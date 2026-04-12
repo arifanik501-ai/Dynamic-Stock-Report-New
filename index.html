@@ -872,113 +872,182 @@
             to { opacity: 1; transform: translateY(-50%) translateX(0) scale(1); }
         }
 
+        .controls-panel.left-panel {
+            right: auto;
+            left: 24px;
+            animation: controlsRevealLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.6s backwards;
+        }
+
+        @keyframes controlsRevealLeft {
+            from { opacity: 0; transform: translateY(-50%) translateX(-30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(-50%) translateX(0) scale(1); }
+        }
+
         .btn-util {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 18px;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
             width: 48px;
             height: 48px;
-            color: rgba(255, 255, 255, 0.45);
+            color: rgba(255, 255, 255, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
             cursor: pointer;
             position: relative;
-            overflow: hidden;
-        }
-
-        .btn-util::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.1), transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            border-radius: 18px;
+            box-shadow: 
+                0 6px 0 #020617,
+                0 8px 15px rgba(0,0,0,0.4),
+                inset 0 2px 0 rgba(255,255,255,0.08);
+            transform: translateY(-3px);
+            z-index: 1;
         }
 
         .btn-util:hover {
-            transform: translateY(-2px) scale(1.05);
-            background: rgba(255, 255, 255, 0.06);
-            color: rgba(255, 255, 255, 0.95);
-            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-6px);
+            color: var(--text-on-primary);
+            background: linear-gradient(135deg, #27374D, #1e293b);
+            border-color: rgba(255, 255, 255, 0.2);
             box-shadow: 
-                inset 0 1px 1px rgba(255, 255, 255, 0.1), 
-                0 10px 20px rgba(0, 0, 0, 0.3);
+                0 9px 0 #020617,
+                0 15px 25px rgba(0,0,0,0.5),
+                inset 0 2px 0 rgba(255,255,255,0.2);
+            z-index: 10;
         }
 
-        .btn-util:hover::before { opacity: 1; }
-
         .btn-util:active {
-            transform: scale(0.94);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transform: translateY(3px) !important;
+            box-shadow: 
+                0 0 0 #020617,
+                0 2px 5px rgba(0,0,0,0.4),
+                inset 0 2px 0 rgba(255,255,255,0.05) !important;
+            transition: all 0.1s ease;
+        }
+
+        body.lite-mode .btn-util:not(.btn-save):not(.btn-special-3d) {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+            border: 1px solid rgba(0, 0, 0, 0.04) !important;
+            box-shadow: 
+                0 6px 0 #cbd5e1,
+                0 8px 20px rgba(15, 23, 42, 0.06),
+                inset 0 2px 5px #ffffff,
+                inset 0 -2px 5px rgba(0, 0, 0, 0.02) !important;
+            color: #64748b !important;
+        }
+
+        body.lite-mode .btn-util:not(.btn-save):not(.btn-special-3d):hover {
+            transform: translateY(-6px);
+            box-shadow: 
+                0 9px 0 #cbd5e1,
+                0 15px 30px rgba(15, 23, 42, 0.1),
+                inset 0 2px 5px #ffffff !important;
+            color: #0f172a !important;
+            background: #ffffff !important;
+        }
+
+        body.lite-mode .btn-util:not(.btn-save):not(.btn-special-3d):active {
+            box-shadow: 0 0 0 #cbd5e1, 0 2px 8px rgba(15, 23, 42, 0.1) !important;
+        }
+
+        /* Lite Mode Tooltips */
+        body.lite-mode .btn-util[title]::before {
+            background: rgba(255, 255, 255, 0.95);
+            color: #475569;
+            box-shadow: 0 8px 30px rgba(15, 23, 42, 0.15);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        body.lite-mode .btn-util[title]:hover::before {
+            color: #0f172a;
         }
 
         .btn-save {
-            background: linear-gradient(135deg, var(--accent-theme), var(--primary-theme)) !important;
+            background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
             color: white !important;
             box-shadow: 
-                0 12px 24px var(--glow-color), 
-                inset 0 2px 2px rgba(255, 255, 255, 0.3),
-                inset 0 -2px 4px rgba(0,0,0,0.2) !important;
+                0 6px 0 #0369a1, 
+                0 8px 15px rgba(2, 132, 199, 0.4),
+                inset 0 2px 0 rgba(255, 255, 255, 0.4) !important;
             border: none !important;
-            border-radius: 20px !important;
             margin-bottom: 2px;
+            animation: floating3D 3s ease-in-out infinite;
         }
 
         .btn-save:hover {
-            box-shadow: 0 16px 36px var(--glow-color), inset 0 2px 2px rgba(255, 255, 255, 0.5) !important;
-            transform: translateY(-3px) scale(1.08);
+            transform: translateY(-8px);
+            box-shadow: 
+                0 10px 0 #0369a1, 
+                0 20px 30px rgba(2, 132, 199, 0.5),
+                inset 0 2px 0 rgba(255, 255, 255, 0.5) !important;
+            filter: brightness(1.1);
         }
 
         .controls-divider {
             height: 1px;
-            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
-            margin: 6px 4px;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.15) 0%, transparent 100%);
+            margin: 10px 4px;
         }
 
         /* ============ TOOLTIPS ============ */
-        .btn-util[title]:hover::before {
+        .btn-util[title]::before {
             content: attr(title);
             position: absolute;
-            right: calc(100% + 12px);
+            right: calc(100% + 14px);
             top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(12px);
-            color: white;
-            font-size: 9px;
+            transform: translateY(-50%) translateX(10px) scale(0.95);
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            color: rgba(255,255,255,0.8);
+            font-size: 10px;
             font-weight: 800;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
-            padding: 6px 12px;
-            border-radius: 8px;
+            padding: 8px 16px;
+            border-radius: 10px;
             white-space: nowrap;
             pointer-events: none;
-            animation: tooltipIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+        }
+
+        .btn-util[title]:hover::before {
             opacity: 1;
-            inset: unset;
-            width: auto;
-            height: auto;
+            visibility: visible;
+            transform: translateY(-50%) translateX(0) scale(1);
+            color: white;
         }
 
-        .btn-util[title]:hover::after {
-            content: '';
-            position: absolute;
-            right: calc(100% + 8px);
-            top: 50%;
-            transform: translateY(-50%);
-            border: 5px solid transparent;
-            border-left-color: rgba(0, 0, 0, 0.8);
-            pointer-events: none;
+        /* Name style change when clicking the button */
+        .btn-util[title]:active::before {
+            background: linear-gradient(135deg, var(--accent-theme), var(--primary-theme));
+            color: #fff;
+            transform: translateY(-50%) translateX(4px) scale(0.9);
+            box-shadow: 0 4px 16px var(--glow-color);
+            border-color: rgba(255, 255, 255, 0.4);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            letter-spacing: 0.18em;
+            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        @keyframes tooltipIn {
-            from { opacity: 0; transform: translateY(-50%) translateX(6px); }
-            to { opacity: 1; transform: translateY(-50%) translateX(0); }
+        /* Tooltips on the left panel should open to the right */
+        .left-panel .btn-util[title]::before {
+            right: auto;
+            left: calc(100% + 14px);
+            transform: translateY(-50%) translateX(-10px) scale(0.95);
+        }
+        
+        .left-panel .btn-util[title]:hover::before {
+            transform: translateY(-50%) translateX(0) scale(1);
+        }
+        
+        .left-panel .btn-util[title]:active::before {
+            transform: translateY(-50%) translateX(-4px) scale(0.9);
         }
 
         /* ============ SAVE PULSE ============ */
@@ -1326,7 +1395,6 @@
 
 /* 3D Special Notification Button */
 .btn-special-3d {
-    position: relative;
     background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
     color: white !important;
     border: none !important;
@@ -1334,23 +1402,20 @@
         0 6px 0 #0369a1, 
         0 8px 15px rgba(2, 132, 199, 0.4),
         inset 0 2px 0 rgba(255, 255, 255, 0.4) !important;
-    transform: translateY(-4px);
-    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     animation: floating3D 3s ease-in-out infinite;
-    z-index: 10;
 }
 
 .btn-special-3d:hover {
-    transform: translateY(-6px);
+    transform: translateY(-8px);
     box-shadow: 
-        0 8px 0 #0369a1, 
-        0 12px 20px rgba(2, 132, 199, 0.5),
+        0 10px 0 #0369a1, 
+        0 20px 30px rgba(2, 132, 199, 0.5),
         inset 0 2px 0 rgba(255, 255, 255, 0.5) !important;
-    filter: brightness(1.2);
+    filter: brightness(1.15);
 }
 
 .btn-special-3d:active {
-    transform: translateY(2px) !important;
+    transform: translateY(3px) !important;
     box-shadow: 
         0 0 0 #0369a1, 
         0 2px 5px rgba(2, 132, 199, 0.4),
@@ -1415,6 +1480,21 @@
     <!-- ============ PAGE 1: REPORT GENERATOR ============ -->
     <div class="page-content active" id="page-generator">
         
+        <div class="controls-panel left-panel no-print" id="theme-controls">
+            <!-- Theme -->
+            <button onclick="randomizeTheme()" class="btn-util" title="Theme">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                </svg>
+            </button>
+            <!-- Lite Mode -->
+            <button onclick="toggleLiteMode()" class="btn-util" title="Lite Mode">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+            </button>
+        </div>
+
         <div class="controls-panel no-print" id="generator-controls">
             <!-- Save to Archive -->
             <button onclick="takeScreenshot(true)" class="btn-util btn-save" title="Save & Sync to Cloud" id="btn-save-report">
@@ -1435,20 +1515,6 @@
                     <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                 </svg>
             </button>
-            <div class="controls-divider"></div>
-            <!-- Theme -->
-            <button onclick="randomizeTheme()" class="btn-util" title="Theme">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
-                </svg>
-            </button>
-            <!-- Lite Mode -->
-            <button onclick="toggleLiteMode()" class="btn-util" title="Lite Mode">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                </svg>
-            </button>
-
             <!-- Reset -->
             <button onclick="refreshData()" class="btn-util" title="Clear All">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -1677,12 +1743,32 @@
         };
 
         const themes = [
+            // Original 6
             { name: "Midnight Teal",   bg: '#0c1222', primary: '#164e63', accent: '#0891b2', text: '#cffafe', glow: 'rgba(8, 145, 178, 0.15)' },
             { name: "Forest Depth",    bg: '#0a1612', primary: '#1a4d2e', accent: '#4f6f52', text: '#f0fdf4', glow: 'rgba(79, 111, 82, 0.15)' },
             { name: "Espresso Night",  bg: '#151010', primary: '#43302b', accent: '#624a42', text: '#fffaf3', glow: 'rgba(98, 74, 66, 0.15)' },
             { name: "Deep Ocean",      bg: '#0a1020', primary: '#102a43', accent: '#243b53', text: '#f0f4f8', glow: 'rgba(36, 59, 83, 0.2)' },
             { name: "Carbon Steel",    bg: '#0f1218', primary: '#1e293b', accent: '#475569', text: '#f8fafc', glow: 'rgba(71, 85, 105, 0.15)' },
-            { name: "Crimson Dark",    bg: '#150a0a', primary: '#7f1d1d', accent: '#991b1b', text: '#fef2f2', glow: 'rgba(153, 27, 27, 0.12)' }
+            { name: "Crimson Dark",    bg: '#150a0a', primary: '#7f1d1d', accent: '#991b1b', text: '#fef2f2', glow: 'rgba(153, 27, 27, 0.12)' },
+            // New Premium Variations
+            { name: "Neon Amethyst",   bg: '#100a16', primary: '#581c87', accent: '#9333ea', text: '#faf5ff', glow: 'rgba(147, 51, 234, 0.15)' },
+            { name: "Cyber Gold",      bg: '#141208', primary: '#854d0e', accent: '#ca8a04', text: '#fefce8', glow: 'rgba(202, 138, 4, 0.15)' },
+            { name: "Toxic Lime",      bg: '#0a1608', primary: '#166534', accent: '#16a34a', text: '#f0fdf4', glow: 'rgba(22, 163, 74, 0.15)' },
+            { name: "Abyssal Indigo",  bg: '#0a0a1a', primary: '#312e81', accent: '#4f46e5', text: '#eef2ff', glow: 'rgba(79, 70, 229, 0.15)' },
+            { name: "Solar Flare",     bg: '#160a0a', primary: '#9a3412', accent: '#ea580c', text: '#fff7ed', glow: 'rgba(234, 88, 12, 0.15)' },
+            { name: "Cosmic Pink",     bg: '#160a12', primary: '#9d174d', accent: '#db2777', text: '#fdf2f8', glow: 'rgba(219, 39, 119, 0.15)' },
+            { name: "Electric Cyan",   bg: '#081416', primary: '#155e75', accent: '#06b6d4', text: '#ecfeff', glow: 'rgba(6, 182, 212, 0.15)' },
+            { name: "Void Violet",     bg: '#120816', primary: '#4c1d95', accent: '#7c3aed', text: '#f5f3ff', glow: 'rgba(124, 58, 237, 0.15)' },
+            { name: "Volcanic Ruby",   bg: '#16080a', primary: '#9f1239', accent: '#e11d48', text: '#fff1f2', glow: 'rgba(225, 29, 72, 0.15)' },
+            { name: "Dark Emerald",    bg: '#081610', primary: '#065f46', accent: '#10b981', text: '#ecfdf5', glow: 'rgba(16, 185, 129, 0.15)' },
+            { name: "Nebula Fuchsia",  bg: '#160a14', primary: '#86198f', accent: '#c026d3', text: '#fdf4ff', glow: 'rgba(192, 38, 211, 0.15)' },
+            { name: "Obsidian Silver", bg: '#101214', primary: '#3f3f46', accent: '#71717a', text: '#f4f4f5', glow: 'rgba(113, 113, 122, 0.15)' },
+            { name: "Twilight Blue",   bg: '#0a121a', primary: '#1e3a8a', accent: '#2563eb', text: '#eff6ff', glow: 'rgba(37, 99, 235, 0.15)' },
+            { name: "Desert Bronze",   bg: '#14100c', primary: '#78350f', accent: '#b45309', text: '#fffbeb', glow: 'rgba(180, 83, 9, 0.15)' },
+            { name: "Aurora Mint",     bg: '#081a18', primary: '#115e59', accent: '#14b8a6', text: '#f0fdfa', glow: 'rgba(20, 184, 166, 0.15)' },
+            { name: "Blood Moon",      bg: '#1a0a0a', primary: '#7f1d1d', accent: '#dc2626', text: '#fef2f2', glow: 'rgba(220, 38, 38, 0.15)' },
+            { name: "Cyber Magma",     bg: '#1a0515', primary: '#831843', accent: '#be185d', text: '#fdf2f8', glow: 'rgba(190, 24, 93, 0.15)' },
+            { name: "Ghost White",     bg: '#1e242a', primary: '#64748b', accent: '#94a3b8', text: '#f8fafc', glow: 'rgba(148, 163, 184, 0.15)' }
         ];
 
         // ============ PAGE SWITCHING ============
@@ -1924,13 +2010,15 @@
             orbs[2].style.background = `radial-gradient(circle, ${theme.accent}25, transparent 70%)`;
         }
 
-        function randomizeTheme() {
+        function randomizeTheme(silent = false) {
             if (document.body.classList.contains('lite-mode')) {
                 toggleLiteMode(); // Turn off lite mode when randomizing dark themes
             }
             const random = themes[Math.floor(Math.random() * themes.length)];
             applyTheme(random);
-            showToast(`${random.name} Theme Applied`);
+            if (!silent) {
+                showToast(`${random.name} Theme Applied`);
+            }
         }
 
         function toggleLiteMode() {
@@ -2010,7 +2098,6 @@
                 sig.innerText = "Takbir Hossain";
                 nameLine.innerText = "Takbir Hossain";
                 descLine.innerText = "Asst. Engineer";
-                applyTheme(themes[0]);
                 h2.innerText = "Opening";
                 h3.innerText = "Production";
                 h4.innerText = "Consumption";
@@ -2020,7 +2107,6 @@
                 sig.innerText = "Nafija";
                 nameLine.innerText = "Nafija";
                 descLine.innerText = "Jr. Engineer";
-                applyTheme(themes[1]);
                 h2.innerText = "Opening";
                 h3.innerText = "Production";
                 h4.innerText = "Consumption";
@@ -2030,7 +2116,6 @@
                 sig.innerText = "...";
                 nameLine.innerText = "...";
                 descLine.innerText = "...";
-                applyTheme(themes[0]);
             }
 
             currentReportType = type;
@@ -2440,6 +2525,9 @@ window.processPastedData = processPastedData;
 window.takeScreenshot = takeScreenshot;
 window.updateBadges = updateBadges;
 window.moveSlider = moveSlider;
+
+// Auto-randomize theme silently on every page refresh
+randomizeTheme(true);
 
 </script>
 
