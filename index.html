@@ -1527,6 +1527,58 @@
     .archive-footer {
         flex-direction: column;
     }
+
+    /* Hide Generator elements completely on mobile */
+    #tab-generator { display: none !important; }
+    .data-column { display: none !important; }
+    
+    /* Make the screenshot-wrapper full width and stop horizontal scrolling */
+    .screenshot-wrapper {
+        padding-top: 10px;
+        padding-bottom: 250px;
+        overflow-x: hidden !important;
+        width: 100vw;
+    }
+}
+
+/* ========================================================
+   MOBILE SCREEN VIEW OVERRIDES (REMOVED DURING SCREENSHOT)
+   These apply ONLY when reading on screen natively.
+   ======================================================== */
+body.mobile-active .a4-sheet {
+    min-width: 100vw !important;
+    width: 100vw !important;
+    margin: 0 !important;
+    padding: 16px 8px !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+body.mobile-active .pivot-table {
+    font-size: 11px !important;
+}
+
+body.mobile-active .pivot-table th {
+    padding: 8px 4px !important;
+    font-size: 8px !important;
+    letter-spacing: 0 !important;
+}
+
+body.mobile-active .pivot-table td {
+    padding: 8px 2px !important;
+}
+
+body.mobile-active .text-pivot-body {
+    font-size: 10px !important;
+}
+
+body.mobile-active .static-data-box {
+    padding: 6px 2px !important;
+}
+
+body.mobile-active .text-huge {
+    font-size: 24px !important;
 }
 </style>
 </head>
@@ -2701,6 +2753,17 @@ randomizeTheme(true);
             alert("Notifications are currently blocked by your browser! Please click the lock icon next to your URL bar to allow them.");
         }
     };
+
+    // Auto-switch away from hidden generator if opening app on Mobile
+    window.addEventListener('DOMContentLoaded', () => {
+        if (window.innerWidth <= 768) {
+            setTimeout(() => {
+                if (typeof window.switchPage === 'function') {
+                    window.switchPage('archive-accessories');
+                }
+            }, 200);
+        }
+    });
 </script>
 
 </body>
