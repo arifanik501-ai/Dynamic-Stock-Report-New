@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mep-ledger-v5';
+const CACHE_NAME = 'mep-ledger-v6';
 const urlsToCache = [
   './index.html',
   './styles.css',
