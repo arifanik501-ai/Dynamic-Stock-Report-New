@@ -2534,6 +2534,19 @@ randomizeTheme(true);
 
 </script>
 
+<!-- ============ AUTO THEME ON EVERY REFRESH ============ -->
+<script>
+    // Backup: Also run theme randomization from outside the module
+    // This ensures it fires even if Firebase CDN is slow/blocked
+    window.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            if (typeof window.randomizeTheme === 'function') {
+                window.randomizeTheme(true);
+            }
+        }, 300);
+    });
+</script>
+
 <!-- ============ PWA & NOTIFICATION ENGINE ============ -->
 <script>
     if ('serviceWorker' in navigator) {
