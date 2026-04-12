@@ -1547,31 +1547,34 @@
                     </div>
                     <div style="display: table-cell; vertical-align: top; text-align: right;">
                         <div class="no-print" style="display: inline-block; position: relative; cursor: pointer;">
-                            <!-- Date Card -->
-                            <div style="background: linear-gradient(145deg, #ffffff, #f8fffe); border: 2px solid var(--primary-theme); border-radius: 14px; padding: 0; overflow: hidden; box-shadow: 0 6px 24px rgba(22, 78, 99, 0.08), 4px 4px 0px rgba(22, 78, 99, 0.06); min-width: 170px; transition: all 0.3s ease;">
+                            <!-- Date Card Premium Upgrade -->
+                            <div style="background: white; border: 1px solid rgba(0, 0, 0, 0.06); border-radius: 18px; padding: 0; box-shadow: 0 12px 35px rgba(0,0,0,0.05), 0 2px 8px rgba(0,0,0,0.02); min-width: 175px; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; overflow: hidden;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='none'">
                                 
-                                <!-- Top accent bar -->
-                                <div style="height: 4px; background: linear-gradient(90deg, var(--primary-theme), var(--accent-theme));"></div>
+                                <!-- Top accent line & faint glow -->
+                                <div style="position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(90deg, var(--primary-theme), var(--accent-theme));"></div>
+                                <div style="position: absolute; top: 0; left: 20%; right: 20%; height: 2px; box-shadow: 0 2px 14px var(--glow-color);"></div>
                                 
-                                <!-- Label row with icon -->
-                                <div style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 16px 4px 16px;">
-                                    <svg style="width: 12px; height: 12px; color: var(--accent-theme); flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                        <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                    </svg>
-                                    <span class="text-label uppercase font-black" style="font-size: 8px; letter-spacing: 0.15em; color: var(--accent-theme);">Reporting Date</span>
+                                <!-- Label row with refined pill -->
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 18px 16px 8px 16px;">
+                                    <div style="background: rgba(15, 23, 42, 0.04); padding: 5px; border-radius: 7px; display: flex; align-items: center; justify-content: center;">
+                                        <svg style="width: 12px; height: 12px; color: var(--accent-theme);" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                    </div>
+                                    <span class="text-label uppercase font-black" style="font-size: 9px; letter-spacing: 0.15em; color: #64748b;">Reporting Date</span>
                                 </div>
                                 
-                                <!-- Date display -->
-                                <div style="padding: 2px 16px 10px 16px; text-align: center;">
-                                    <span id="display-date-day" style="display: block; font-size: 28px; font-weight: 900; color: var(--primary-theme); line-height: 1; letter-spacing: -0.03em;">11</span>
-                                    <span id="display-date-monthyear" style="display: block; font-size: 11px; font-weight: 800; color: var(--accent-theme); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 2px;">APR 2026</span>
-                                    <span id="display-date-weekday" style="display: block; font-size: 9px; font-weight: 700; color: #94a3b8; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 3px;">Saturday</span>
-                                    
-                                    <!-- Digital Clock Addition -->
-                                    <div style="margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(22, 78, 99, 0.2); display: flex; justify-content: center; align-items: center; gap: 4px;">
-                                        <svg style="width: 10px; height: 10px; color: var(--primary-theme);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        <span id="digital-clock" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 800; color: var(--primary-theme); letter-spacing: 0.05em;">00:00:00</span>
-                                    </div>
+                                <!-- Bold Date Section -->
+                                <div style="padding: 0 16px 18px 16px; text-align: center;">
+                                    <span id="display-date-day" style="display: block; font-size: 46px; font-weight: 900; background: linear-gradient(135deg, var(--primary-theme), var(--accent-theme)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 0.9; letter-spacing: -0.05em; padding-bottom: 2px;">11</span>
+                                    <span id="display-date-monthyear" style="display: block; font-size: 11px; font-weight: 800; color: #334155; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 6px;">APR 2026</span>
+                                    <span id="display-date-weekday" style="display: block; font-size: 9px; font-weight: 700; color: #94a3b8; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 3px;">Saturday</span>
+                                </div>
+
+                                <!-- Digital Clock Footer -->
+                                <div style="background: #f8fafc; border-top: 1px solid rgba(0,0,0,0.04); padding: 12px 16px; display: flex; justify-content: center; align-items: center; gap: 6px;">
+                                    <svg style="width: 12px; height: 12px; color: var(--primary-theme);" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span id="digital-clock" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 800; color: var(--primary-theme); letter-spacing: 0.06em;">00:00:00</span>
                                 </div>
                             </div>
                             
