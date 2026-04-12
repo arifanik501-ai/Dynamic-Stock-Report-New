@@ -1436,7 +1436,97 @@
 @keyframes bellRing {
     0%, 5%, 15%, 100% { transform: rotate(0); }
     7%, 11% { transform: rotate(15deg); }
-    9%, 13% { transform: rotate(-15deg); }
+}
+
+/* ============ MOBILE VIEW OVERRIDES ============ */
+@media (max-width: 768px) {
+    .tab-navigation {
+        width: calc(100% - 20px) !important;
+        padding: 10px !important;
+        margin-top: 10px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        justify-content: flex-start;
+    }
+    .tab-btn { flex: 0 0 auto; }
+    
+    .screenshot-wrapper {
+        padding-top: 10px;
+        padding-bottom: 250px;
+        overflow-x: auto;
+        width: 100vw;
+    }
+    
+    .a4-sheet {
+        margin: 10px;
+        min-width: 210mm;
+    }
+
+    .controls-panel {
+        position: fixed;
+        bottom: 20px;
+        top: auto !important;
+        right: 15px;
+        left: 15px;
+        transform: none !important;
+        flex-direction: row !important;
+        flex-wrap: wrap;
+        width: auto !important;
+        justify-content: center;
+        border-radius: 20px !important;
+        padding: 12px !important;
+        animation: none !important;
+    }
+
+    .controls-panel.left-panel {
+        bottom: 95px;
+        right: 15px;
+        left: 15px;
+    }
+
+    .controls-divider {
+        width: 1px !important;
+        height: 32px !important;
+        margin: 0 8px !important;
+    }
+
+    .btn-util {
+        width: 46px !important;
+        height: 46px !important;
+    }
+
+    .btn-util[title]::before {
+        display: none !important;
+    }
+
+    .modal-content {
+        width: 95vw !important;
+    }
+
+    .archive-container {
+        width: 100%;
+        padding: 0 10px;
+        margin: 90px auto 200px;
+    }
+
+    .archive-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px;
+    }
+
+    .archive-card-body {
+        padding: 10px;
+        overflow-x: auto;
+    }
+    
+    .archive-table {
+        min-width: 600px;
+    }
+
+    .archive-footer {
+        flex-direction: column;
+    }
 }
 </style>
 </head>
