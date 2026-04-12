@@ -1962,7 +1962,10 @@
                 return;
             }
 
-            const reportDate = document.getElementById('display-date-text').innerText;
+            const reportDateText = document.getElementById('display-date-text').innerText;
+            const targetDateInput = document.getElementById('statement-date-picker');
+            const dateKey = targetDateInput && targetDateInput.value ? targetDateInput.value : new Date().toISOString().split('T')[0];
+            
             const now = new Date();
             const savedAt = now.toLocaleString('en-US', {
                 month: 'short', day: 'numeric', year: 'numeric',
@@ -1972,17 +1975,33 @@
             const reportData = {
                 type: currentReportType,
                 data: JSON.parse(JSON.stringify(inventoryData)),
-                reportDate: reportDate,
+                reportDate: reportDateText,
                 savedAt: savedAt,
                 savedTimestamp: now.getTime()
             };
 
             const key = window.STORAGE_KEYS[currentReportType];
-            localStorage.setItem(key, JSON.stringify(reportData));
+            
+            let archiveMap = {};
+            const storedRaw = localStorage.getItem(key);
+            if (storedRaw) {
+                const parsed = JSON.parse(storedRaw);
+                // Migration: If the stored data is a single object (has .type directly)
+                if (parsed.type && !parsed[dateKey]) {
+                    const fallbackDate = new Date(parsed.savedTimestamp || Date.now()).toISOString().split('T')[0];
+                    archiveMap[fallbackDate] = parsed;
+                } else if (!parsed.type) {
+                    archiveMap = parsed;
+                }
+            }
+
+            // Save under today's precise key
+            archiveMap[dateKey] = reportData;
+            localStorage.setItem(key, JSON.stringify(archiveMap));
 
             // Sync to Firebase if available
             if (window.firebaseSet && window.firebaseRef && window.firebaseDB) {
-                window.firebaseSet(window.firebaseRef(window.firebaseDB, 'inventory_reports/' + currentReportType), reportData)
+                window.firebaseSet(window.firebaseRef(window.firebaseDB, 'inventory_reports/' + currentReportType + '/' + dateKey), reportData)
                     .catch(e => console.error("Firebase sync failed:", e));
             }
 
@@ -1991,21 +2010,28 @@
             btn.classList.add('save-pulse');
             setTimeout(() => btn.classList.remove('save-pulse'), 700);
 
-            // Update badge
+            // Set current active archive tab to this new date
+            window['archiveSelectedDate_' + currentReportType] = dateKey;
+            
             updateBadges();
 
             const config = REPORT_CONFIG[currentReportType];
-            if (!silent) showToast(`${config.emoji} ${config.title} — Saved!`);
+            if (!silent) showToast(`${config.emoji} ${config.title} Saved!`);
         }
+
+        window.changeArchiveDate = function(type, dateVal) {
+            window['archiveSelectedDate_' + type] = dateVal;
+            renderArchivePage(type);
+        };
 
         // ============ RENDER ARCHIVE PAGE ============
         function renderArchivePage(type) {
             const container = document.getElementById('archive-content-' + type);
             const key = window.STORAGE_KEYS[type];
-            const stored = localStorage.getItem(key);
             const config = REPORT_CONFIG[type];
+            let storedRaw = localStorage.getItem(key);
 
-            if (!stored) {
+            if (!storedRaw) {
                 container.innerHTML = `
                     <div class="archive-empty">
                         <svg class="archive-empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
@@ -2018,8 +2044,35 @@
                 return;
             }
 
-            const report = JSON.parse(stored);
+            let archiveMap = JSON.parse(storedRaw);
+            
+            // Auto migrate old single object inline if necessary
+            if (archiveMap.type && !archiveMap[new Date().toISOString().split('T')[0]]) {
+                const fallbackDate = new Date(archiveMap.savedTimestamp || Date.now()).toISOString().split('T')[0];
+                let temp = {};
+                temp[fallbackDate] = archiveMap;
+                archiveMap = temp;
+                localStorage.setItem(key, JSON.stringify(archiveMap));
+            }
+
+            let availableDates = Object.keys(archiveMap).sort((a,b) => b.localeCompare(a));
+            
+            if (availableDates.length === 0) {
+                localStorage.removeItem(key);
+                renderArchivePage(type); 
+                return;
+            }
+
+            let selectedDate = window['archiveSelectedDate_' + type];
+            if (!selectedDate || !availableDates.includes(selectedDate)) {
+                selectedDate = availableDates[0]; 
+                window['archiveSelectedDate_' + type] = selectedDate;
+            }
+
+            const report = archiveMap[selectedDate];
             const headers = config.headers;
+
+            let dropdownOptions = availableDates.map(d => `<option value="${d}" ${d === selectedDate ? 'selected' : ''}>${archiveMap[d].reportDate} (${d})</option>`).join('');
 
             let tableRows = '';
             report.data.forEach((item, idx) => {
@@ -2037,16 +2090,20 @@
 
             container.innerHTML = `
                 <div class="archive-card">
-                    <div class="archive-card-header">
-                        <div class="report-name">${config.emoji} ${config.title}</div>
-                        <div class="archive-meta">
-                            <div class="archive-meta-item">
-                                <span class="archive-meta-label">Report Date</span>
-                                <span class="archive-meta-value">${report.reportDate}</span>
-                            </div>
-                            <div class="archive-meta-item">
-                                <span class="archive-meta-label">Saved At</span>
-                                <span class="archive-meta-value">${report.savedAt}</span>
+                    <div class="archive-card-header" style="justify-content: space-between; gap: 15px;">
+                        <div style="flex: 1;">
+                            <div class="report-name">${config.emoji} ${config.title}</div>
+                            <div class="archive-meta">
+                                <div class="archive-meta-item">
+                                    <span class="archive-meta-label">Select History</span>
+                                    <select class="archive-date-selector" onchange="changeArchiveDate('${type}', this.value)" style="background: rgba(255,255,255,0.06); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 11px; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; outline: none; margin-top: 4px;">
+                                        ${dropdownOptions}
+                                    </select>
+                                </div>
+                                <div class="archive-meta-item">
+                                    <span class="archive-meta-label">Saved At</span>
+                                    <span class="archive-meta-value">${report.savedAt}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2080,12 +2137,12 @@
                             </div>
                         </div>
                         <div style="display: flex; gap: 10px;">
-                            <button onclick="deleteArchive('${type}')" class="btn-util archive-action-btn archive-delete-btn" title="Delete" style="width: 38px; height: 38px; border-radius: 10px;">
+                            <button onclick="deleteArchive('${type}', '${selectedDate}')" class="btn-util archive-action-btn archive-delete-btn" title="Delete Saved Date" style="width: 38px; height: 38px; border-radius: 10px;">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                     <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                 </svg>
                             </button>
-                            <button onclick="loadToGenerator('${type}')" class="btn-util archive-action-btn" title="Load" style="width: auto; padding: 8px 16px; border-radius: 10px; gap: 6px; display: flex; font-size: 9px; font-weight: 800; letter-spacing: 0.1em;">
+                            <button onclick="loadToGenerator('${type}', '${selectedDate}')" class="btn-util archive-action-btn" title="Load" style="width: auto; padding: 8px 16px; border-radius: 10px; gap: 6px; display: flex; font-size: 9px; font-weight: 800; letter-spacing: 0.1em;">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                                 LOAD
                             </button>
@@ -2096,44 +2153,71 @@
         }
 
         // ============ DELETE ARCHIVE ============
-        function deleteArchive(type) {
-            if (!confirm(`Are you sure you want to delete the saved ${REPORT_CONFIG[type].title}?`)) return;
-            localStorage.removeItem(window.STORAGE_KEYS[type]);
+        function deleteArchive(type, dateKey) {
+            if (!confirm(`Are you sure you want to delete the saved report for ${dateKey}?`)) return;
+            const key = window.STORAGE_KEYS[type];
+            let storedRaw = localStorage.getItem(key);
+            
+            if (storedRaw) {
+                let archiveMap = JSON.parse(storedRaw);
+                delete archiveMap[dateKey];
+                
+                if (Object.keys(archiveMap).length === 0) {
+                    localStorage.removeItem(key);
+                } else {
+                    localStorage.setItem(key, JSON.stringify(archiveMap));
+                }
+            }
             
             // Delete from Firebase if available
             if (window.firebaseSet && window.firebaseRef && window.firebaseDB) {
-                window.firebaseSet(window.firebaseRef(window.firebaseDB, 'inventory_reports/' + type), null)
+                window.firebaseSet(window.firebaseRef(window.firebaseDB, 'inventory_reports/' + type + '/' + dateKey), null)
                     .catch(e => console.error("Firebase delete failed:", e));
             }
 
             renderArchivePage(type);
             updateBadges();
-            showToast("Archive Deleted");
+            showToast("Date Record Deleted");
         }
 
         // ============ LOAD TO GENERATOR ============
-        function loadToGenerator(type) {
-            const stored = localStorage.getItem(window.STORAGE_KEYS[type]);
-            if (!stored) return;
+        function loadToGenerator(type, dateKey) {
+            const storedRaw = localStorage.getItem(window.STORAGE_KEYS[type]);
+            if (!storedRaw) return;
 
-            const report = JSON.parse(stored);
+            const archiveMap = JSON.parse(storedRaw);
+            const report = archiveMap[dateKey] || archiveMap; // fallback logic
+            
             inventoryData = report.data;
             currentReportType = type;
             renderTable();
             updateReportBranding(type);
+            
+            // Sync the date picker if it matches
+            const picker = document.getElementById('statement-date-picker');
+            if (picker && dateKey) picker.value = dateKey;
+            
             switchPage('generator');
-            showToast(`${REPORT_CONFIG[type].emoji} Loaded to Generator`);
+            showToast(`${REPORT_CONFIG[type].emoji} Loaded [${dateKey}]`);
         }
 
         // ============ UPDATE BADGES ============
         function updateBadges() {
             ['accessories', 'armature'].forEach(type => {
                 const badge = document.getElementById('badge-' + type);
-                const stored = localStorage.getItem(window.STORAGE_KEYS[type]);
-                if (stored) {
-                    const report = JSON.parse(stored);
-                    badge.textContent = report.savedAt;
-                    badge.classList.remove('empty');
+                const storedRaw = localStorage.getItem(window.STORAGE_KEYS[type]);
+                if (storedRaw) {
+                    const archiveMap = JSON.parse(storedRaw);
+                    const dates = Object.keys(archiveMap).sort((a,b) => b.localeCompare(a));
+                    if (dates.length > 0) {
+                        const activeDate = window['archiveSelectedDate_' + type] || dates[0];
+                        const report = archiveMap[activeDate] || archiveMap[dates[0]] || archiveMap;
+                        badge.textContent = report.savedAt ? report.savedAt.split(', ')[0] : dates[0];
+                        badge.classList.remove('empty');
+                    } else {
+                        badge.textContent = 'EMPTY';
+                        badge.classList.add('empty');
+                    }
                 } else {
                     badge.textContent = 'EMPTY';
                     badge.classList.add('empty');
