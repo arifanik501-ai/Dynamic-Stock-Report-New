@@ -1,0 +1,22 @@
+{
+  "name": "MEP Stock Ledger",
+  "short_name": "MEP Ledger",
+  "description": "Premium industrial technical ledger & stock report generator for MEP FAN LTD.",
+  "start_url": "./index (1).html",
+  "display": "standalone",
+  "background_color": "#0c1222",
+  "theme_color": "#0891b2",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "./icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
