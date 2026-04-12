@@ -1437,6 +1437,149 @@
     0%, 5%, 15%, 100% { transform: rotate(0); }
     7%, 11% { transform: rotate(15deg); }
 }
+/* ============ CALENDAR UI ============ */
+.archive-layout-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+    padding: 0 20px;
+    margin: 0 auto;
+    max-width: 1400px;
+}
+
+.archive-main-column {
+    flex: 1;
+    max-width: 920px;
+    width: 100%;
+}
+
+.archive-calendar-sidebar {
+    width: 320px;
+    padding-top: 40px;
+    position: sticky;
+    top: 20px;
+}
+
+.calendar-card {
+    background: rgba(15, 15, 25, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    color: white;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 14px;
+}
+.calendar-nav-btn {
+    background: rgba(255,255,255,0.05);
+    border: none;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.calendar-nav-btn:hover {
+    background: rgba(255,255,255,0.15);
+}
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+.calendar-day-header {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.3);
+    margin-bottom: 8px;
+}
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.4);
+    border-radius: 8px;
+    cursor: default;
+    position: relative;
+}
+.calendar-day.has-data {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.calendar-day.has-data:hover {
+    background: var(--accent-theme);
+    box-shadow: 0 0 15px var(--glow-color);
+    transform: scale(1.1);
+    z-index: 2;
+}
+.calendar-day.active-day {
+    background: var(--primary-theme) !important;
+    color: white !important;
+    border-color: var(--accent-theme) !important;
+    box-shadow: 0 0 20px var(--glow-color) !important;
+    font-weight: 900 !important;
+}
+
+.mobile-calendar-fab {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--primary-theme), var(--accent-theme));
+    color: white;
+    border: none;
+    border-radius: 30px;
+    height: 50px;
+    padding: 0 24px;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 20px var(--glow-color);
+    z-index: 900;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.glass-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: none;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.glass-modal.active { display: flex; }
+.hidden-fab { display: none !important; }
 
 /* ============ MOBILE VIEW OVERRIDES ============ */
 @media (max-width: 768px) {
@@ -1542,6 +1685,20 @@
 
     button[onclick^="loadToGenerator"] { display: none !important; }
     .archive-btn-back { display: none !important; }
+
+    .archive-layout-wrapper {
+        flex-direction: column;
+        padding: 0 10px;
+    }
+    .archive-calendar-sidebar {
+        display: none !important;
+    }
+    .archive-container {
+        padding-top: 20px;
+    }
+    .mobile-calendar-fab {
+        display: flex;
+    }
 
     /* ========================================================
        MOBILE SCREEN VIEW OVERRIDES (REMOVED DURING SCREENSHOT)
@@ -1789,19 +1946,24 @@
 
     <!-- ============ PAGE 2: ACCESSORIES ARCHIVE ============ -->
     <div class="page-content" id="page-archive-accessories">
-        <div class="archive-container">
-            <div class="archive-header">
-                <div>
-                    <div class="archive-title">📦 Accessories Archive</div>
-                    <div class="archive-subtitle">Fan Accessories Stock Report — Last Saved Version</div>
+        <div class="archive-layout-wrapper">
+            <div class="archive-main-column archive-container">
+                <div class="archive-header">
+                    <div>
+                        <div class="archive-title">📦 Accessories Archive</div>
+                        <div class="archive-subtitle">Fan Accessories Stock Report — Last Saved Version</div>
+                    </div>
+                    <button onclick="switchPage('generator')" class="btn-util archive-btn-back" title="Back to Generator">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">Generator</span>
+                    </button>
                 </div>
-                <button onclick="switchPage('generator')" class="btn-util archive-btn-back" title="Back to Generator">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">Generator</span>
-                </button>
+                <div id="archive-content-accessories">
+                    <!-- Dynamically rendered -->
+                </div>
             </div>
-            <div id="archive-content-accessories">
-                <!-- Dynamically rendered -->
+            <div class="archive-calendar-sidebar no-print">
+                <div id="desktop-calendar-accessories"></div>
             </div>
         </div>
     </div>
@@ -1810,23 +1972,45 @@
 
     <!-- ============ PAGE 4: ARMATURE ARCHIVE ============ -->
     <div class="page-content" id="page-archive-armature">
-        <div class="archive-container">
-            <div class="archive-header">
-                <div>
-                    <div class="archive-title">⚙️ Armature Archive</div>
-                    <div class="archive-subtitle">Fan Armature Stock Report — Last Saved Version</div>
+        <div class="archive-layout-wrapper">
+            <div class="archive-main-column archive-container">
+                <div class="archive-header">
+                    <div>
+                        <div class="archive-title">⚙️ Armature Archive</div>
+                        <div class="archive-subtitle">Fan Armature Stock Report — Last Saved Version</div>
+                    </div>
+                    <button onclick="switchPage('generator')" class="btn-util archive-btn-back" title="Back to Generator">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">Generator</span>
+                    </button>
                 </div>
-                <button onclick="switchPage('generator')" class="btn-util archive-btn-back" title="Back to Generator">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">Generator</span>
-                </button>
+                <div id="archive-content-armature">
+                    <!-- Dynamically rendered -->
+                </div>
             </div>
-            <div id="archive-content-armature">
-                <!-- Dynamically rendered -->
+            <div class="archive-calendar-sidebar no-print">
+                <div id="desktop-calendar-armature"></div>
             </div>
         </div>
     </div>
 
+
+    <!-- ============ MOBILE CALENDAR FAB & MODAL ============ -->
+    <button class="mobile-calendar-fab no-print" onclick="toggleMobileCalendar(true)">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+        History
+    </button>
+
+    <div id="calendar-modal" class="glass-modal no-print" onclick="if(event.target === this) toggleMobileCalendar(false)">
+        <div style="position: relative; width: 100%; max-width: 350px;">
+            <div id="mobile-calendar-container"></div>
+            <button onclick="toggleMobileCalendar(false)" style="position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.1); border: none; width: 30px; height: 30px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+    </div>
 
     <!-- ============ IMPORT MODAL ============ -->
     <div id="import-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-6 no-print">
@@ -1952,6 +2136,12 @@
             if (pageId.startsWith('archive-')) {
                 const type = pageId.replace('archive-', '');
                 renderArchivePage(type);
+                
+                const fab = document.querySelector('.mobile-calendar-fab');
+                if(fab) fab.classList.remove('hidden-fab');
+            } else {
+                const fab = document.querySelector('.mobile-calendar-fab');
+                if(fab) fab.classList.add('hidden-fab');
             }
         }
 
@@ -2150,6 +2340,95 @@
                     </div>
                 </div>
             `;
+            
+            renderCalendarWidget(type);
+        }
+
+        window.calendarNavDate = {
+            accessories: new Date(),
+            armature: new Date()
+        };
+
+        function renderCalendarWidget(type) {
+            const targetDesktop = document.getElementById('desktop-calendar-' + type);
+            const targetMobile = document.getElementById('mobile-calendar-container');
+
+            const key = window.STORAGE_KEYS[type];
+            let archiveMap = {};
+            const storedRaw = localStorage.getItem(key);
+            if(storedRaw) { archiveMap = JSON.parse(storedRaw); }
+            
+            const activeNavDate = window.calendarNavDate[type];
+            const year = activeNavDate.getFullYear();
+            const month = activeNavDate.getMonth();
+            const todayStr = new Date().toISOString().split('T')[0];
+            const selectedDateKey = window['archiveSelectedDate_' + type] || todayStr;
+
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            let gridHtml = '';
+            for(let i=0; i<firstDay; i++) { gridHtml += `<div class="calendar-day"></div>`; }
+            
+            for(let d=1; d<=daysInMonth; d++) {
+                const dayStr = `${year}-${String(month+1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                
+                let classes = 'calendar-day';
+                let onclick = '';
+                
+                if (archiveMap[dayStr]) {
+                    classes += ' has-data';
+                    if (dayStr === selectedDateKey) classes += ' active-day';
+                    onclick = `onclick="changeArchiveDate('${type}', '${dayStr}'); toggleMobileCalendar(false);"`;
+                }
+
+                gridHtml += `<div class="${classes}" ${onclick}>${d}</div>`;
+            }
+
+            const calHtml = `
+                <div class="calendar-card" style="animation: dropIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+                    <div class="calendar-header">
+                        <button class="calendar-nav-btn" onclick="navCalendar('${type}', -1)"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M15 19l-7-7 7-7"></path></svg></button>
+                        <div>${monthNames[month]} ${year}</div>
+                        <button class="calendar-nav-btn" onclick="navCalendar('${type}', 1)"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M9 5l7 7-7 7"></path></svg></button>
+                    </div>
+                    <div class="calendar-grid">
+                        <div class="calendar-day-header">SUN</div>
+                        <div class="calendar-day-header">MON</div>
+                        <div class="calendar-day-header">TUE</div>
+                        <div class="calendar-day-header">WED</div>
+                        <div class="calendar-day-header">THU</div>
+                        <div class="calendar-day-header">FRI</div>
+                        <div class="calendar-day-header">SAT</div>
+                        ${gridHtml}
+                    </div>
+                </div>
+            `;
+            
+            if (targetDesktop) targetDesktop.innerHTML = calHtml;
+            if (targetMobile && document.getElementById('page-archive-' + type).classList.contains('active')) {
+                targetMobile.innerHTML = calHtml;
+            }
+        }
+
+        window.navCalendar = function(type, dir) {
+            const d = window.calendarNavDate[type];
+            d.setMonth(d.getMonth() + dir);
+            renderCalendarWidget(type);
+        }
+
+        window.toggleMobileCalendar = function(show) {
+            const mod = document.getElementById('calendar-modal');
+            if(show) {
+                let activeType = 'accessories';
+                if(document.getElementById('page-archive-armature').classList.contains('active')) activeType = 'armature';
+                renderCalendarWidget(activeType);
+                mod.classList.add('active');
+            } else {
+                mod.classList.remove('active');
+            }
         }
 
         // ============ DELETE ARCHIVE ============
