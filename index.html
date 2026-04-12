@@ -1539,6 +1539,8 @@
         overflow-x: hidden !important;
         width: 100vw;
     }
+
+    button[onclick^="loadToGenerator"] { display: none !important; }
 }
 
 /* ========================================================
@@ -2497,7 +2499,15 @@ body.mobile-active .text-huge {
 
             const navRect = nav.getBoundingClientRect();
             const tabRect = activeTab.getBoundingClientRect();
-            const offsetX = tabRect.left - navRect.left - 5; // subtract nav padding
+            
+            // Calculate exact offset safely including active scroll offsets and padding
+            const paddingLeft = parseFloat(getComputedStyle(nav).paddingLeft) || 5;
+            const paddingTop = parseFloat(getComputedStyle(nav).paddingTop) || 5;
+            const offsetX = (tabRect.left - navRect.left) + nav.scrollLeft - paddingLeft;
+
+            // Dynamically adapt to mobile padding 
+            slider.style.top = paddingTop + 'px';
+            slider.style.height = `calc(100% - ${paddingTop * 2}px)`;
 
             if (instant) {
                 slider.style.transition = 'none';
@@ -2543,6 +2553,15 @@ body.mobile-active .text-huge {
 
             slider.style.opacity = '1';
         }
+
+        // Setup scroll sync for slider so it sticks accurately during swiping
+        document.getElementById('tab-nav').addEventListener('scroll', () => {
+            const activeTab = document.querySelector('.tab-btn.active');
+            if (activeTab) {
+                // Instantly sync offset during manual scroll
+                moveSlider(activeTab.id, true);
+            }
+        });
 
         // ============ INIT ============
         window.onload = () => {
