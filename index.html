@@ -251,6 +251,75 @@
             background: var(--accent-theme);
         }
 
+        /* ============ PREMIUM DATE WRAPPER ============ */
+        .premium-date-wrapper {
+            position: relative;
+            display: inline-block;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05), inset 0 0 0 1px rgba(255,255,255,1);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 20;
+        }
+
+        .premium-date-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 32px;
+            background: linear-gradient(135deg, var(--primary-theme), var(--accent-theme), var(--primary-theme));
+            z-index: -1;
+            opacity: 0.15;
+            filter: blur(12px);
+            background-size: 200% 200%;
+            animation: gradientShift 5s ease infinite;
+            transition: all 0.5s ease;
+        }
+
+        .premium-date-wrapper:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.1), 0 15px 30px var(--glow-color), inset 0 0 0 1px rgba(255,255,255,1);
+        }
+
+        .premium-date-wrapper:hover::before {
+            opacity: 0.35;
+            filter: blur(18px);
+        }
+
+        .premium-date-glass {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, var(--accent-theme) 0%, transparent 70%);
+            opacity: 0.2;
+            border-radius: 50%;
+            animation: pulseGlow 3s infinite alternate;
+            pointer-events: none;
+            mix-blend-mode: multiply;
+        }
+
+        /* Disable ALL wrapper styling for HTML2Canvas JPG export */
+        .capturing .premium-date-wrapper {
+            padding: 0 !important;
+            background: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            transform: none !important;
+        }
+
+        .capturing .premium-date-wrapper::before,
+        .capturing .premium-date-wrapper .premium-date-glass {
+            display: none !important;
+        }
+
         /* ============ TEXT STYLES ============ */
         .text-huge {
             font-size: calc(32px * var(--font-scale));
@@ -1850,40 +1919,48 @@
                     </div>
                     <div style="display: table-cell; vertical-align: top; text-align: right;">
                         <div class="no-print" style="display: inline-block; position: relative; cursor: pointer;">
-                            <!-- Date Card Premium Upgrade -->
-                            <div style="background: white; border: 1px solid rgba(0, 0, 0, 0.06); border-radius: 18px; padding: 0; box-shadow: 0 12px 35px rgba(0,0,0,0.05), 0 2px 8px rgba(0,0,0,0.02); min-width: 175px; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; overflow: hidden;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='none'">
+                            
+                            <!-- EXTREME UI UPGRADE WRAPPER FOR VERIFIED SCREEN EXPERIENCE -->
+                            <div class="premium-date-wrapper">
+                                <div class="premium-date-glass"></div>
                                 
-                                <!-- Top accent line & faint glow -->
-                                <div style="position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(90deg, var(--primary-theme), var(--accent-theme));"></div>
-                                <div style="position: absolute; top: 0; left: 20%; right: 20%; height: 2px; box-shadow: 0 2px 14px var(--glow-color);"></div>
-                                
-                                <!-- Label row with refined pill -->
-                                <div style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 18px 16px 8px 16px;">
-                                    <div style="background: rgba(15, 23, 42, 0.04); padding: 5px; border-radius: 7px; display: flex; align-items: center; justify-content: center;">
-                                        <svg style="width: 12px; height: 12px; color: var(--accent-theme);" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                        </svg>
-                                    </div>
-                                    <span class="text-label uppercase font-black" style="font-size: 9px; letter-spacing: 0.15em; color: #64748b;">Reporting Date</span>
-                                </div>
-                                
-                                <!-- Bold Date Section -->
-                                <div style="padding: 0 16px 18px 16px; text-align: center;">
-                                    <span id="display-date-day" style="display: block; font-size: 46px; font-weight: 900; background: linear-gradient(135deg, var(--primary-theme), var(--accent-theme)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 0.9; letter-spacing: -0.05em; padding-bottom: 2px;">11</span>
-                                    <span id="display-date-monthyear" style="display: block; font-size: 11px; font-weight: 800; color: #334155; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 6px;">APR 2026</span>
-                                    <span id="display-date-weekday" style="display: block; font-size: 9px; font-weight: 700; color: #94a3b8; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 3px;">Saturday</span>
-                                </div>
-
-                                <!-- Digital Clock Footer -->
-                                <div style="background: #f8fafc; border-top: 1px solid rgba(0,0,0,0.04); padding: 12px 16px; display: flex; justify-content: center; align-items: center; gap: 6px;">
-                                    <svg style="width: 12px; height: 12px; color: var(--primary-theme);" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    <span id="digital-clock" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 800; color: var(--primary-theme); letter-spacing: 0.06em;">00:00:00</span>
-                                </div>
-                            </div>
+                                <!-- Date Card — Simple table-based layout for html2canvas compatibility -->
+                                <table id="date-card-box" cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border: 2px solid var(--accent-theme); border-radius: 16px; min-width: 170px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.08);">
+                                <tr>
+                                    <td style="padding: 0; height: 5px; background: var(--accent-theme);"></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px 16px 6px 16px; text-align: center;">
+                                        <span style="font-size: 10px; font-weight: 900; letter-spacing: 0.18em; color: var(--primary-theme); text-transform: uppercase;">📅 Reporting Date</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; padding: 4px 16px 2px 16px;">
+                                        <span id="display-date-day" style="font-size: 46px; font-weight: 900; color: var(--primary-theme); letter-spacing: -0.04em; line-height: 1.15;">11</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; padding: 0 16px 4px 16px;">
+                                        <span id="display-date-monthyear" style="font-size: 12px; font-weight: 900; color: var(--accent-theme); letter-spacing: 0.2em; text-transform: uppercase;">APR 2026</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; padding: 4px 16px 12px 16px;">
+                                        <span id="display-date-weekday" style="display: inline-block; font-size: 9px; font-weight: 800; color: #ffffff; background: var(--accent-theme); padding: 4px 14px; border-radius: 20px; letter-spacing: 0.15em; text-transform: uppercase;">Saturday</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; padding: 10px 16px; border-top: 1px dashed var(--accent-theme); background: #f8fafc;">
+                                        <span style="font-size: 10px; color: var(--accent-theme); vertical-align: middle;">🕐</span>
+                                        <span id="digital-clock" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 900; color: var(--primary-theme); letter-spacing: 0.08em; vertical-align: middle; margin-left: 4px;">00:00:00</span>
+                                    </td>
+                                </tr>
+                            </table>
                             
                             <!-- Hidden full date text for screenshot export -->
                             <span id="display-date-text" style="display: none;">...</span>
                             <input type="date" id="statement-date-picker" class="date-trigger" onchange="updateFormattedDate(this.value)">
+                            </div> <!-- End premium-date-wrapper -->
                         </div>
                     </div>
                 </header>
@@ -2028,7 +2105,12 @@
                         <span class="status-dot"></span>
                         Format: Name [Tab] Opening [Tab] Prod [Tab] Cons
                     </span>
-                    <div style="display: flex; gap: 10px;">
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <select id="import-report-type" style="padding: 10px 12px; background: rgba(0,0,0,0.2); color: rgba(255,255,255,0.9); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; font-size: 10px; font-weight: 800; text-transform: uppercase; outline: none; cursor: pointer; letter-spacing: 0.05em; font-family: 'Plus Jakarta Sans', sans-serif;">
+                            <option value="auto" style="background: #1e293b; color: white;">Auto Desktop Magic ✨</option>
+                            <option value="accessories" style="background: #1e293b; color: white;">📦 Accessories</option>
+                            <option value="armature" style="background: #1e293b; color: white;">⚙️ Armature</option>
+                        </select>
                         <button onclick="toggleModal(false)" style="padding: 10px 20px; font-weight: 800; color: rgba(255,255,255,0.4); text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; border: none; background: none; cursor: pointer; border-radius: 10px; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)';this.style.color='rgba(255,255,255,0.7)'" onmouseout="this.style.background='none';this.style.color='rgba(255,255,255,0.4)'">Cancel</button>
                         <button onclick="processPastedData()" style="padding: 10px 24px; background: linear-gradient(135deg, var(--primary-theme), var(--accent-theme)); color: white; border: none; border-radius: 12px; font-weight: 800; text-transform: uppercase; font-size: 11px; letter-spacing: 0.08em; cursor: pointer; box-shadow: 0 6px 20px rgba(8, 145, 178, 0.3); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);" onmouseover="this.style.transform='translateY(-2px) scale(1.02)';this.style.boxShadow='0 10px 28px rgba(8,145,178,0.4)'" onmouseout="this.style.transform='none';this.style.boxShadow='0 6px 20px rgba(8,145,178,0.3)'">Inject Data</button>
                     </div>
@@ -2101,7 +2183,13 @@
             { name: "Aurora Mint",     bg: '#081a18', primary: '#115e59', accent: '#14b8a6', text: '#f0fdfa', glow: 'rgba(20, 184, 166, 0.15)' },
             { name: "Blood Moon",      bg: '#1a0a0a', primary: '#7f1d1d', accent: '#dc2626', text: '#fef2f2', glow: 'rgba(220, 38, 38, 0.15)' },
             { name: "Cyber Magma",     bg: '#1a0515', primary: '#831843', accent: '#be185d', text: '#fdf2f8', glow: 'rgba(190, 24, 93, 0.15)' },
-            { name: "Ghost White",     bg: '#1e242a', primary: '#64748b', accent: '#94a3b8', text: '#f8fafc', glow: 'rgba(148, 163, 184, 0.15)' }
+            { name: "Ghost White",     bg: '#1e242a', primary: '#64748b', accent: '#94a3b8', text: '#f8fafc', glow: 'rgba(148, 163, 184, 0.15)' },
+            // Bright & Colorful Themes
+            { name: "Tropical Paradise", bg: '#1a0b06', primary: '#c05621', accent: '#ed8936', text: '#ffedd5', glow: 'rgba(237, 137, 54, 0.15)' },
+            { name: "Neon Cyberpunk",  bg: '#090514', primary: '#b83280', accent: '#f472b6', text: '#fce7f3', glow: 'rgba(244, 114, 182, 0.15)' },
+            { name: "Sunny Melon",     bg: '#141108', primary: '#b45309', accent: '#f59e0b', text: '#fef3c7', glow: 'rgba(245, 158, 11, 0.15)' },
+            { name: "Aqua Marine",     bg: '#051414', primary: '#0369a1', accent: '#0ea5e9', text: '#e0f2fe', glow: 'rgba(14, 165, 233, 0.15)' },
+            { name: "Electric Violet", bg: '#0e0514', primary: '#5b21b6', accent: '#a78bfa', text: '#ede9fe', glow: 'rgba(167, 139, 250, 0.15)' }
         ];
 
         // ============ PAGE SWITCHING ============
@@ -2171,28 +2259,53 @@
             };
 
             const key = window.STORAGE_KEYS[currentReportType];
+            const datePattern = /^\d{4}-\d{2}-\d{2}$/;
             
+            // Robust archive loading: always preserve existing date entries
             let archiveMap = {};
-            const storedRaw = localStorage.getItem(key);
-            if (storedRaw) {
-                const parsed = JSON.parse(storedRaw);
-                // Migration: If the stored data is a single object (has .type directly)
-                if (parsed.type && !parsed[dateKey]) {
-                    const fallbackDate = new Date(parsed.savedTimestamp || Date.now()).toISOString().split('T')[0];
-                    archiveMap[fallbackDate] = parsed;
-                } else if (!parsed.type) {
-                    archiveMap = parsed;
+            try {
+                const storedRaw = localStorage.getItem(key);
+                if (storedRaw) {
+                    const parsed = JSON.parse(storedRaw);
+                    
+                    if (parsed && typeof parsed === 'object') {
+                        // Check if it's old single-report format (has .type and .data array directly)
+                        if (parsed.type && parsed.data && Array.isArray(parsed.data)) {
+                            // Migrate: wrap the single report into a date-map
+                            const fallbackDate = new Date(parsed.savedTimestamp || Date.now()).toISOString().split('T')[0];
+                            archiveMap[fallbackDate] = parsed;
+                        } else {
+                            // It's a date-map format — extract ONLY valid date entries
+                            Object.keys(parsed).forEach(k => {
+                                if (datePattern.test(k) && parsed[k] && typeof parsed[k] === 'object') {
+                                    archiveMap[k] = parsed[k];
+                                }
+                            });
+                        }
+                    }
                 }
+            } catch(e) {
+                console.error('Error reading existing archive, starting fresh:', e);
+                archiveMap = {};
             }
 
-            // Save under today's precise key
+            // Save current report under its date key
             archiveMap[dateKey] = reportData;
             localStorage.setItem(key, JSON.stringify(archiveMap));
 
-            // Sync to Firebase if available
+            // Sync FULL archive map to Firebase (preserves all dates in cloud)
             if (window.firebaseSet && window.firebaseRef && window.firebaseDB) {
-                window.firebaseSet(window.firebaseRef(window.firebaseDB, 'inventory_reports/' + currentReportType + '/' + dateKey), reportData)
-                    .catch(e => console.error("Firebase sync failed:", e));
+                // Disable the onValue listener temporarily to prevent sync loop
+                window._firebaseSaving = true;
+                window.firebaseSet(window.firebaseRef(window.firebaseDB, 'inventory_reports/' + currentReportType), archiveMap)
+                    .then(() => {
+                        console.log('Full archive synced to Firebase for:', currentReportType, '(' + Object.keys(archiveMap).length + ' dates)');
+                        setTimeout(() => { window._firebaseSaving = false; }, 1000);
+                    })
+                    .catch(e => {
+                        console.error('Firebase sync failed:', e);
+                        window._firebaseSaving = false;
+                    });
             }
 
             // Animate save button
@@ -2216,9 +2329,12 @@
 
         // ============ RENDER ARCHIVE PAGE ============
         function renderArchivePage(type) {
+          try {
             const container = document.getElementById('archive-content-' + type);
+            if (!container) { console.error('Archive container not found for:', type); return; }
             const key = window.STORAGE_KEYS[type];
             const config = REPORT_CONFIG[type];
+            if (!config) { console.error('No REPORT_CONFIG for type:', type); return; }
             let storedRaw = localStorage.getItem(key);
 
             if (!storedRaw) {
@@ -2231,13 +2347,29 @@
                         <div class="archive-empty-desc">Generate a "${config.title}" from the Report Generator and click the Save button.</div>
                     </div>
                 `;
+                renderCalendarWidget(type);
                 return;
             }
 
-            let archiveMap = JSON.parse(storedRaw);
+            let archiveMap;
+            try { archiveMap = JSON.parse(storedRaw); } catch(e) {
+                console.error('Failed to parse archive data:', e);
+                localStorage.removeItem(key);
+                container.innerHTML = `
+                    <div class="archive-empty">
+                        <svg class="archive-empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                            <path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                        </svg>
+                        <div class="archive-empty-title">No Saved Report Yet</div>
+                        <div class="archive-empty-desc">Generate a "${config.title}" from the Report Generator and click the Save button.</div>
+                    </div>
+                `;
+                renderCalendarWidget(type);
+                return;
+            }
             
-            // Auto migrate old single object inline if necessary
-            if (archiveMap.type && !archiveMap[new Date().toISOString().split('T')[0]]) {
+            // Robust migration: detect if it's a single old-format report object (has .type and .data)
+            if (archiveMap && archiveMap.type && archiveMap.data && Array.isArray(archiveMap.data)) {
                 const fallbackDate = new Date(archiveMap.savedTimestamp || Date.now()).toISOString().split('T')[0];
                 let temp = {};
                 temp[fallbackDate] = archiveMap;
@@ -2245,11 +2377,23 @@
                 localStorage.setItem(key, JSON.stringify(archiveMap));
             }
 
-            let availableDates = Object.keys(archiveMap).sort((a,b) => b.localeCompare(a));
+            // Filter only valid date keys (YYYY-MM-DD format) to avoid stale non-date properties
+            const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+            let availableDates = Object.keys(archiveMap).filter(k => datePattern.test(k)).sort((a,b) => b.localeCompare(a));
             
             if (availableDates.length === 0) {
+                // Data exists but no valid date keys — likely corrupted from Firebase sync
                 localStorage.removeItem(key);
-                renderArchivePage(type); 
+                container.innerHTML = `
+                    <div class="archive-empty">
+                        <svg class="archive-empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                            <path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                        </svg>
+                        <div class="archive-empty-title">No Saved Report Yet</div>
+                        <div class="archive-empty-desc">Generate a "${config.title}" from the Report Generator and click the Save button.</div>
+                    </div>
+                `;
+                renderCalendarWidget(type);
                 return;
             }
 
@@ -2260,19 +2404,41 @@
             }
 
             const report = archiveMap[selectedDate];
+            if (!report || !report.data || !Array.isArray(report.data)) {
+                console.error('Invalid report data for date:', selectedDate, report);
+                container.innerHTML = `
+                    <div class="archive-empty">
+                        <svg class="archive-empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                            <path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                        </svg>
+                        <div class="archive-empty-title">Data Format Error</div>
+                        <div class="archive-empty-desc">The saved data for this date appears to be corrupted. Try saving a new "${config.title}" report.</div>
+                    </div>
+                `;
+                renderCalendarWidget(type);
+                return;
+            }
+
             const headers = config.headers;
 
-            let dropdownOptions = availableDates.map(d => `<option value="${d}" ${d === selectedDate ? 'selected' : ''}>${archiveMap[d].reportDate} (${d})</option>`).join('');
+            let dropdownOptions = availableDates.map(d => {
+                const rpt = archiveMap[d];
+                const label = (rpt && rpt.reportDate) ? rpt.reportDate : d;
+                return `<option value="${d}" ${d === selectedDate ? 'selected' : ''}>${label} (${d})</option>`;
+            }).join('');
 
             let tableRows = '';
             report.data.forEach((item, idx) => {
-                const closing = item.opening + item.production - item.consumption;
+                const opening = Number(item.opening) || 0;
+                const production = Number(item.production) || 0;
+                const consumption = Number(item.consumption) || 0;
+                const closing = opening + production - consumption;
                 tableRows += `
                     <tr style="animation: rowFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${Math.min(idx, 10) * 0.05}s backwards;">
-                        <td>${item.name}</td>
-                        <td>${item.opening.toLocaleString()}</td>
-                        <td style="color: var(--accent-theme); font-weight: 900;">${item.production.toLocaleString()}</td>
-                        <td style="color: #f43f5e; font-weight: 900;">${item.consumption.toLocaleString()}</td>
+                        <td>${item.name || '—'}</td>
+                        <td>${opening.toLocaleString()}</td>
+                        <td style="color: var(--accent-theme); font-weight: 900;">${production.toLocaleString()}</td>
+                        <td style="color: #f43f5e; font-weight: 900;">${consumption.toLocaleString()}</td>
                         <td style="font-weight: 900; background: rgba(255, 255, 255, 0.03);">${closing.toLocaleString()}</td>
                     </tr>
                 `;
@@ -2292,7 +2458,7 @@
                                 </div>
                                 <div class="archive-meta-item">
                                     <span class="archive-meta-label">Saved At</span>
-                                    <span class="archive-meta-value">${report.savedAt}</span>
+                                    <span class="archive-meta-value">${report.savedAt || '—'}</span>
                                 </div>
                             </div>
                         </div>
@@ -2342,6 +2508,22 @@
             `;
             
             renderCalendarWidget(type);
+          } catch(err) {
+            console.error('renderArchivePage crashed for type:', type, err);
+            const container = document.getElementById('archive-content-' + type);
+            const config = REPORT_CONFIG[type] || { title: type };
+            if (container) {
+                container.innerHTML = `
+                    <div class="archive-empty">
+                        <svg class="archive-empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                            <path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                        </svg>
+                        <div class="archive-empty-title">No Saved Report Yet</div>
+                        <div class="archive-empty-desc">Generate a "${config.title}" from the Report Generator and click the Save button.</div>
+                    </div>
+                `;
+            }
+          }
         }
 
         window.calendarNavDate = {
@@ -2437,21 +2619,33 @@
             const key = window.STORAGE_KEYS[type];
             let storedRaw = localStorage.getItem(key);
             
+            let remainingMap = {};
             if (storedRaw) {
                 let archiveMap = JSON.parse(storedRaw);
                 delete archiveMap[dateKey];
                 
-                if (Object.keys(archiveMap).length === 0) {
+                // Filter: keep only valid date keys
+                const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+                Object.keys(archiveMap).forEach(k => {
+                    if (datePattern.test(k) && archiveMap[k]) {
+                        remainingMap[k] = archiveMap[k];
+                    }
+                });
+                
+                if (Object.keys(remainingMap).length === 0) {
                     localStorage.removeItem(key);
                 } else {
-                    localStorage.setItem(key, JSON.stringify(archiveMap));
+                    localStorage.setItem(key, JSON.stringify(remainingMap));
                 }
             }
             
-            // Delete from Firebase if available
+            // Sync FULL remaining archive to Firebase (or set null if empty)
             if (window.firebaseSet && window.firebaseRef && window.firebaseDB) {
-                window.firebaseSet(window.firebaseRef(window.firebaseDB, 'inventory_reports/' + type + '/' + dateKey), null)
-                    .catch(e => console.error("Firebase delete failed:", e));
+                window._firebaseSaving = true;
+                const firebaseData = Object.keys(remainingMap).length > 0 ? remainingMap : null;
+                window.firebaseSet(window.firebaseRef(window.firebaseDB, 'inventory_reports/' + type), firebaseData)
+                    .then(() => { setTimeout(() => { window._firebaseSaving = false; }, 1000); })
+                    .catch(e => { console.error("Firebase delete sync failed:", e); window._firebaseSaving = false; });
             }
 
             renderArchivePage(type);
@@ -2642,7 +2836,11 @@
             
             const lines = text.split('\n');
             let newItems = [];
-            let reportType = 'accessories';
+            
+            const typeSelector = document.getElementById('import-report-type');
+            let manualType = typeSelector ? typeSelector.value : 'auto';
+            let reportType = manualType !== 'auto' ? manualType : 'accessories';
+            let autoDetectActive = manualType === 'auto';
             
             lines.forEach((line) => {
                 const parts = line.split(/\t| {2,}/).map(p => p.trim()).filter(p => p !== "");
@@ -2650,7 +2848,7 @@
                     const numericParts = parts.filter(p => !isNaN(p.replace(/,/g, '')) && p !== "");
                     const namePart = parts[0];
                     
-                    if (namePart) {
+                    if (autoDetectActive && namePart) {
                         const lowName = namePart.toLowerCase();
                         if (lowName.includes('armature')) reportType = 'armature';
                     }
@@ -2765,6 +2963,14 @@
                 hugeTitle.style.color = getComputedStyle(document.documentElement).getPropertyValue('--primary-theme');
             }
 
+            // JPG-only: shift weekday text up inside pill
+            const wdEl = document.getElementById('display-date-weekday');
+            let origWdPadding = '';
+            if (wdEl) {
+                origWdPadding = wdEl.style.padding;
+                wdEl.style.padding = '2px 14px 6px 14px';
+            }
+
             // Disable mobile overrides temporarily
             document.body.classList.remove('mobile-active');
 
@@ -2849,6 +3055,11 @@
                     hugeTitle.style.backgroundClip = origTitleStyles.backgroundClip;
                     hugeTitle.style.color = origTitleStyles.color;
                 }
+
+
+
+                // Restore weekday pill padding
+                if (wdEl) { wdEl.style.padding = origWdPadding; }
 
                 // Restore mobile overrides
                 document.body.classList.add('mobile-active');
@@ -2997,9 +3208,13 @@
         window.firebaseStorageRef = storageRef;
         window.firebaseStorageSet = uploadString;
 
-        // Start Realtime Sync (Firebase -> Local Storage)
+        // Start Realtime Sync (Firebase -> Local Storage) — MERGE strategy
         const reportsRef = ref(database, 'inventory_reports');
+        const datePattern = /^\d{4}-\d{2}-\d{2}$/;
         onValue(reportsRef, (snapshot) => {
+            // Skip if we just saved (prevent sync loop)
+            if (window._firebaseSaving) return;
+            
             const data = snapshot.val() || {};
             let localChanged = false;
 
@@ -3010,19 +3225,65 @@
                 const key = window.STORAGE_KEYS[type];
                 const remoteData = data[type];
                 
-                if (remoteData) {
-                    const localDataStr = localStorage.getItem(key);
-                    const remoteDataStr = JSON.stringify(remoteData);
-                    
-                    if (localDataStr !== remoteDataStr) {
-                        localStorage.setItem(key, remoteDataStr);
+                // Build merged archive: combine local + remote, keep newest per date
+                let mergedMap = {};
+                
+                // Step 1: Load existing local data
+                try {
+                    const localRaw = localStorage.getItem(key);
+                    if (localRaw) {
+                        const localParsed = JSON.parse(localRaw);
+                        if (localParsed && typeof localParsed === 'object') {
+                            // Handle old single-report format
+                            if (localParsed.type && localParsed.data && Array.isArray(localParsed.data)) {
+                                const fallbackDate = new Date(localParsed.savedTimestamp || Date.now()).toISOString().split('T')[0];
+                                mergedMap[fallbackDate] = localParsed;
+                            } else {
+                                // Date-map format — keep only valid date keys
+                                Object.keys(localParsed).forEach(k => {
+                                    if (datePattern.test(k) && localParsed[k]) {
+                                        mergedMap[k] = localParsed[k];
+                                    }
+                                });
+                            }
+                        }
+                    }
+                } catch(e) { console.error('Local parse error during sync:', e); }
+                
+                // Step 2: Merge remote data on top (remote wins if newer, otherwise keep local)
+                if (remoteData && typeof remoteData === 'object') {
+                    Object.keys(remoteData).forEach(dateKey => {
+                        if (!datePattern.test(dateKey)) return; // skip non-date keys
+                        const remoteEntry = remoteData[dateKey];
+                        if (!remoteEntry || typeof remoteEntry !== 'object') return;
+                        
+                        const localEntry = mergedMap[dateKey];
+                        if (!localEntry) {
+                            // Date doesn't exist locally — add from remote
+                            mergedMap[dateKey] = remoteEntry;
+                        } else {
+                            // Both exist — keep the one with the latest timestamp
+                            const remoteTs = remoteEntry.savedTimestamp || 0;
+                            const localTs = localEntry.savedTimestamp || 0;
+                            if (remoteTs >= localTs) {
+                                mergedMap[dateKey] = remoteEntry;
+                            }
+                        }
+                    });
+                }
+                
+                // Step 3: Compare merged result with current local
+                const mergedStr = JSON.stringify(mergedMap);
+                const currentLocalStr = localStorage.getItem(key);
+                
+                if (Object.keys(mergedMap).length > 0) {
+                    if (currentLocalStr !== mergedStr) {
+                        localStorage.setItem(key, mergedStr);
                         localChanged = true;
                     }
-                } else {
-                    if (localStorage.getItem(key)) {
-                        localStorage.removeItem(key);
-                        localChanged = true;
-                    }
+                } else if (!remoteData && currentLocalStr) {
+                    // Remote is empty AND no local dates survived merge — do NOT wipe.
+                    // Only wipe if user explicitly deleted. Keep local data safe.
                 }
             });
 
