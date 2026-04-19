@@ -1462,6 +1462,113 @@
     will-change: transform, opacity;
 }
 
+/* ============ RND TABLE ============ */
+.rnd-sheet {
+    width: 340mm;
+    min-height: auto;
+}
+.rnd-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 2px solid #1e293b;
+    font-size: 11px;
+    table-layout: fixed;
+}
+.rnd-table th {
+    padding: 8px 4px;
+    font-weight: 800;
+    font-size: 9px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #334155;
+    color: #fff;
+    line-height: 1.3;
+}
+.rnd-table td {
+    padding: 2px;
+    border: 1px solid #cbd5e1;
+    text-align: center;
+    vertical-align: middle;
+    height: 32px;
+}
+.rnd-table td:first-child {
+    font-weight: 800;
+    background: #f8fafc;
+    width: 30px;
+}
+.rnd-table input[type="number"] {
+    width: 100%;
+    height: 28px;
+    border: none;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    background: transparent;
+    outline: none;
+    color: #1e293b;
+    -moz-appearance: textfield;
+}
+.rnd-table input[type="number"]::-webkit-outer-spin-button,
+.rnd-table input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.rnd-table input[type="number"]:focus {
+    background: rgba(8, 145, 178, 0.08);
+    box-shadow: inset 0 0 0 2px var(--accent-theme);
+}
+.rnd-th-sl { background: #475569; width: 30px; }
+.rnd-th-green { background: #16a34a; }
+.rnd-th-pink { background: #db2777; }
+.rnd-th-cyan { background: #0891b2; }
+.rnd-avg-row td {
+    background: linear-gradient(135deg, #1e3a5f, #0f2847) !important;
+    color: #fff !important;
+    font-weight: 900 !important;
+    font-size: 12px;
+    border-color: #1e3a5f;
+}
+.rnd-controls {
+    position: fixed;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 100;
+    background: rgba(12, 14, 22, 0.7);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    padding: 10px;
+    border-radius: 34px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    animation: controlsReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.6s backwards;
+}
+@media (max-width: 768px) {
+    .rnd-controls {
+        position: fixed;
+        bottom: 20px;
+        top: auto !important;
+        right: 15px;
+        left: 15px;
+        transform: none !important;
+        flex-direction: row !important;
+        justify-content: center;
+        border-radius: 20px !important;
+        padding: 12px !important;
+        animation: none !important;
+    }
+    .rnd-sheet {
+        width: 100% !important;
+        min-width: 340mm;
+    }
+}
+
 /* 3D Special Notification Button */
 .btn-special-3d {
     background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
@@ -1846,6 +1953,14 @@
             Armature
             <span class="tab-badge empty" id="badge-armature">EMPTY</span>
         </button>
+
+        <button class="tab-btn" onclick="switchPage('archive-armature-rnd')" id="tab-rnd">
+            <svg class="tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+            </svg>
+            Armature RND
+            <span class="tab-badge empty" id="badge-armature-rnd">EMPTY</span>
+        </button>
     </nav>
 
     <!-- Theme and Global Controls (Available on all pages) -->
@@ -1892,6 +2007,14 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                 </svg>
+            </button>
+            <div class="controls-divider"></div>
+            <!-- Armature RND Report -->
+            <button onclick="switchPage('rnd-generator')" class="btn-util" title="Armature RND Report" style="width: auto !important; padding: 8px 14px !important; display: flex; align-items: center; gap: 6px; border-radius: 14px; background: linear-gradient(135deg, #0f766e, #0891b2); color: white; font-size: 10px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; border: none; box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);">
+                <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                </svg>
+                RND
             </button>
             <div class="controls-divider"></div>
             <!-- Test Notification -->
@@ -2071,6 +2194,139 @@
         </div>
     </div>
 
+    <!-- ============ PAGE 5: ARMATURE RND GENERATOR ============ -->
+    <div class="page-content" id="page-rnd-generator">
+
+        <div class="rnd-controls no-print" id="rnd-controls" style="display:none;">
+            <button onclick="saveRndReport()" class="btn-util btn-save" title="Save RND Report" id="btn-save-rnd">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M5 13l4 4L19 7"></path></svg>
+            </button>
+            <div class="controls-divider"></div>
+            <button onclick="takeRndScreenshot()" class="btn-util" title="Download JPG">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            </button>
+            <button onclick="clearRndData()" class="btn-util" title="Clear All">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </button>
+        </div>
+
+        <div class="screenshot-wrapper" id="rnd-capture-area">
+            <div id="rnd-report-page" class="a4-sheet rnd-sheet">
+                <div class="corner top-left"></div>
+                <div class="corner top-right"></div>
+                <div class="corner bottom-left"></div>
+                <div class="corner bottom-right"></div>
+
+                <header style="display: table; width: 100%; position: relative; z-index: 20; margin-bottom: 20px;">
+                    <div style="display: table-cell; vertical-align: top; text-align: left;">
+                        <h1 class="text-huge uppercase tracking-tighter">MEP FAN LTD.</h1>
+                        <div style="margin-top: 8px;">
+                            <span style="display: inline-block; width: 80px; height: 6px; border-radius: 99px; background: linear-gradient(90deg, var(--primary-theme), var(--accent-theme)); vertical-align: middle; margin-right: 20px;"></span>
+                            <span class="text-label font-black uppercase" style="vertical-align: middle;">Armature RND Report</span>
+                        </div>
+                    </div>
+                    <div style="display: table-cell; vertical-align: top; text-align: right;">
+                        <div class="no-print" style="display: inline-block; position: relative; cursor: pointer;">
+                            <div class="premium-date-wrapper">
+                                <div class="premium-date-glass"></div>
+                                <table cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border: 2px solid var(--accent-theme); border-radius: 16px; min-width: 170px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.08);">
+                                <tr><td style="padding: 0; height: 5px; background: var(--accent-theme);"></td></tr>
+                                <tr><td style="padding: 10px 16px 6px 16px; text-align: center;"><span style="font-size: 10px; font-weight: 900; letter-spacing: 0.18em; color: var(--primary-theme); text-transform: uppercase;">📅 RND Date</span></td></tr>
+                                <tr><td style="text-align: center; padding: 4px 16px 2px 16px;"><span id="rnd-date-day" style="font-size: 46px; font-weight: 900; color: var(--primary-theme); letter-spacing: -0.04em; line-height: 1.15;">--</span></td></tr>
+                                <tr><td style="text-align: center; padding: 0 16px 4px 16px;"><span id="rnd-date-monthyear" style="font-size: 12px; font-weight: 900; color: var(--accent-theme); letter-spacing: 0.2em; text-transform: uppercase;">--- ----</span></td></tr>
+                                <tr><td style="text-align: center; padding: 4px 16px 12px 16px;"><span id="rnd-date-weekday" style="display: inline-block; font-size: 9px; font-weight: 800; color: #ffffff; background: var(--accent-theme); padding: 4px 14px; border-radius: 20px; letter-spacing: 0.15em; text-transform: uppercase;">---</span></td></tr>
+                                </table>
+                                <span id="rnd-date-text" style="display: none;">...</span>
+                                <input type="date" id="rnd-date-picker" class="date-trigger" onchange="updateRndDate(this.value)">
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <div id="rnd-title-box" class="report-type-box" style="background: linear-gradient(145deg, #0f766e, #0891b2);">
+                    <div class="report-title-icon"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg></div>
+                    <div>
+                        <div class="report-title-text">Armature RND Report</div>
+                        <div class="report-title-sub">MEP FAN LTD • Armature R&amp;D Division</div>
+                    </div>
+                </div>
+
+                <div style="overflow-x: auto;">
+                <table class="rnd-table" id="rnd-data-table">
+                    <thead>
+                        <tr>
+                            <th class="rnd-th-sl">SL</th>
+                            <th class="rnd-th-green">Stator<br>Weight (g)</th>
+                            <th class="rnd-th-pink">Starting<br>Winding Turn</th>
+                            <th class="rnd-th-pink">Starting<br>Wire SWG</th>
+                            <th class="rnd-th-pink">Starting Super<br>Wire Weight (g)</th>
+                            <th class="rnd-th-pink">Starting<br>Resistance (Ω)</th>
+                            <th class="rnd-th-cyan">Running<br>Winding Turn</th>
+                            <th class="rnd-th-cyan">Running<br>Wire SWG</th>
+                            <th class="rnd-th-cyan">Running Super<br>Wire Weight (g)</th>
+                            <th class="rnd-th-cyan">Running<br>Resistance (Ω)</th>
+                            <th class="rnd-th-green">Total<br>Resistance (Ω)</th>
+                            <th class="rnd-th-cyan">Super Wire<br>Conductive Dia (mm)</th>
+                            <th class="rnd-th-pink">Super Wire Total<br>Dia (mm)</th>
+                            <th class="rnd-th-green">Total Super<br>Wire Weight (g)</th>
+                            <th class="rnd-th-pink">Total Fiber<br>Weight (g)</th>
+                            <th class="rnd-th-green">Total Armature<br>Weight (g)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rnd-body">
+                    </tbody>
+                </table>
+                </div>
+
+                <div style="display: block; width: 100%; position: relative; z-index: 20; height: 140px; margin-top: 30px; padding-top: 20px;">
+                    <div style="position: absolute; left: 0; bottom: 0; width: 280px; text-align: left; font-size: 13px; font-weight: 900; text-transform: uppercase;">
+                        <span class="text-label" style="font-size: 11px; display: block; position: absolute; bottom: 110px; left: 0; letter-spacing: 0.1em;">Tested by</span>
+                        <div class="text-signature" style="position: absolute; bottom: 35px; left: 10px; transform: rotate(-1deg); z-index: 2; line-height: 1;">Takbir Hossain</div>
+                        <div style="border-top: 2px solid var(--primary-theme); padding-top: 12px; margin-top: 70px;">
+                            <span style="font-size: 20px; display: block; letter-spacing: -0.05em; line-height: 1;">Takbir Hossain</span>
+                            <span style="font-size: 11px; opacity: 0.8; display: block; margin-top: 4px; line-height: 1;">Asst. Engineer</span>
+                        </div>
+                    </div>
+                    <div style="position: absolute; right: 0; bottom: 0; width: 280px; text-align: right; font-size: 13px; font-weight: 900; text-transform: uppercase;">
+                        <span class="text-label" style="font-size: 11px; display: block; position: absolute; bottom: 110px; right: 0; letter-spacing: 0.1em;">Authorized By</span>
+                        <div class="text-signature" style="position: absolute; bottom: 35px; right: 10px; transform: rotate(-1deg); z-index: 2; line-height: 1;">Arif Ahmed</div>
+                        <div style="border-top: 2px solid var(--primary-theme); padding-top: 12px; margin-top: 70px;">
+                            <span style="font-size: 20px; display: block; letter-spacing: -0.05em; line-height: 1;">Arif Ahmed Anik</span>
+                            <span style="font-size: 11px; opacity: 0.8; display: block; margin-top: 4px; line-height: 1;">Incharge</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ PAGE 6: ARMATURE RND ARCHIVE ============ -->
+    <div class="page-content" id="page-archive-armature-rnd">
+        <div class="archive-container" style="max-width: 100%; width: 100%;">
+            <div class="archive-header">
+                <div>
+                    <div class="archive-title">🔬 Armature RND Archive</div>
+                    <div class="archive-subtitle">Armature RND Report — Last Saved Version</div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <button onclick="toggleRndCalendar()" class="btn-util" title="Calendar" id="btn-rnd-calendar" style="display:flex;align-items:center;gap:6px;width:auto;padding:8px 14px;border-radius:14px;font-size:10px;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;">
+                        <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        Calendar
+                    </button>
+                    <button onclick="switchPage('rnd-generator')" class="btn-util archive-btn-back" title="Back to RND Generator">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">RND Generator</span>
+                    </button>
+                </div>
+            </div>
+            <div id="rnd-calendar-panel" class="no-print" style="display:none;margin-bottom:16px;max-width:320px;">
+                <div id="desktop-calendar-armature-rnd"></div>
+            </div>
+            <div id="archive-content-armature-rnd">
+                <!-- Dynamically rendered -->
+            </div>
+        </div>
+    </div>
 
     <!-- ============ MOBILE CALENDAR FAB & MODAL ============ -->
     <button class="mobile-calendar-fab no-print" onclick="toggleMobileCalendar(true)">
@@ -2135,7 +2391,8 @@
 
         window.STORAGE_KEYS = {
             accessories: 'mep_report_accessories',
-            armature: 'mep_report_armature'
+            armature: 'mep_report_armature',
+            'armature-rnd': 'mep_report_armature_rnd'
         };
 
         const REPORT_CONFIG = {
@@ -2154,6 +2411,14 @@
                 headers: ['Opening', 'Production', 'Consumption', 'Closing'],
                 themeIndex: 0,
                 emoji: '⚙️'
+            },
+            'armature-rnd': {
+                title: 'ARMATURE RND REPORT',
+                sigName: 'Takbir Hossain',
+                sigDesc: 'Asst. Engineer',
+                headers: ['SL','Stator Weight','Starting Winding Turn','Starting Wire SWG','Starting Super Wire Weight','Starting Resistance','Running Winding Turn','Running Wire SWG','Running Super Wire Weight','Running Resistance','Total Resistance','Super Wire Conductive Dia','Super Wire Total Dia','Total Super Wire Weight','Total Fiber Weight','Total Armature Weight'],
+                themeIndex: 0,
+                emoji: '🔬'
             }
         };
 
@@ -2205,7 +2470,9 @@
             const tabMap = {
                 'generator': 'tab-generator',
                 'archive-accessories': 'tab-accessories',
-                'archive-armature': 'tab-armature'
+                'archive-armature': 'tab-armature',
+                'rnd-generator': 'tab-generator',
+                'archive-armature-rnd': 'tab-rnd'
             };
             document.getElementById(tabMap[pageId]).classList.add('active');
 
@@ -2214,16 +2481,26 @@
 
             // Show/hide controls panel
             const controlsPanel = document.getElementById('generator-controls');
+            const rndControls = document.getElementById('rnd-controls');
             if (pageId === 'generator') {
                 controlsPanel.style.display = 'flex';
+                if (rndControls) rndControls.style.display = 'none';
+            } else if (pageId === 'rnd-generator') {
+                controlsPanel.style.display = 'none';
+                if (rndControls) rndControls.style.display = 'flex';
             } else {
                 controlsPanel.style.display = 'none';
+                if (rndControls) rndControls.style.display = 'none';
             }
 
             // Render archive if needed
             if (pageId.startsWith('archive-')) {
                 const type = pageId.replace('archive-', '');
-                renderArchivePage(type);
+                if (type === 'armature-rnd') {
+                    renderRndArchivePage();
+                } else {
+                    renderArchivePage(type);
+                }
                 
                 const fab = document.querySelector('.mobile-calendar-fab');
                 if(fab) fab.classList.remove('hidden-fab');
@@ -2528,7 +2805,8 @@
 
         window.calendarNavDate = {
             accessories: new Date(),
-            armature: new Date()
+            armature: new Date(),
+            'armature-rnd': new Date()
         };
 
         function renderCalendarWidget(type) {
@@ -2606,6 +2884,7 @@
             if(show) {
                 let activeType = 'accessories';
                 if(document.getElementById('page-archive-armature').classList.contains('active')) activeType = 'armature';
+                if(document.getElementById('page-archive-armature-rnd').classList.contains('active')) activeType = 'armature-rnd';
                 renderCalendarWidget(activeType);
                 mod.classList.add('active');
             } else {
@@ -2676,7 +2955,7 @@
 
         // ============ UPDATE BADGES ============
         function updateBadges() {
-            ['accessories', 'armature'].forEach(type => {
+            ['accessories', 'armature', 'armature-rnd'].forEach(type => {
                 const badge = document.getElementById('badge-' + type);
                 const storedRaw = localStorage.getItem(window.STORAGE_KEYS[type]);
                 if (storedRaw) {
@@ -3221,7 +3500,7 @@
             // Wait until the main script defines STORAGE_KEYS
             if (!window.STORAGE_KEYS) return;
 
-            ['accessories', 'armature'].forEach(type => {
+            ['accessories', 'armature', 'armature-rnd'].forEach(type => {
                 const key = window.STORAGE_KEYS[type];
                 const remoteData = data[type];
                 
@@ -3300,10 +3579,269 @@
                 }
             }
         });
+// ============ ARMATURE RND FUNCTIONS ============
+const RND_COLS = ['statorWeight','startingWindingTurn','startingWireSWG','startingSuperWireWeight','startingResistance','runningWindingTurn','runningWireSWG','runningSuperWireWeight','runningResistance','totalResistance','superWireConductiveDia','superWireTotalDia','totalSuperWireWeight','totalFiberWeight','totalArmatureWeight'];
+let rndData = [];
+
+function initRndTable() {
+    const body = document.getElementById('rnd-body');
+    if (!body) return;
+    body.innerHTML = '';
+    if (rndData.length === 0) {
+        rndData = Array.from({length: 10}, () => {
+            let row = {};
+            RND_COLS.forEach(c => row[c] = '');
+            return row;
+        });
+    }
+    rndData.forEach((row, idx) => {
+        const tr = document.createElement('tr');
+        tr.style.animationDelay = `${idx * 0.03}s`;
+        let cells = `<td>${idx + 1}</td>`;
+        RND_COLS.forEach(col => {
+            const val = row[col] !== undefined && row[col] !== '' ? row[col] : '';
+            cells += `<td><input type="number" step="any" value="${val}" data-row="${idx}" data-col="${col}" onchange="updateRndCell(this)" oninput="updateRndCell(this)"></td>`;
+        });
+        tr.innerHTML = cells;
+        body.appendChild(tr);
+    });
+    // Average row
+    const avgTr = document.createElement('tr');
+    avgTr.className = 'rnd-avg-row';
+    avgTr.innerHTML = '<td style="font-weight:900;"></td>' + RND_COLS.map(col => `<td id="rnd-avg-${col}">0</td>`).join('');
+    body.appendChild(avgTr);
+    updateRndAverages();
+}
+
+function updateRndCell(input) {
+    const r = parseInt(input.dataset.row);
+    const c = input.dataset.col;
+    rndData[r][c] = input.value !== '' ? parseFloat(input.value) : '';
+    updateRndAverages();
+}
+
+function updateRndAverages() {
+    RND_COLS.forEach(col => {
+        let sum = 0, count = 0;
+        rndData.forEach(row => {
+            const v = parseFloat(row[col]);
+            if (!isNaN(v)) { sum += v; count++; }
+        });
+        const avg = count > 0 ? (sum / count) : 0;
+        const el = document.getElementById('rnd-avg-' + col);
+        if (el) el.textContent = avg === 0 ? '0' : parseFloat(avg.toFixed(2)).toLocaleString();
+    });
+}
+
+function updateRndDate(val) {
+    if (!val) return;
+    const date = new Date(val);
+    const dayEl = document.getElementById('rnd-date-day');
+    if (dayEl) dayEl.innerText = date.getDate();
+    const myEl = document.getElementById('rnd-date-monthyear');
+    if (myEl) myEl.innerText = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }).toUpperCase();
+    const wdEl = document.getElementById('rnd-date-weekday');
+    if (wdEl) wdEl.innerText = date.toLocaleDateString('en-US', { weekday: 'long' });
+    const opt = { month: 'short', day: 'numeric', year: 'numeric', weekday: 'long' };
+    const formatted = date.toLocaleDateString('en-US', opt).replace(',', ' \u2022');
+    document.getElementById('rnd-date-text').innerText = formatted;
+}
+
+function saveRndReport(silent = false) {
+    const hasData = rndData.some(row => RND_COLS.some(c => row[c] !== '' && row[c] !== undefined));
+    if (!hasData) {
+        if (!silent) showToast('No RND data to save!');
+        return;
+    }
+    const reportDateText = document.getElementById('rnd-date-text').innerText;
+    const picker = document.getElementById('rnd-date-picker');
+    const dateKey = picker && picker.value ? picker.value : new Date().toISOString().split('T')[0];
+    const now = new Date();
+    const savedAt = now.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
+    const reportData = { type: 'armature-rnd', data: JSON.parse(JSON.stringify(rndData)), reportDate: reportDateText, savedAt: savedAt, savedTimestamp: now.getTime() };
+    const key = window.STORAGE_KEYS['armature-rnd'];
+    const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+    let archiveMap = {};
+    try {
+        const storedRaw = localStorage.getItem(key);
+        if (storedRaw) {
+            const parsed = JSON.parse(storedRaw);
+            if (parsed && typeof parsed === 'object') {
+                if (parsed.type && parsed.data && Array.isArray(parsed.data)) {
+                    const fallbackDate = new Date(parsed.savedTimestamp || Date.now()).toISOString().split('T')[0];
+                    archiveMap[fallbackDate] = parsed;
+                } else {
+                    Object.keys(parsed).forEach(k => { if (datePattern.test(k) && parsed[k]) archiveMap[k] = parsed[k]; });
+                }
+            }
+        }
+    } catch(e) { archiveMap = {}; }
+    archiveMap[dateKey] = reportData;
+    localStorage.setItem(key, JSON.stringify(archiveMap));
+    if (window.firebaseSet && window.firebaseRef && window.firebaseDB) {
+        window._firebaseSaving = true;
+        window.firebaseSet(window.firebaseRef(window.firebaseDB, 'inventory_reports/armature-rnd'), archiveMap)
+            .then(() => { setTimeout(() => { window._firebaseSaving = false; }, 1000); })
+            .catch(e => { console.error('RND Firebase sync failed:', e); window._firebaseSaving = false; });
+    }
+    const btn = document.getElementById('btn-save-rnd');
+    if (btn) { btn.classList.add('save-pulse'); setTimeout(() => btn.classList.remove('save-pulse'), 700); }
+    window['archiveSelectedDate_armature-rnd'] = dateKey;
+    updateBadges();
+    if (!silent) showToast('🔬 Armature RND Report Saved!');
+}
+
+function clearRndData() {
+    if (!confirm('Clear all RND data?')) return;
+    rndData = Array.from({length: 10}, () => { let row = {}; RND_COLS.forEach(c => row[c] = ''); return row; });
+    initRndTable();
+    showToast('RND Data Cleared');
+}
+
+function toggleRndCalendar() {
+    const panel = document.getElementById('rnd-calendar-panel');
+    if (!panel) return;
+    if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+        renderCalendarWidget('armature-rnd');
+    } else {
+        panel.style.display = 'none';
+    }
+}
+
+function renderRndArchivePage() {
+    const type = 'armature-rnd';
+    const container = document.getElementById('archive-content-armature-rnd');
+    if (!container) return;
+    const key = window.STORAGE_KEYS[type];
+    const config = REPORT_CONFIG[type];
+    const storedRaw = localStorage.getItem(key);
+    if (!storedRaw) {
+        container.innerHTML = `<div class="archive-empty"><svg class="archive-empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg><div class="archive-empty-title">No Saved RND Report Yet</div><div class="archive-empty-desc">Enter data in the RND Generator and click Save.</div></div>`;
+        renderCalendarWidget(type);
+        return;
+    }
+    let archiveMap;
+    try { archiveMap = JSON.parse(storedRaw); } catch(e) { container.innerHTML = '<div class="archive-empty"><div class="archive-empty-title">Data Error</div></div>'; return; }
+    if (archiveMap.type && archiveMap.data) { let t = {}; t[new Date(archiveMap.savedTimestamp||Date.now()).toISOString().split('T')[0]] = archiveMap; archiveMap = t; }
+    const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+    let dates = Object.keys(archiveMap).filter(k => datePattern.test(k)).sort((a,b) => b.localeCompare(a));
+    if (dates.length === 0) { container.innerHTML = '<div class="archive-empty"><div class="archive-empty-title">No Saved RND Report Yet</div></div>'; renderCalendarWidget(type); return; }
+    let selectedDate = window['archiveSelectedDate_armature-rnd'];
+    if (!selectedDate || !dates.includes(selectedDate)) { selectedDate = dates[0]; window['archiveSelectedDate_armature-rnd'] = selectedDate; }
+    const report = archiveMap[selectedDate];
+    if (!report || !report.data) { container.innerHTML = '<div class="archive-empty"><div class="archive-empty-title">Data Error</div></div>'; renderCalendarWidget(type); return; }
+    const dropdownOptions = dates.map(d => { const r = archiveMap[d]; return `<option value="${d}" ${d===selectedDate?'selected':''}>${(r&&r.reportDate)?r.reportDate:d} (${d})</option>`; }).join('');
+    const hdrs = ['SL','Stator Wt','Start Turn','Start SWG','Start SW Wt','Start Res','Run Turn','Run SWG','Run SW Wt','Run Res','Total Res','SW Cond Dia','SW Total Dia','Total SW Wt','Total Fiber Wt','Total Arm Wt'];
+    let thHtml = hdrs.map((h,i) => `<th style="font-size:9px; padding:8px 3px; ${i===0?'width:30px;':''} background: ${i===0?'#475569':i<=5?'#db2777':i<=9?'#0891b2':'#16a34a'};">${h}</th>`).join('');
+    let tbHtml = '';
+    report.data.forEach((row, idx) => {
+        let tds = `<td style="font-weight:800;background:rgba(255,255,255,0.03);">${idx+1}</td>`;
+        RND_COLS.forEach(col => { const v = row[col]; tds += `<td>${v !== '' && v !== undefined ? parseFloat(v).toLocaleString() : ''}</td>`; });
+        tbHtml += `<tr style="animation:rowFadeIn 0.4s cubic-bezier(0.16,1,0.3,1) ${Math.min(idx,10)*0.05}s backwards;">${tds}</tr>`;
+    });
+    // Average row
+    let avgTds = '<td style="font-weight:900;background:linear-gradient(135deg,#1e3a5f,#0f2847);color:#fff;"></td>';
+    RND_COLS.forEach(col => {
+        let sum = 0, count = 0;
+        report.data.forEach(row => { const v = parseFloat(row[col]); if (!isNaN(v)) { sum += v; count++; } });
+        const avg = count > 0 ? parseFloat((sum/count).toFixed(2)) : 0;
+        avgTds += `<td style="background:linear-gradient(135deg,#1e3a5f,#0f2847);color:#fff;font-weight:900;">${avg === 0 ? '0' : avg.toLocaleString()}</td>`;
+    });
+    tbHtml += `<tr>${avgTds}</tr>`;
+    container.innerHTML = `
+        <div class="archive-card">
+            <div class="archive-card-header" style="justify-content:space-between;gap:15px;">
+                <div style="flex:1;"><div class="report-name">🔬 ARMATURE RND REPORT</div>
+                    <div class="archive-meta"><div class="archive-meta-item"><span class="archive-meta-label">Select History</span>
+                        <select class="archive-date-selector" onchange="changeArchiveDate('armature-rnd',this.value)" style="background:rgba(255,255,255,0.06);color:white;border:1px solid rgba(255,255,255,0.1);padding:4px 8px;border-radius:6px;font-weight:800;font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;outline:none;margin-top:4px;">${dropdownOptions}</select>
+                    </div><div class="archive-meta-item"><span class="archive-meta-label">Saved At</span><span class="archive-meta-value">${report.savedAt||'—'}</span></div></div>
+                </div>
+            </div>
+            <div class="archive-card-body" style="overflow-x:auto;">
+                <table class="archive-table" style="min-width:900px;"><thead><tr>${thHtml}</tr></thead><tbody>${tbHtml}</tbody></table>
+            </div>
+            <div class="archive-footer">
+                <div class="archive-sig-block"><div class="archive-sig-item"><div class="archive-sig-label">Tested By</div><div class="archive-sig-name">Takbir Hossain</div><div class="archive-sig-desc">Asst. Engineer</div></div>
+                    <div class="archive-sig-item"><div class="archive-sig-label">Authorized By</div><div class="archive-sig-name">Arif Ahmed Anik</div><div class="archive-sig-desc">Incharge</div></div></div>
+                <div style="display:flex;gap:10px;">
+                    <button onclick="deleteArchive('armature-rnd','${selectedDate}')" class="btn-util archive-action-btn archive-delete-btn" title="Delete" style="width:38px;height:38px;border-radius:10px;"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                    <button onclick="loadRndFromArchive('${selectedDate}')" class="btn-util archive-action-btn" title="Load" style="width:auto;padding:8px 16px;border-radius:10px;gap:6px;display:flex;font-size:9px;font-weight:800;letter-spacing:0.1em;"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>LOAD</button>
+                </div>
+            </div>
+        </div>`;
+    renderCalendarWidget(type);
+}
+
+function loadRndFromArchive(dateKey) {
+    const storedRaw = localStorage.getItem(window.STORAGE_KEYS['armature-rnd']);
+    if (!storedRaw) return;
+    const archiveMap = JSON.parse(storedRaw);
+    const report = archiveMap[dateKey] || archiveMap;
+    rndData = report.data;
+    initRndTable();
+    const picker = document.getElementById('rnd-date-picker');
+    if (picker && dateKey) picker.value = dateKey;
+    updateRndDate(dateKey);
+    switchPage('rnd-generator');
+    showToast('🔬 RND Report Loaded [' + dateKey + ']');
+}
+
+async function takeRndScreenshot(silentDownload = false) {
+    const sheet = document.getElementById('rnd-report-page');
+    if (!sheet) return;
+    showToast(silentDownload ? 'Syncing RND Snapshot...' : 'Generating RND Ultra-HD Capture...');
+    const origShadow = sheet.style.boxShadow;
+    const origRadius = sheet.style.borderRadius;
+    const origAnim = sheet.style.animation;
+    const origOverflow = sheet.style.overflow;
+    const hugeTitle = sheet.querySelector('.text-huge');
+    let origT = {};
+    if (hugeTitle) {
+        origT = { background: hugeTitle.style.background, webkitBackgroundClip: hugeTitle.style.webkitBackgroundClip, webkitTextFillColor: hugeTitle.style.webkitTextFillColor, backgroundClip: hugeTitle.style.backgroundClip, color: hugeTitle.style.color };
+        hugeTitle.style.background = 'none'; hugeTitle.style.webkitBackgroundClip = 'unset'; hugeTitle.style.webkitTextFillColor = 'unset'; hugeTitle.style.backgroundClip = 'unset';
+        hugeTitle.style.color = getComputedStyle(document.documentElement).getPropertyValue('--primary-theme');
+    }
+    document.body.classList.remove('mobile-active');
+    sheet.style.boxShadow = 'none'; sheet.style.borderRadius = '0'; sheet.style.animation = 'none'; sheet.style.overflow = 'visible';
+    sheet.classList.add('capturing');
+    await new Promise(r => setTimeout(r, 100));
+    try {
+        const canvasImg = await html2canvas(sheet, { scale: 3, useCORS: true, backgroundColor: '#ffffff', logging: false, allowTaint: true, removeContainer: true });
+        const dataUrl = canvasImg.toDataURL('image/jpeg', 0.95);
+        const link = document.createElement('a');
+        link.download = `Armature-RND-Report-${new Date().toISOString().split('T')[0]}.jpg`;
+        link.href = dataUrl;
+        if (!silentDownload) link.click();
+        if (window.firebaseStorageSet && window.firebaseStorageRef && window.firebaseStorage) {
+            const filename = `mep_reports/armature-rnd/RND-Report-${new Date().toISOString().split('T')[0]}_${Date.now()}.jpg`;
+            const imgRef = window.firebaseStorageRef(window.firebaseStorage, filename);
+            window.firebaseStorageSet(imgRef, dataUrl, 'data_url').catch(e => console.error('RND Cloud sync failed:', e));
+        }
+        saveRndReport(true);
+        showToast(silentDownload ? 'RND Snapshot Synced' : 'RND Report Exported & Synced');
+    } catch(err) {
+        console.error('RND Screenshot error:', err);
+        showToast('Capture Failed: ' + (err.message || 'Unknown'));
+    } finally {
+        sheet.style.boxShadow = origShadow; sheet.style.borderRadius = origRadius; sheet.style.animation = origAnim; sheet.style.overflow = origOverflow;
+        sheet.classList.remove('capturing');
+        if (hugeTitle) { hugeTitle.style.background = origT.background; hugeTitle.style.webkitBackgroundClip = origT.webkitBackgroundClip; hugeTitle.style.webkitTextFillColor = origT.webkitTextFillColor; hugeTitle.style.backgroundClip = origT.backgroundClip; hugeTitle.style.color = origT.color; }
+        document.body.classList.add('mobile-active');
+    }
+}
+
+// Override renderArchivePage to handle armature-rnd type
+const _originalRenderArchivePage = renderArchivePage;
+function renderArchivePageExtended(type) {
+    if (type === 'armature-rnd') { renderRndArchivePage(); return; }
+    _originalRenderArchivePage(type);
+}
+
 // Expose UI functions globally for module execution
 window.switchPage = switchPage;
 window.saveCurrentReport = saveCurrentReport;
-window.renderArchivePage = renderArchivePage;
+window.renderArchivePage = renderArchivePageExtended;
 window.deleteArchive = deleteArchive;
 window.loadToGenerator = loadToGenerator;
 window.applyTheme = applyTheme;
@@ -3315,6 +3853,24 @@ window.processPastedData = processPastedData;
 window.takeScreenshot = takeScreenshot;
 window.updateBadges = updateBadges;
 window.moveSlider = moveSlider;
+window.initRndTable = initRndTable;
+window.updateRndCell = updateRndCell;
+window.updateRndAverages = updateRndAverages;
+window.updateRndDate = updateRndDate;
+window.saveRndReport = saveRndReport;
+window.clearRndData = clearRndData;
+window.takeRndScreenshot = takeRndScreenshot;
+window.loadRndFromArchive = loadRndFromArchive;
+window.toggleRndCalendar = toggleRndCalendar;
+window.renderRndArchivePage = renderRndArchivePage;
+
+// Initialize RND table
+initRndTable();
+const rndDatePicker = document.getElementById('rnd-date-picker');
+if (rndDatePicker) {
+    rndDatePicker.value = new Date().toISOString().split('T')[0];
+    updateRndDate(rndDatePicker.value);
+}
 
 // Auto-randomize theme silently on every page refresh
 randomizeTheme(true);
