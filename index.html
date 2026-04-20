@@ -190,7 +190,7 @@
                 linear-gradient(rgba(22, 78, 99, 0.018) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(22, 78, 99, 0.018) 1px, transparent 1px);
             background-size: 20px 20px;
-            width: 210mm;
+            width: 260mm;
             min-height: auto;
             padding: 15mm 15mm;
             box-shadow:
@@ -444,11 +444,16 @@
 
         .pivot-table th {
             background: linear-gradient(160deg, var(--primary-theme) 0%, var(--accent-theme) 100%);
-            padding: 22px 12px;
+            padding: 16px 6px;
             border: 1px solid rgba(255,255,255,0.06);
             text-align: center !important;
             vertical-align: middle;
             position: relative;
+        }
+
+        .text-pivot-header {
+            font-size: 11px;
+            letter-spacing: 0.08em;
         }
 
         .pivot-table th::after {
@@ -1990,6 +1995,13 @@
                 </svg>
             </button>
             <div class="controls-divider"></div>
+            <!-- Daily Target (Fixed at 1600) -->
+            <div style="background: rgba(15, 23, 42, 0.4); padding: 5px 10px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05); display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <span style="font-size: 8px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-theme); margin-bottom: 3px;">Day Target</span>
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 900; color: white; letter-spacing: 0.05em;">1600</span>
+                <input type="hidden" id="day-target-input" value="1600">
+            </div>
+            <div class="controls-divider"></div>
             <!-- Import Data -->
             <button onclick="toggleModal(true)" class="btn-util" title="Import Data">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -2101,11 +2113,12 @@
                 <table class="pivot-table relative z-20">
                     <thead>
                         <tr>
-                            <th class="w-[30%] text-pivot-header uppercase">Item Names</th>
-                            <th id="header-2" class="w-[14%] text-pivot-header uppercase">Opening</th>
-                            <th id="header-3" class="w-[18%] text-pivot-header uppercase">Production</th>
-                            <th id="header-4" class="w-[20%] text-pivot-header uppercase">Consumption</th>
-                            <th id="header-5" class="w-[18%] text-pivot-header uppercase">Closing</th>
+                            <th class="w-[24%] text-pivot-header uppercase">Item Names</th>
+                            <th id="header-2" class="w-[12%] text-pivot-header uppercase">Opening</th>
+                            <th id="header-3" class="w-[16%] text-pivot-header uppercase">Production</th>
+                            <th id="header-4" class="w-[16%] text-pivot-header uppercase">Consumption</th>
+                            <th id="header-5" class="w-[15%] text-pivot-header uppercase">Closing</th>
+                            <th id="header-6" class="w-[17%] text-pivot-header uppercase" style="white-space: nowrap;">Stock Cover</th>
                         </tr>
                     </thead>
                     <tbody id="inventory-body">
@@ -2400,7 +2413,7 @@
                 title: 'FAN ACCESSORIES STOCK REPORT',
                 sigName: 'Nafija',
                 sigDesc: 'Jr. Engineer',
-                headers: ['Opening', 'Production', 'Consumption', 'Closing'],
+                headers: ['Opening', 'Production', 'Consumption', 'Closing', 'Stock Cover'],
                 themeIndex: 1,
                 emoji: '📦'
             },
@@ -2408,7 +2421,7 @@
                 title: 'FAN ARMATURE STOCK REPORT',
                 sigName: 'Takbir Hossain',
                 sigDesc: 'Asst. Engineer',
-                headers: ['Opening', 'Production', 'Consumption', 'Closing'],
+                headers: ['Opening', 'Production', 'Consumption', 'Closing', 'Stock Cover'],
                 themeIndex: 0,
                 emoji: '⚙️'
             },
@@ -2520,6 +2533,8 @@
             const reportDateText = document.getElementById('display-date-text').innerText;
             const targetDateInput = document.getElementById('statement-date-picker');
             const dateKey = targetDateInput && targetDateInput.value ? targetDateInput.value : new Date().toISOString().split('T')[0];
+            const dayTargetInput = document.getElementById('day-target-input');
+            const targetPerDay = dayTargetInput && dayTargetInput.value ? Number(dayTargetInput.value) : 1;
             
             const now = new Date();
             const savedAt = now.toLocaleString('en-US', {
@@ -2530,6 +2545,7 @@
             const reportData = {
                 type: currentReportType,
                 data: JSON.parse(JSON.stringify(inventoryData)),
+                targetPerDay: targetPerDay,
                 reportDate: reportDateText,
                 savedAt: savedAt,
                 savedTimestamp: now.getTime()
@@ -2705,18 +2721,34 @@
             }).join('');
 
             let tableRows = '';
+            
+            // Allow live recalculation in archive if needed by fetching input, fallback to report saved target or 1.
+            const liveInput = document.getElementById('day-target-input');
+            const targetPerDay = liveInput && liveInput.value ? Number(liveInput.value) : (Number(report.targetPerDay) > 0 ? Number(report.targetPerDay) : 1);
+            
             report.data.forEach((item, idx) => {
                 const opening = Number(item.opening) || 0;
                 const production = Number(item.production) || 0;
                 const consumption = Number(item.consumption) || 0;
                 const closing = opening + production - consumption;
+                
+                // Stock Cover as Days & Hours (1 day = 11 hours)
+                let stockCoverText = '0D 0H';
+                if (closing > 0 && targetPerDay > 0) {
+                    const totalDays = closing / targetPerDay;
+                    const wholeDays = Math.floor(totalDays);
+                    const remainingHours = Math.round((totalDays - wholeDays) * 11);
+                    stockCoverText = `${wholeDays}D ${remainingHours}H`;
+                }
+                
                 tableRows += `
                     <tr style="animation: rowFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${Math.min(idx, 10) * 0.05}s backwards;">
                         <td>${item.name || '—'}</td>
                         <td>${opening.toLocaleString()}</td>
                         <td style="color: var(--accent-theme); font-weight: 900;">${production.toLocaleString()}</td>
                         <td style="color: #f43f5e; font-weight: 900;">${consumption.toLocaleString()}</td>
-                        <td style="font-weight: 900; background: rgba(255, 255, 255, 0.03);">${closing.toLocaleString()}</td>
+                        <td style="font-weight: 900; background: rgba(255, 255, 255, 0.03); border-right: 1px solid rgba(255,255,255,0.05);">${closing.toLocaleString()}</td>
+                        <td style="font-weight: 900; color: #a78bfa; font-family: 'JetBrains Mono', monospace;">${stockCoverText}</td>
                     </tr>
                 `;
             });
@@ -2744,11 +2776,12 @@
                         <table class="archive-table">
                             <thead>
                                 <tr>
-                                    <th style="width: 30%;">Item Names</th>
-                                    <th>${headers[0]}</th>
-                                    <th>${headers[1]}</th>
-                                    <th>${headers[2]}</th>
-                                    <th>${headers[3]}</th>
+                                    <th style="width: 24%; padding: 12px 6px; font-size: 9px; letter-spacing: 0.1em;">Item Names</th>
+                                    <th style="width: 12%; padding: 12px 6px; font-size: 9px; letter-spacing: 0.1em;">${headers[0]}</th>
+                                    <th style="width: 16%; padding: 12px 6px; font-size: 9px; letter-spacing: 0.1em;">${headers[1]}</th>
+                                    <th style="width: 16%; padding: 12px 6px; font-size: 9px; letter-spacing: 0.1em;">${headers[2]}</th>
+                                    <th style="width: 15%; padding: 12px 6px; font-size: 9px; letter-spacing: 0.1em;">${headers[3]}</th>
+                                    <th style="width: 17%; padding: 12px 6px; font-size: 9px; letter-spacing: 0.1em; white-space: nowrap;">${headers[4]}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -2941,6 +2974,11 @@
             const report = archiveMap[dateKey] || archiveMap; // fallback logic
             
             inventoryData = report.data;
+            if (report.targetPerDay) {
+                const dayTargetInput = document.getElementById('day-target-input');
+                if (dayTargetInput) dayTargetInput.value = report.targetPerDay;
+            }
+            
             currentReportType = type;
             renderTable();
             updateReportBranding(type);
@@ -2976,6 +3014,21 @@
                 }
             });
         }
+
+        window.dayTargetChanged = function() {
+            const liveInput = document.getElementById('day-target-input');
+            if (liveInput) {
+                localStorage.setItem('mep_day_target_value', liveInput.value);
+            }
+            renderTable();
+            // Re-render archive if we are in it and modified the value (if it's accessible).
+            const pageGen = document.getElementById('page-generator');
+            if (pageGen && !pageGen.classList.contains('active')) {
+                // Determine active archive
+                if (document.getElementById('page-archive-accessories').classList.contains('active')) renderArchivePage('accessories');
+                if (document.getElementById('page-archive-armature').classList.contains('active')) renderArchivePage('armature');
+            }
+        };
 
         // ============ CORE FUNCTIONS ============
 
@@ -3077,6 +3130,7 @@
             const h3 = document.getElementById('header-3');
             const h4 = document.getElementById('header-4');
             const h5 = document.getElementById('header-5');
+            const h6 = document.getElementById('header-6');
 
             if (type === 'armature') {
                 setReportTitle('Fan Armature Stock Report', 'MEP FAN LTD • Armature Division');
@@ -3087,6 +3141,7 @@
                 h3.innerText = "Production";
                 h4.innerText = "Consumption";
                 h5.innerText = "Closing";
+                h6.innerText = "Stock Cover";
             } else if (type === 'accessories') {
                 setReportTitle('Fan Accessories Stock Report', 'MEP FAN LTD • Accessories Division');
                 sig.innerText = "Nafija";
@@ -3096,6 +3151,7 @@
                 h3.innerText = "Production";
                 h4.innerText = "Consumption";
                 h5.innerText = "Closing";
+                h6.innerText = "Stock Cover";
             } else {
                 setReportTitle('Awaiting Report Type...', 'MEP FAN LTD • Inventory Ledger');
                 sig.innerText = "...";
@@ -3183,8 +3239,21 @@
                 return;
             }
 
+            const dayTargetInput = document.getElementById('day-target-input');
+            const targetPerDay = dayTargetInput && dayTargetInput.value ? Number(dayTargetInput.value) : 1;
+
             inventoryData.forEach((item, index) => {
                 const closing = item.opening + item.production - item.consumption;
+                
+                // Calculate stock cover as Days & Hours (1 day = 11 hours)
+                let stockCoverText = '0D 0H';
+                if (closing > 0 && targetPerDay > 0) {
+                    const totalDays = closing / targetPerDay;
+                    const wholeDays = Math.floor(totalDays);
+                    const remainingHours = Math.round((totalDays - wholeDays) * 11);
+                    stockCoverText = `${wholeDays}D ${remainingHours}H`;
+                }
+                
                 const row = document.createElement('tr');
                 row.style.animationDelay = `${Math.min(index, 10) * 0.04}s`;
                 
@@ -3201,8 +3270,11 @@
                     <td>
                         <div class="static-data-box"><span class="text-rose-600">${item.consumption.toLocaleString()}</span></div>
                     </td>
-                    <td style="border-left: 3px solid var(--primary-theme); background: rgba(8, 145, 178, 0.04)">
+                    <td style="border-left: 3px solid var(--primary-theme); border-right: 1px dashed var(--primary-theme); background: rgba(8, 145, 178, 0.04)">
                         <div class="text-pivot-body font-black tabular-nums" style="text-align: center; padding: 8px 0; display: block;">${closing.toLocaleString()}</div>
+                    </td>
+                    <td style="background: rgba(139, 92, 246, 0.04)">
+                        <div class="text-pivot-body font-black tabular-nums" style="text-align: center; padding: 8px 0; display: block; color: #8b5cf6;">${stockCoverText}</div>
                     </td>
                 `;
                 container.appendChild(row);
@@ -3882,6 +3954,15 @@ randomizeTheme(true);
     // Backup: Also run theme randomization from outside the module
     // This ensures it fires even if Firebase CDN is slow/blocked
     window.addEventListener('DOMContentLoaded', function() {
+        // Load persistent day target value
+        const savedDayTarget = localStorage.getItem('mep_day_target_value');
+        if (savedDayTarget) {
+            const dayTargetInput = document.getElementById('day-target-input');
+            if (dayTargetInput) {
+                dayTargetInput.value = savedDayTarget;
+            }
+        }
+
         setTimeout(function() {
             if (typeof window.randomizeTheme === 'function') {
                 window.randomizeTheme(true);
