@@ -545,14 +545,14 @@
 
             try {
                 const canvasImg = await html2canvas(sheet, {
-                    scale: 3,
+                    scale: 4,
                     useCORS: true,
                     backgroundColor: '#ffffff',
                     logging: false,
                     allowTaint: true,
                     removeContainer: true,
                 });
-                const dataUrl = canvasImg.toDataURL('image/jpeg', 0.95);
+                const dataUrl = canvasImg.toDataURL('image/jpeg', 1.0);
                 const link = document.createElement('a');
                 link.download = `MEP-Ledger-${new Date().toISOString().split('T')[0]}.jpg`;
                 link.href = dataUrl;
