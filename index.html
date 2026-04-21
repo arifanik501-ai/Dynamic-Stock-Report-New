@@ -1057,6 +1057,134 @@
             filter: brightness(1.1);
         }
 
+        /* ============ GOLDEN DOWNLOAD BUTTON ============ */
+        @keyframes goldenShimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        @keyframes goldenPulseGlow {
+            0%, 100% { box-shadow: 0 6px 0 #92400e, 0 8px 15px rgba(245,158,11,0.4), inset 0 2px 0 rgba(255,255,255,0.5), 0 0 15px rgba(245,158,11,0.2); }
+            50% { box-shadow: 0 6px 0 #92400e, 0 12px 30px rgba(245,158,11,0.7), inset 0 2px 0 rgba(255,255,255,0.6), 0 0 40px rgba(251,191,36,0.5), 0 0 80px rgba(245,158,11,0.2); }
+        }
+        @keyframes goldenBounce {
+            0%, 100% { transform: translateY(-3px) rotate(0deg); }
+            25% { transform: translateY(-8px) rotate(-2deg); }
+            50% { transform: translateY(-5px) rotate(0deg); }
+            75% { transform: translateY(-10px) rotate(2deg); }
+        }
+        @keyframes goldenSparkle {
+            0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+            50% { opacity: 1; transform: scale(1) rotate(180deg); }
+        }
+        @keyframes goldenRingPulse {
+            0% { transform: scale(1); opacity: 0.6; }
+            100% { transform: scale(2.2); opacity: 0; }
+        }
+
+        .btn-golden {
+            background: linear-gradient(135deg, #f59e0b, #d97706, #fbbf24, #f59e0b) !important;
+            background-size: 300% 100% !important;
+            color: #451a03 !important;
+            border: 2px solid rgba(251, 191, 36, 0.6) !important;
+            border-radius: 16px;
+            box-shadow: 
+                0 6px 0 #92400e, 
+                0 8px 15px rgba(245,158,11,0.4),
+                inset 0 2px 0 rgba(255,255,255,0.5) !important;
+            animation: goldenShimmer 2.5s linear infinite, goldenPulseGlow 2s ease-in-out infinite, goldenBounce 3s ease-in-out infinite !important;
+            position: relative;
+            overflow: visible;
+            margin-bottom: 2px;
+            z-index: 2;
+        }
+
+        .btn-golden svg {
+            filter: drop-shadow(0 1px 2px rgba(120, 53, 15, 0.4));
+            stroke: #451a03 !important;
+            stroke-width: 2.5 !important;
+        }
+
+        .btn-golden[title]::before {
+            content: '✦' !important;
+            position: absolute !important;
+            top: -6px !important;
+            right: -6px !important;
+            left: auto !important;
+            bottom: auto !important;
+            font-size: 12px !important;
+            color: #fde68a !important;
+            background: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            border: none !important;
+            transform: none !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            animation: goldenSparkle 1.5s ease-in-out infinite !important;
+            text-shadow: 0 0 6px rgba(251, 191, 36, 0.8);
+            pointer-events: none;
+            z-index: 3;
+            white-space: normal !important;
+            letter-spacing: normal !important;
+            text-transform: none !important;
+            font-weight: normal !important;
+        }
+
+        .btn-golden::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 20px;
+            border: 2px solid rgba(251, 191, 36, 0.4);
+            animation: goldenRingPulse 2s ease-out infinite;
+            pointer-events: none;
+        }
+
+        .btn-golden:hover {
+            transform: translateY(-10px) scale(1.1) !important;
+            box-shadow: 
+                0 14px 0 #92400e, 
+                0 25px 40px rgba(245,158,11,0.6),
+                inset 0 2px 0 rgba(255,255,255,0.6),
+                0 0 60px rgba(251,191,36,0.5),
+                0 0 100px rgba(245,158,11,0.3) !important;
+            filter: brightness(1.2) !important;
+            animation: goldenShimmer 1s linear infinite !important;
+        }
+
+        .btn-golden:active {
+            transform: translateY(3px) scale(0.95) !important;
+            box-shadow: 
+                0 0 0 #92400e,
+                0 2px 5px rgba(245,158,11,0.4),
+                inset 0 2px 0 rgba(255,255,255,0.3) !important;
+            animation: none !important;
+        }
+
+        /* Lite Mode golden override */
+        body.lite-mode .btn-golden {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b, #fde68a, #f59e0b) !important;
+            background-size: 300% 100% !important;
+            border: 2px solid rgba(245, 158, 11, 0.4) !important;
+            color: #78350f !important;
+            box-shadow: 
+                0 6px 0 #d4a24a,
+                0 8px 20px rgba(245,158,11,0.2),
+                inset 0 2px 5px rgba(255,255,255,0.7) !important;
+            animation: goldenShimmer 2.5s linear infinite, goldenPulseGlow 2s ease-in-out infinite, goldenBounce 3s ease-in-out infinite !important;
+        }
+
+        body.lite-mode .btn-golden:hover {
+            box-shadow: 
+                0 12px 0 #d4a24a,
+                0 20px 35px rgba(245,158,11,0.35),
+                inset 0 2px 5px rgba(255,255,255,0.8),
+                0 0 50px rgba(251,191,36,0.3) !important;
+        }
+
         .controls-divider {
             height: 1px;
             background: radial-gradient(circle at center, rgba(255, 255, 255, 0.15) 0%, transparent 100%);
@@ -2003,7 +2131,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75" />
                 </svg>
             </button>
-            <button onclick="takeScreenshot()" class="btn-util" title="Download JPG">
+            <button onclick="takeScreenshot()" class="btn-util btn-golden" title="Download JPG">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"></path>
                 </svg>
@@ -2207,7 +2335,7 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" /></svg>
             </button>
             <div class="controls-divider"></div>
-            <button onclick="takeRndScreenshot()" class="btn-util" title="Download JPG">
+            <button onclick="takeRndScreenshot()" class="btn-util btn-golden" title="Download JPG">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"></path></svg>
             </button>
             <button onclick="clearRndData()" class="btn-util" title="Clear All">
@@ -2469,7 +2597,9 @@
             { name: "Neon Cyberpunk",  bg: '#090514', primary: '#b83280', accent: '#f472b6', text: '#fce7f3', glow: 'rgba(244, 114, 182, 0.15)' },
             { name: "Sunny Melon",     bg: '#141108', primary: '#b45309', accent: '#f59e0b', text: '#fef3c7', glow: 'rgba(245, 158, 11, 0.15)' },
             { name: "Aqua Marine",     bg: '#051414', primary: '#0369a1', accent: '#0ea5e9', text: '#e0f2fe', glow: 'rgba(14, 165, 233, 0.15)' },
-            { name: "Electric Violet", bg: '#0e0514', primary: '#5b21b6', accent: '#a78bfa', text: '#ede9fe', glow: 'rgba(167, 139, 250, 0.15)' }
+            { name: "Electric Violet", bg: '#0e0514', primary: '#5b21b6', accent: '#a78bfa', text: '#ede9fe', glow: 'rgba(167, 139, 250, 0.15)' },
+            // Golden Theme
+            { name: "Royal Gold",      bg: '#14110a', primary: '#92400e', accent: '#f59e0b', text: '#fef3c7', glow: 'rgba(245, 158, 11, 0.20)' }
         ];
 
         // ============ PAGE SWITCHING ============
