@@ -1503,7 +1503,7 @@
     background: #f8fafc;
     width: 30px;
 }
-.rnd-table input[type="number"] {
+.rnd-table input {
     width: 100%;
     height: 28px;
     border: none;
@@ -1514,14 +1514,10 @@
     background: transparent;
     outline: none;
     color: #1e293b;
-    -moz-appearance: textfield;
+    padding: 0 2px;
+    box-sizing: border-box;
 }
-.rnd-table input[type="number"]::-webkit-outer-spin-button,
-.rnd-table input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-.rnd-table input[type="number"]:focus {
+.rnd-table input:focus {
     background: rgba(8, 145, 178, 0.08);
     box-shadow: inset 0 0 0 2px var(--accent-theme);
 }
@@ -2284,11 +2280,11 @@
                             <th class="rnd-th-cyan">Running<br>Wire SWG</th>
                             <th class="rnd-th-cyan">Running Super<br>Wire Weight (g)</th>
                             <th class="rnd-th-cyan">Running<br>Resistance (Ω)</th>
-                            <th class="rnd-th-green">Total<br>Resistance (Ω)</th>
                             <th class="rnd-th-cyan">Super Wire<br>Conductive Dia (mm)</th>
                             <th class="rnd-th-pink">Super Wire Total<br>Dia (mm)</th>
                             <th class="rnd-th-green">Total Super<br>Wire Weight (g)</th>
                             <th class="rnd-th-pink">Total Fiber<br>Weight (g)</th>
+                            <th class="rnd-th-green">Total<br>Resistance (Ω)</th>
                             <th class="rnd-th-green">Total Armature<br>Weight (g)</th>
                         </tr>
                     </thead>
@@ -2435,7 +2431,7 @@
                 title: 'ARMATURE RND REPORT',
                 sigName: 'Takbir Hossain',
                 sigDesc: 'Asst. Engineer',
-                headers: ['SL','Stator Weight','Starting Winding Turn','Starting Wire SWG','Starting Super Wire Weight','Starting Resistance','Running Winding Turn','Running Wire SWG','Running Super Wire Weight','Running Resistance','Total Resistance','Super Wire Conductive Dia','Super Wire Total Dia','Total Super Wire Weight','Total Fiber Weight','Total Armature Weight'],
+                headers: ['SL','Stator Weight','Starting Winding Turn','Starting Wire SWG','Starting Super Wire Weight','Starting Resistance','Running Winding Turn','Running Wire SWG','Running Super Wire Weight','Running Resistance','Super Wire Conductive Dia','Super Wire Total Dia','Total Super Wire Weight','Total Fiber Weight','Total Resistance','Total Armature Weight'],
                 themeIndex: 0,
                 emoji: '🔬'
             }
@@ -2623,7 +2619,11 @@
 
         window.changeArchiveDate = function(type, dateVal) {
             window['archiveSelectedDate_' + type] = dateVal;
-            renderArchivePage(type);
+            if (type === 'armature-rnd') {
+                renderRndArchivePage();
+            } else {
+                renderArchivePage(type);
+            }
         };
 
         // ============ RENDER ARCHIVE PAGE ============
@@ -3658,7 +3658,7 @@
             }
         });
 // ============ ARMATURE RND FUNCTIONS ============
-const RND_COLS = ['statorWeight','startingWindingTurn','startingWireSWG','startingSuperWireWeight','startingResistance','runningWindingTurn','runningWireSWG','runningSuperWireWeight','runningResistance','totalResistance','superWireConductiveDia','superWireTotalDia','totalSuperWireWeight','totalFiberWeight','totalArmatureWeight'];
+const RND_COLS = ['statorWeight','startingWindingTurn','startingWireSWG','startingSuperWireWeight','startingResistance','runningWindingTurn','runningWireSWG','runningSuperWireWeight','runningResistance','superWireConductiveDia','superWireTotalDia','totalSuperWireWeight','totalFiberWeight','totalResistance','totalArmatureWeight'];
 let rndData = [];
 
 function initRndTable() {
@@ -3672,16 +3672,41 @@ function initRndTable() {
             return row;
         });
     }
+    const AUTO_COLS = ['totalResistance', 'totalArmatureWeight'];
+    const EDITABLE_COLS = RND_COLS.filter(c => !AUTO_COLS.includes(c));
     rndData.forEach((row, idx) => {
+        recalcRndRow(idx);
         const tr = document.createElement('tr');
         tr.style.animationDelay = `${idx * 0.03}s`;
         let cells = `<td>${idx + 1}</td>`;
-        RND_COLS.forEach(col => {
+        RND_COLS.forEach((col, colIdx) => {
             const val = row[col] !== undefined && row[col] !== '' ? row[col] : '';
-            cells += `<td><input type="number" step="any" value="${val}" data-row="${idx}" data-col="${col}" onchange="updateRndCell(this)" oninput="updateRndCell(this)"></td>`;
+            if (AUTO_COLS.includes(col)) {
+                cells += `<td><input type="text" inputmode="decimal" value="${val}" data-row="${idx}" data-col="${col}" data-colidx="${colIdx}" readonly tabindex="-1" style="background:rgba(16,185,129,0.10);color:#10b981;font-weight:900;cursor:default;"></td>`;
+            } else {
+                cells += `<td><input type="text" inputmode="decimal" value="${val}" data-row="${idx}" data-col="${col}" data-colidx="${colIdx}" onchange="updateRndCell(this)" oninput="updateRndCell(this)"></td>`;
+            }
         });
         tr.innerHTML = cells;
         body.appendChild(tr);
+    });
+    // Arrow key navigation
+    body.addEventListener('keydown', function(e) {
+        const input = e.target;
+        if (input.tagName !== 'INPUT' || !input.dataset.row) return;
+        const row = parseInt(input.dataset.row);
+        const colIdx = parseInt(input.dataset.colidx);
+        let targetRow = row, targetCol = colIdx;
+        if (e.key === 'ArrowUp') { targetRow = row - 1; e.preventDefault(); }
+        else if (e.key === 'ArrowDown') { targetRow = row + 1; e.preventDefault(); }
+        else if (e.key === 'ArrowLeft') { targetCol = colIdx - 1; e.preventDefault(); }
+        else if (e.key === 'ArrowRight') { targetCol = colIdx + 1; e.preventDefault(); }
+        else if (e.key === 'Enter') { targetRow = row + 1; e.preventDefault(); }
+        else if (e.key === 'Tab') { return; }
+        else { return; }
+        if (targetRow < 0 || targetRow >= rndData.length || targetCol < 0 || targetCol >= RND_COLS.length) return;
+        const next = body.querySelector(`input[data-row="${targetRow}"][data-colidx="${targetCol}"]`);
+        if (next) { next.focus(); next.select(); }
     });
     // Average row
     const avgTr = document.createElement('tr');
@@ -3691,10 +3716,32 @@ function initRndTable() {
     updateRndAverages();
 }
 
+function recalcRndRow(idx) {
+    const row = rndData[idx];
+    const startR = parseFloat(row['startingResistance']) || 0;
+    const runR = parseFloat(row['runningResistance']) || 0;
+    const hasResistance = row['startingResistance'] !== '' || row['runningResistance'] !== '';
+    row['totalResistance'] = hasResistance ? parseFloat((startR + runR).toFixed(4)) : '';
+
+    const stator = parseFloat(row['statorWeight']) || 0;
+    const startSW = parseFloat(row['startingSuperWireWeight']) || 0;
+    const runSW = parseFloat(row['runningSuperWireWeight']) || 0;
+    const fiber = parseFloat(row['totalFiberWeight']) || 0;
+    const hasWeight = row['statorWeight'] !== '' || row['startingSuperWireWeight'] !== '' || row['runningSuperWireWeight'] !== '' || row['totalFiberWeight'] !== '';
+    row['totalArmatureWeight'] = hasWeight ? parseFloat((stator + startSW + runSW + fiber).toFixed(4)) : '';
+}
+
 function updateRndCell(input) {
     const r = parseInt(input.dataset.row);
     const c = input.dataset.col;
     rndData[r][c] = input.value !== '' ? parseFloat(input.value) : '';
+    recalcRndRow(r);
+    // Update the read-only auto fields in the DOM for this row
+    const autoFields = ['totalResistance', 'totalArmatureWeight'];
+    autoFields.forEach(col => {
+        const el = document.querySelector(`input[data-row="${r}"][data-col="${col}"]`);
+        if (el) el.value = rndData[r][col] !== '' ? rndData[r][col] : '';
+    });
     updateRndAverages();
 }
 
@@ -3812,7 +3859,7 @@ function renderRndArchivePage() {
     const report = archiveMap[selectedDate];
     if (!report || !report.data) { container.innerHTML = '<div class="archive-empty"><div class="archive-empty-title">Data Error</div></div>'; renderCalendarWidget(type); return; }
     const dropdownOptions = dates.map(d => { const r = archiveMap[d]; return `<option value="${d}" ${d===selectedDate?'selected':''}>${(r&&r.reportDate)?r.reportDate:d} (${d})</option>`; }).join('');
-    const hdrs = ['SL','Stator Wt','Start Turn','Start SWG','Start SW Wt','Start Res','Run Turn','Run SWG','Run SW Wt','Run Res','Total Res','SW Cond Dia','SW Total Dia','Total SW Wt','Total Fiber Wt','Total Arm Wt'];
+    const hdrs = ['SL','Stator Wt','Start Turn','Start SWG','Start SW Wt','Start Res','Run Turn','Run SWG','Run SW Wt','Run Res','SW Cond Dia','SW Total Dia','Total SW Wt','Total Fiber Wt','Total Res','Total Arm Wt'];
     let thHtml = hdrs.map((h,i) => `<th style="font-size:9px; padding:8px 3px; ${i===0?'width:30px;':''} background: ${i===0?'#475569':i<=5?'#db2777':i<=9?'#0891b2':'#16a34a'};">${h}</th>`).join('');
     let tbHtml = '';
     report.data.forEach((row, idx) => {
