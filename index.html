@@ -2687,11 +2687,16 @@
 
             <!-- ☰ Trigger — always visible -->
             <button class="btn-util ctrl-trigger" id="ctrl-toggle-btn" onclick="toggleControlPanel()" title="Tools">
-                <svg class="ctrl-icon ctrl-icon-menu" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+                <!-- Menu: premium 2×2 grid -->
+                <svg class="ctrl-icon ctrl-icon-menu" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                    <rect x="3.5" y="3.5" width="7" height="7" rx="2.2"/>
+                    <rect x="13.5" y="3.5" width="7" height="7" rx="2.2"/>
+                    <rect x="3.5" y="13.5" width="7" height="7" rx="2.2"/>
+                    <rect x="13.5" y="13.5" width="7" height="7" rx="2.2"/>
                 </svg>
-                <svg class="ctrl-icon ctrl-icon-close" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                <!-- Close: bold rounded X -->
+                <svg class="ctrl-icon ctrl-icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round">
+                    <path d="M5 5l14 14M19 5L5 19"/>
                 </svg>
             </button>
 
