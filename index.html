@@ -46,15 +46,15 @@
             --bg-retro: #e2e8f0;
             --glass-bg: rgba(255, 255, 255, 0.6);
             --glass-border: rgba(0, 0, 0, 0.08);
-            color: #0f172a;
+            color: #0a0f1a;
         }
         body.lite-mode .bg-grid, body.lite-mode .bg-scanlines { display: none; }
-        body.lite-mode .btn-util:not(.btn-save) {
+        body.lite-mode .btn-util:not(.btn-save):not(.btn-golden) {
             color: #475569;
             background: rgba(0,0,0,0.03);
             border-color: rgba(0,0,0,0.1);
         }
-        body.lite-mode .btn-util:not(.btn-save):hover {
+        body.lite-mode .btn-util:not(.btn-save):not(.btn-golden):hover {
             color: #0f172a;
             background: rgba(0,0,0,0.08);
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
@@ -64,8 +64,8 @@
             border-color: rgba(0,0,0,0.1);
             box-shadow: 0 8px 32px rgba(0,0,0,0.08);
         }
-        body.lite-mode .tab-btn { color: #64748b; }
-        body.lite-mode .tab-btn.active { color: #0f172a; }
+        body.lite-mode .tab-btn { color: #475569; }
+        body.lite-mode .tab-btn.active { color: #020617; }
         body.lite-mode .tab-slider {
             background: rgba(255,255,255,0.9);
             border-color: rgba(0,0,0,0.08);
@@ -73,20 +73,162 @@
         }
         body.lite-mode .tab-slider::before { background: var(--accent-theme); }
         body.lite-mode .archive-title { background: linear-gradient(135deg, #0f172a, #475569); -webkit-background-clip: text; }
-        body.lite-mode .archive-table td { color: #334155; border-color: rgba(0,0,0,0.04); }
-        body.lite-mode .archive-table td:first-child { color: #0f172a; }
+        body.lite-mode .archive-table td { color: #1e293b; border-color: rgba(0,0,0,0.06); }
+        body.lite-mode .archive-table td:first-child { color: #020617; }
         body.lite-mode .controls-panel { box-shadow: 0 16px 40px rgba(0,0,0,0.05); }
         body.lite-mode .archive-card { box-shadow: 0 16px 40px rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.1); }
         body.lite-mode .archive-empty { border-color: rgba(0,0,0,0.1); }
-        body.lite-mode .archive-empty-title { color: #334155; }
-        body.lite-mode .archive-empty-desc, body.lite-mode .archive-empty-icon { color: #64748b; opacity: 0.8; }
+        body.lite-mode .archive-empty-title { color: #1e293b; }
+        body.lite-mode .archive-empty-desc, body.lite-mode .archive-empty-icon { color: #475569; opacity: 0.9; }
         body.lite-mode .archive-btn-back { color: #475569 !important; border-color: rgba(0,0,0,0.1) !important; background: rgba(0,0,0,0.03) !important; }
         body.lite-mode .archive-btn-back:hover { color: #0f172a !important; background: rgba(0,0,0,0.08) !important; }
-        body.lite-mode .archive-sig-name { color: #0f172a; }
-        body.lite-mode .archive-sig-desc { color: #64748b; }
+        body.lite-mode .archive-sig-name { color: #020617; }
+        body.lite-mode .archive-sig-desc { color: #475569; }
         body.lite-mode .archive-action-btn:not(.archive-delete-btn) { color: #475569 !important; border-color: rgba(0,0,0,0.1) !important; background: rgba(0,0,0,0.03) !important; }
         body.lite-mode .archive-action-btn:not(.archive-delete-btn):hover { color: #0f172a !important; background: rgba(0,0,0,0.08) !important; }
 
+        /* ── Lite Mode: Report Sheet Text Visibility ── */
+        body.lite-mode .text-huge {
+            background: linear-gradient(135deg, #0f172a, var(--accent-theme)) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+        }
+        body.lite-mode .text-label {
+            color: #1e293b !important;
+        }
+        body.lite-mode .text-pivot-header {
+            color: #ffffff !important;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
+        }
+        body.lite-mode .text-pivot-body {
+            color: #0f172a !important;
+        }
+        body.lite-mode .pivot-table td {
+            color: #1e293b !important;
+        }
+        body.lite-mode .pivot-table td:first-child {
+            color: #020617 !important;
+        }
+        body.lite-mode .static-data-box span {
+            color: #1e293b !important;
+        }
+        body.lite-mode .text-signature {
+            color: #1e3a8a !important;
+        }
+        body.lite-mode .report-type-box .report-title-text {
+            color: #ffffff !important;
+        }
+        body.lite-mode .report-type-box .report-title-sub {
+            color: rgba(255, 255, 255, 0.7) !important;
+        }
+        body.lite-mode .premium-date-wrapper span,
+        body.lite-mode .premium-date-wrapper div {
+            color: #0f172a !important;
+        }
+        body.lite-mode #display-date-day {
+            color: #1e293b !important;
+        }
+        body.lite-mode #display-date-monthyear {
+            color: var(--accent-theme) !important;
+        }
+        body.lite-mode #display-date-weekday {
+            color: #ffffff !important;
+        }
+        body.lite-mode #digital-clock {
+            color: #475569 !important;
+        }
+        body.lite-mode .corner::before, body.lite-mode .corner::after {
+            background: #334155 !important;
+        }
+
+        /* ── Lite Mode: Full UI Polish ── */
+        body.lite-mode .a4-sheet {
+            box-shadow:
+                0 0 0 1px rgba(0,0,0,0.08),
+                0 20px 60px -10px rgba(0, 0, 0, 0.12),
+                0 10px 30px -8px rgba(0, 0, 0, 0.08) !important;
+            border: 1px solid rgba(0,0,0,0.06) !important;
+        }
+        body.lite-mode .pivot-table {
+            border: 3px solid #1e293b !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+        }
+        body.lite-mode .pivot-table td {
+            border-color: rgba(0, 0, 0, 0.08) !important;
+        }
+        body.lite-mode .pivot-table tbody tr:nth-child(even) {
+            background: rgba(0, 0, 0, 0.02) !important;
+        }
+        body.lite-mode .pivot-table tbody tr:hover {
+            background: linear-gradient(90deg, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.02)) !important;
+        }
+        body.lite-mode .pivot-table td[style*="border-left"] {
+            border-left-color: #1e293b !important;
+        }
+        body.lite-mode .report-type-box {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12), 4px 4px 0px rgba(0, 0, 0, 0.06) !important;
+        }
+        body.lite-mode .premium-date-wrapper {
+            border-color: rgba(0, 0, 0, 0.1) !important;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08), inset 0 0 0 1px rgba(0,0,0,0.04) !important;
+        }
+        body.lite-mode #reported-by-name,
+        body.lite-mode #sig-line-2 {
+            color: #0f172a !important;
+        }
+        body.lite-mode #reported-by-desc,
+        body.lite-mode #sig-desc-2 {
+            color: #334155 !important;
+        }
+        body.lite-mode .static-data-box {
+            border-color: rgba(0, 0, 0, 0.06) !important;
+        }
+        body.lite-mode .lifted-text {
+            color: #020617 !important;
+        }
+        body.lite-mode .toast-notification {
+            background: rgba(0, 0, 0, 0.85) !important;
+            color: #ffffff !important;
+        }
+
+        /* ── Lite Mode: Calendar Widget ── */
+        body.lite-mode .calendar-card {
+            background: rgba(255, 255, 255, 0.85) !important;
+            border: 1px solid rgba(0, 0, 0, 0.08) !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06) !important;
+        }
+        body.lite-mode .calendar-header {
+            color: #0f172a !important;
+            border-bottom-color: rgba(0,0,0,0.08) !important;
+        }
+        body.lite-mode .calendar-nav-btn {
+            background: rgba(0, 0, 0, 0.05) !important;
+            color: #334155 !important;
+        }
+        body.lite-mode .calendar-nav-btn:hover {
+            background: rgba(0, 0, 0, 0.1) !important;
+            color: #0f172a !important;
+        }
+        body.lite-mode .calendar-day-header {
+            color: rgba(0, 0, 0, 0.4) !important;
+        }
+        body.lite-mode .calendar-day {
+            color: rgba(0, 0, 0, 0.25) !important;
+        }
+        body.lite-mode .calendar-day.has-data {
+            background: rgba(0, 0, 0, 0.04) !important;
+            border: 1px solid rgba(0, 0, 0, 0.12) !important;
+            color: #1e293b !important;
+        }
+        body.lite-mode .calendar-day.has-data:hover {
+            background: var(--accent-theme) !important;
+            color: #ffffff !important;
+        }
+        body.lite-mode .calendar-day.active-day {
+            background: var(--primary-theme) !important;
+            color: #ffffff !important;
+        }
 
         /* ============ ANIMATED BACKGROUND ============ */
         .bg-canvas {
@@ -304,6 +446,296 @@
             mix-blend-mode: multiply;
         }
 
+        /* ============ THEME SELECTOR MODAL ============ */
+        .theme-selector-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 99999;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .theme-selector-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+        }
+        .theme-selector-panel {
+            width: 92vw;
+            max-width: 680px;
+            max-height: 85vh;
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.98));
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: themeModalIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes themeModalIn {
+            from { transform: scale(0.9) translateY(30px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        .theme-selector-header {
+            padding: 24px 28px 0;
+            flex-shrink: 0;
+        }
+        .theme-selector-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+        .theme-selector-title h2 {
+            font-size: 20px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #f8fafc, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+            margin: 0;
+        }
+        .theme-close-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 18px;
+        }
+        .theme-close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: rotate(90deg);
+        }
+        .theme-mode-tabs {
+            display: flex;
+            gap: 4px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 14px;
+            padding: 4px;
+            margin-bottom: 14px;
+        }
+        .theme-mode-tab {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 11px;
+            border: none;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.4);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .theme-mode-tab.active {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .theme-mode-tab:hover:not(.active) {
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .theme-search-box {
+            width: 100%;
+            padding: 12px 18px 12px 42px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            color: white;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.3s;
+            margin-bottom: 6px;
+            box-sizing: border-box;
+        }
+        .theme-search-box:focus {
+            border-color: var(--accent-theme, #0891b2);
+            box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.15);
+        }
+        .theme-search-box::placeholder {
+            color: rgba(255, 255, 255, 0.25);
+        }
+        .theme-search-wrap {
+            position: relative;
+            margin-bottom: 8px;
+        }
+        .theme-search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            color: rgba(255, 255, 255, 0.25);
+            pointer-events: none;
+        }
+        .theme-count {
+            font-size: 10px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 0.05em;
+            text-align: right;
+            padding: 2px 4px 8px;
+        }
+        .theme-grid-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 28px 20px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.1) transparent;
+        }
+        .theme-grid-scroll::-webkit-scrollbar { width: 4px; }
+        .theme-grid-scroll::-webkit-scrollbar-track { background: transparent; }
+        .theme-grid-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+            gap: 12px;
+        }
+        .theme-card {
+            border-radius: 16px;
+            padding: 14px;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.04);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .theme-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+        }
+        .theme-card:hover {
+            transform: translateY(-4px) scale(1.03);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+        .theme-card:hover::before { opacity: 1; }
+        .theme-card.selected {
+            border-color: var(--accent-theme, #0891b2) !important;
+            box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.2), 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .theme-card.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            background: var(--accent-theme, #0891b2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 900;
+            color: white;
+        }
+        .theme-swatches {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 10px;
+        }
+        .theme-swatch {
+            flex: 1;
+            height: 28px;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+        .theme-swatch:first-child { border-radius: 8px 4px 4px 8px; }
+        .theme-swatch:last-child { border-radius: 4px 8px 8px 4px; }
+        .theme-card:hover .theme-swatch { transform: scaleY(1.15); }
+        .theme-card-name {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .theme-selector-footer {
+            padding: 16px 28px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        .theme-random-btn {
+            padding: 10px 22px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.7);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .theme-random-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+        .theme-apply-btn {
+            padding: 10px 28px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, var(--primary-theme, #164e63), var(--accent-theme, #0891b2));
+            color: white;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 15px rgba(8, 145, 178, 0.3);
+        }
+        .theme-apply-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(8, 145, 178, 0.4);
+            filter: brightness(1.1);
+        }
+        @media (max-width: 480px) {
+            .theme-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .theme-selector-panel { max-height: 90vh; border-radius: 20px; }
+            .theme-selector-header { padding: 18px 18px 0; }
+            .theme-grid-scroll { padding: 0 18px 16px; }
+            .theme-selector-footer { padding: 12px 18px; }
+        }
+
         /* Disable ALL wrapper styling for HTML2Canvas JPG export */
         .capturing .premium-date-wrapper {
             padding: 0 !important;
@@ -318,6 +750,18 @@
         .capturing .premium-date-wrapper::before,
         .capturing .premium-date-wrapper .premium-date-glass {
             display: none !important;
+        }
+
+        /* Fix: Neutralize gradient-text on .text-huge for html2canvas */
+        .capturing .text-huge {
+            background: none !important;
+            -webkit-background-clip: unset !important;
+            -webkit-text-fill-color: unset !important;
+            background-clip: unset !important;
+            color: var(--primary-theme) !important;
+        }
+        body.lite-mode .capturing .text-huge {
+            color: #0f172a !important;
         }
 
         /* ============ TEXT STYLES ============ */
@@ -999,7 +1443,7 @@
             transition: all 0.1s ease;
         }
 
-        body.lite-mode .btn-util:not(.btn-save):not(.btn-special-3d) {
+        body.lite-mode .btn-util:not(.btn-save):not(.btn-special-3d):not(.btn-golden) {
             background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
             border: 1px solid rgba(0, 0, 0, 0.04) !important;
             box-shadow: 
@@ -1010,7 +1454,7 @@
             color: #64748b !important;
         }
 
-        body.lite-mode .btn-util:not(.btn-save):not(.btn-special-3d):hover {
+        body.lite-mode .btn-util:not(.btn-save):not(.btn-special-3d):not(.btn-golden):hover {
             transform: translateY(-6px);
             box-shadow: 
                 0 9px 0 #cbd5e1,
@@ -1020,7 +1464,7 @@
             background: #ffffff !important;
         }
 
-        body.lite-mode .btn-util:not(.btn-save):not(.btn-special-3d):active {
+        body.lite-mode .btn-util:not(.btn-save):not(.btn-special-3d):not(.btn-golden):active {
             box-shadow: 0 0 0 #cbd5e1, 0 2px 8px rgba(15, 23, 42, 0.1) !important;
         }
 
@@ -1187,8 +1631,133 @@
 
         .controls-divider {
             height: 1px;
-            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.15) 0%, transparent 100%);
-            margin: 10px 4px;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.12) 0%, transparent 100%);
+            margin: 4px 4px;
+        }
+
+        /* ── Controls: Icon + Label layout ── */
+        .btn-util {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            width: 52px;
+            height: auto;
+            min-height: 52px;
+            padding: 9px 4px 7px;
+            color: rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+            position: relative;
+            box-shadow: 
+                0 6px 0 #020617,
+                0 8px 15px rgba(0,0,0,0.4),
+                inset 0 2px 0 rgba(255,255,255,0.08);
+            transform: translateY(-3px);
+            z-index: 1;
+        }
+
+        .btn-util-label {
+            font-size: 6.5px;
+            font-weight: 900;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.35);
+            line-height: 1;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            pointer-events: none;
+        }
+
+        .btn-util:hover .btn-util-label {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Teal square RND button */
+        .btn-rnd {
+            background: linear-gradient(135deg, #0f766e, #0891b2) !important;
+            color: #a7f3d0 !important;
+            border: none !important;
+            box-shadow: 
+                0 6px 0 #065f46,
+                0 8px 15px rgba(8, 145, 178, 0.35),
+                inset 0 2px 0 rgba(255,255,255,0.15) !important;
+        }
+
+        .btn-rnd:hover {
+            background: linear-gradient(135deg, #0d9488, #0ea5e9) !important;
+            box-shadow: 
+                0 9px 0 #065f46,
+                0 14px 25px rgba(8, 145, 178, 0.5),
+                inset 0 2px 0 rgba(255,255,255,0.25) !important;
+        }
+
+        .btn-rnd .btn-util-label {
+            color: rgba(167, 243, 208, 0.7);
+        }
+
+        body.lite-mode .btn-rnd {
+            background: linear-gradient(135deg, #0f766e, #0891b2) !important;
+            color: white !important;
+            border: none !important;
+        }
+
+        /* Lite mode: btn-util-label */
+        body.lite-mode .btn-util-label {
+            color: rgba(0, 0, 0, 0.35);
+        }
+        body.lite-mode .btn-util:hover .btn-util-label {
+            color: #0f172a;
+        }
+
+        /* ─── Speed Dial Panel ─── */
+        .ctrl-trigger {
+            position: relative;
+            overflow: hidden;
+        }
+        .ctrl-icon {
+            width: 20px;
+            height: 20px;
+            position: absolute;
+            transition: opacity 0.28s ease, transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .ctrl-icon-menu  { opacity: 1; transform: rotate(0deg)   scale(1); }
+        .ctrl-icon-close { opacity: 0; transform: rotate(-180deg) scale(0.3); }
+        .ctrl-trigger.active .ctrl-icon-menu  { opacity: 0; transform: rotate(180deg) scale(0.3); }
+        .ctrl-trigger.active .ctrl-icon-close { opacity: 1; transform: rotate(0deg)   scale(1); }
+        .ctrl-trigger.active {
+            background: linear-gradient(135deg, #1e40af, #3b82f6) !important;
+            color: white !important;
+            box-shadow: 0 6px 0 #1e3a8a, 0 8px 20px rgba(59,130,246,0.4), inset 0 2px 0 rgba(255,255,255,0.25) !important;
+            border-color: rgba(59,130,246,0.4) !important;
+        }
+        .ctrl-trigger.active .btn-util-label { color: rgba(255,255,255,0.8); }
+
+        /* Speed Dial - grid reveal */
+        .ctrl-speed-wrap {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .ctrl-speed-wrap.open { grid-template-rows: 1fr; }
+        .ctrl-speed-inner {
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-height: 0;
+        }
+        .ctrl-item {
+            opacity: 0;
+            transform: translateY(-14px) scale(0.85);
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.48s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .ctrl-item.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
 
         /* ============ TOOLTIPS ============ */
@@ -2090,71 +2659,126 @@
             Armature RND
             <span class="tab-badge empty" id="badge-armature-rnd">EMPTY</span>
         </button>
+
+        <button class="tab-btn" onclick="switchPage('archive-fan')" id="tab-fan">
+            <svg class="tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            Fan Assemble
+            <span class="tab-badge empty" id="badge-fan">EMPTY</span>
+        </button>
     </nav>
 
     <!-- Theme and Global Controls (Available on all pages) -->
     <div class="controls-panel left-panel no-print" id="theme-controls">
         <!-- Theme -->
-        <button onclick="randomizeTheme()" class="btn-util" title="Theme">
+        <button onclick="openThemeSelector()" class="btn-util" title="Theme">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
             </svg>
         </button>
-        <!-- Lite Mode -->
-        <button onclick="toggleLiteMode()" class="btn-util" title="Lite Mode">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-            </svg>
-        </button>
+
     </div>
 
     <!-- ============ PAGE 1: REPORT GENERATOR ============ -->
     <div class="page-content active" id="page-generator">
 
         <div class="controls-panel no-print" id="generator-controls">
-            <!-- Save to Archive -->
-            <button onclick="takeScreenshot(true)" class="btn-util btn-save" title="Save & Sync to Cloud" id="btn-save-report">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+
+            <!-- ☰ Trigger — always visible -->
+            <button class="btn-util ctrl-trigger" id="ctrl-toggle-btn" onclick="toggleControlPanel()" title="Tools">
+                <svg class="ctrl-icon ctrl-icon-menu" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+                </svg>
+                <svg class="ctrl-icon ctrl-icon-close" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
             </button>
-            <div class="controls-divider"></div>
-            <!-- Daily Target (Fixed at 1600) -->
-            <div style="background: rgba(15, 23, 42, 0.4); padding: 5px 10px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05); display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                <span style="font-size: 8px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-theme); margin-bottom: 3px;">Day Target</span>
-                <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 900; color: white; letter-spacing: 0.05em;">1600</span>
-                <input type="hidden" id="day-target-input" value="1600">
+
+            <!-- Speed Dial Wrapper -->
+            <div class="ctrl-speed-wrap" id="ctrl-speed-wrap">
+                <div class="ctrl-speed-inner">
+
+                    <div class="ctrl-item"><div class="controls-divider" style="margin-top:4px;"></div></div>
+
+                    <!-- SAVE -->
+                    <div class="ctrl-item">
+                        <button onclick="takeScreenshot(true)" class="btn-util btn-save" title="Save &amp; Sync" id="btn-save-report">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+                            </svg>
+                            <span class="btn-util-label" style="color:rgba(255,255,255,0.75);">SAVE</span>
+                        </button>
+                    </div>
+
+                    <!-- TARGET -->
+                    <div class="ctrl-item">
+                        <div style="background:rgba(15,23,42,0.45);padding:8px 6px 7px;border-radius:14px;border:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;align-items:center;justify-content:center;width:52px;box-sizing:border-box;">
+                            <span style="font-size:6.5px;font-weight:900;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent-theme);margin-bottom:3px;font-family:'Plus Jakarta Sans',sans-serif;">TARGET</span>
+                            <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:900;color:white;letter-spacing:-0.02em;line-height:1;">1600</span>
+                            <input type="hidden" id="day-target-input" value="1600">
+                        </div>
+                    </div>
+
+                    <div class="ctrl-item"><div class="controls-divider"></div></div>
+
+                    <!-- IMPORT -->
+                    <div class="ctrl-item">
+                        <button onclick="toggleModal(true)" class="btn-util" title="Import Data">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75" />
+                            </svg>
+                            <span class="btn-util-label">IMPORT</span>
+                        </button>
+                    </div>
+
+                    <!-- EXPORT (golden) -->
+                    <div class="ctrl-item">
+                        <button onclick="takeScreenshot()" class="btn-util btn-golden" title="Download JPG">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- CLEAR -->
+                    <div class="ctrl-item">
+                        <button onclick="refreshData()" class="btn-util" title="Clear All">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                            </svg>
+                            <span class="btn-util-label">CLEAR</span>
+                        </button>
+                    </div>
+
+                    <div class="ctrl-item"><div class="controls-divider"></div></div>
+
+                    <!-- RND -->
+                    <div class="ctrl-item">
+                        <button onclick="switchPage('rnd-generator')" class="btn-util btn-rnd" title="Armature RND">
+                            <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+                            </svg>
+                            <span class="btn-util-label">RND</span>
+                        </button>
+                    </div>
+
+                    <div class="ctrl-item"><div class="controls-divider"></div></div>
+
+                    <!-- ALERT -->
+                    <div class="ctrl-item">
+                        <button onclick="testNotification()" class="btn-util btn-special-3d" title="Notification">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                            </svg>
+                            <span class="btn-util-label">ALERT</span>
+                        </button>
+                    </div>
+
+                </div>
             </div>
-            <div class="controls-divider"></div>
-            <button onclick="toggleModal(true)" class="btn-util" title="Import Data">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75" />
-                </svg>
-            </button>
-            <button onclick="takeScreenshot()" class="btn-util btn-golden" title="Download JPG">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"></path>
-                </svg>
-            </button>
-            <button onclick="refreshData()" class="btn-util" title="Clear All">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                </svg>
-            </button>
-            <div class="controls-divider"></div>
-            <button onclick="switchPage('rnd-generator')" class="btn-util" title="Armature RND Report" style="width: auto !important; padding: 8px 14px !important; display: flex; align-items: center; gap: 6px; border-radius: 14px; background: linear-gradient(135deg, #0f766e, #0891b2); color: white; font-size: 10px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; border: none; box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);">
-                <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
-                </svg>
-                RND
-            </button>
-            <div class="controls-divider"></div>
-            <!-- Test Notification -->
-            <button onclick="testNotification()" class="btn-util btn-special-3d" title="Test Notification">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                </svg>
-            </button>
+
         </div>
 
         <div class="screenshot-wrapper" id="capture-area">
@@ -2323,6 +2947,30 @@
             </div>
             <div class="archive-calendar-sidebar no-print">
                 <div id="desktop-calendar-armature"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ PAGE: FAN ASSEMBLE ARCHIVE ============ -->
+    <div class="page-content" id="page-archive-fan">
+        <div class="archive-layout-wrapper">
+            <div class="archive-main-column archive-container">
+                <div class="archive-header">
+                    <div>
+                        <div class="archive-title">🌀 Fan Assemble Archive</div>
+                        <div class="archive-subtitle">Fan Assemble Report — Last Saved Version</div>
+                    </div>
+                    <button onclick="switchPage('generator')" class="btn-util archive-btn-back" title="Back to Generator">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">Generator</span>
+                    </button>
+                </div>
+                <div id="archive-content-fan">
+                    <!-- Dynamically rendered -->
+                </div>
+            </div>
+            <div class="archive-calendar-sidebar no-print">
+                <div id="desktop-calendar-fan"></div>
             </div>
         </div>
     </div>
@@ -2509,11 +3157,43 @@
                             <option value="auto" style="background: #1e293b; color: white;">Auto Desktop Magic ✨</option>
                             <option value="accessories" style="background: #1e293b; color: white;">📦 Accessories</option>
                             <option value="armature" style="background: #1e293b; color: white;">⚙️ Armature</option>
+                            <option value="fan" style="background: #1e293b; color: white;">🌀 Fan Assemble</option>
                         </select>
                         <button onclick="toggleModal(false)" style="padding: 10px 20px; font-weight: 800; color: rgba(255,255,255,0.4); text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; border: none; background: none; cursor: pointer; border-radius: 10px; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)';this.style.color='rgba(255,255,255,0.7)'" onmouseout="this.style.background='none';this.style.color='rgba(255,255,255,0.4)'">Cancel</button>
                         <button onclick="processPastedData()" style="padding: 10px 24px; background: linear-gradient(135deg, var(--primary-theme), var(--accent-theme)); color: white; border: none; border-radius: 12px; font-weight: 800; text-transform: uppercase; font-size: 11px; letter-spacing: 0.08em; cursor: pointer; box-shadow: 0 6px 20px rgba(8, 145, 178, 0.3); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);" onmouseover="this.style.transform='translateY(-2px) scale(1.02)';this.style.boxShadow='0 10px 28px rgba(8,145,178,0.4)'" onmouseout="this.style.transform='none';this.style.boxShadow='0 6px 20px rgba(8,145,178,0.3)'">Inject Data</button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ THEME SELECTOR MODAL ============ -->
+    <div class="theme-selector-overlay" id="theme-selector-overlay" onclick="if(event.target===this)closeThemeSelector()">
+        <div class="theme-selector-panel">
+            <div class="theme-selector-header">
+                <div class="theme-selector-title">
+                    <h2>🎨 Theme Gallery</h2>
+                    <button class="theme-close-btn" onclick="closeThemeSelector()">✕</button>
+                </div>
+                <div class="theme-mode-tabs">
+                    <button class="theme-mode-tab active" id="theme-tab-dark" onclick="switchThemeTab('dark')">🌙 Dark Themes</button>
+                    <button class="theme-mode-tab" id="theme-tab-lite" onclick="switchThemeTab('lite')">☀️ Lite Themes</button>
+                </div>
+                <div class="theme-search-wrap">
+                    <svg class="theme-search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input type="text" class="theme-search-box" id="theme-search" placeholder="Search themes..." oninput="filterThemes()">
+                </div>
+                <div class="theme-count" id="theme-count"></div>
+            </div>
+            <div class="theme-grid-scroll">
+                <div class="theme-grid" id="theme-grid"></div>
+            </div>
+            <div class="theme-selector-footer">
+                <button class="theme-random-btn" onclick="randomThemeFromSelector()">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3"/></svg>
+                    Surprise Me
+                </button>
+                <button class="theme-apply-btn" onclick="closeThemeSelector()">Done</button>
             </div>
         </div>
     </div>
@@ -2528,6 +3208,7 @@
         </div>
     </div>
 
+    <script src="themes.js"></script>
     <script type="module">
         let inventoryData = [];
         let currentReportType = 'initial'; // tracks: 'accessories', 'assemble', 'armature', 'initial'
@@ -2535,7 +3216,8 @@
         window.STORAGE_KEYS = {
             accessories: 'mep_report_accessories',
             armature: 'mep_report_armature',
-            'armature-rnd': 'mep_report_armature_rnd'
+            'armature-rnd': 'mep_report_armature_rnd',
+            fan: 'mep_report_fan'
         };
 
         const REPORT_CONFIG = {
@@ -2562,45 +3244,18 @@
                 headers: ['SL','Stator Weight','Starting Winding Turn','Starting Wire SWG','Starting Super Wire Weight','Starting Resistance','Running Winding Turn','Running Wire SWG','Running Super Wire Weight','Running Resistance','Super Wire Conductive Dia','Super Wire Total Dia','Total Super Wire Weight','Total Fiber Weight','Total Resistance','Total Armature Weight'],
                 themeIndex: 0,
                 emoji: '🔬'
+            },
+            fan: {
+                title: 'FAN ASSEMBLE REPORT',
+                sigName: 'Bithi Rani',
+                sigDesc: 'Sub Assistant Engineer',
+                headers: ['Opening', 'Input', 'Rejection', 'Output', 'Closing'],
+                themeIndex: 2,
+                emoji: '🌀'
             }
         };
 
-        const themes = [
-            // Original 6
-            { name: "Midnight Teal",   bg: '#0c1222', primary: '#164e63', accent: '#0891b2', text: '#cffafe', glow: 'rgba(8, 145, 178, 0.15)' },
-            { name: "Forest Depth",    bg: '#0a1612', primary: '#1a4d2e', accent: '#4f6f52', text: '#f0fdf4', glow: 'rgba(79, 111, 82, 0.15)' },
-            { name: "Espresso Night",  bg: '#151010', primary: '#43302b', accent: '#624a42', text: '#fffaf3', glow: 'rgba(98, 74, 66, 0.15)' },
-            { name: "Deep Ocean",      bg: '#0a1020', primary: '#102a43', accent: '#243b53', text: '#f0f4f8', glow: 'rgba(36, 59, 83, 0.2)' },
-            { name: "Carbon Steel",    bg: '#0f1218', primary: '#1e293b', accent: '#475569', text: '#f8fafc', glow: 'rgba(71, 85, 105, 0.15)' },
-            { name: "Crimson Dark",    bg: '#150a0a', primary: '#7f1d1d', accent: '#991b1b', text: '#fef2f2', glow: 'rgba(153, 27, 27, 0.12)' },
-            // New Premium Variations
-            { name: "Neon Amethyst",   bg: '#100a16', primary: '#581c87', accent: '#9333ea', text: '#faf5ff', glow: 'rgba(147, 51, 234, 0.15)' },
-            { name: "Cyber Gold",      bg: '#141208', primary: '#854d0e', accent: '#ca8a04', text: '#fefce8', glow: 'rgba(202, 138, 4, 0.15)' },
-            { name: "Toxic Lime",      bg: '#0a1608', primary: '#166534', accent: '#16a34a', text: '#f0fdf4', glow: 'rgba(22, 163, 74, 0.15)' },
-            { name: "Abyssal Indigo",  bg: '#0a0a1a', primary: '#312e81', accent: '#4f46e5', text: '#eef2ff', glow: 'rgba(79, 70, 229, 0.15)' },
-            { name: "Solar Flare",     bg: '#160a0a', primary: '#9a3412', accent: '#ea580c', text: '#fff7ed', glow: 'rgba(234, 88, 12, 0.15)' },
-            { name: "Cosmic Pink",     bg: '#160a12', primary: '#9d174d', accent: '#db2777', text: '#fdf2f8', glow: 'rgba(219, 39, 119, 0.15)' },
-            { name: "Electric Cyan",   bg: '#081416', primary: '#155e75', accent: '#06b6d4', text: '#ecfeff', glow: 'rgba(6, 182, 212, 0.15)' },
-            { name: "Void Violet",     bg: '#120816', primary: '#4c1d95', accent: '#7c3aed', text: '#f5f3ff', glow: 'rgba(124, 58, 237, 0.15)' },
-            { name: "Volcanic Ruby",   bg: '#16080a', primary: '#9f1239', accent: '#e11d48', text: '#fff1f2', glow: 'rgba(225, 29, 72, 0.15)' },
-            { name: "Dark Emerald",    bg: '#081610', primary: '#065f46', accent: '#10b981', text: '#ecfdf5', glow: 'rgba(16, 185, 129, 0.15)' },
-            { name: "Nebula Fuchsia",  bg: '#160a14', primary: '#86198f', accent: '#c026d3', text: '#fdf4ff', glow: 'rgba(192, 38, 211, 0.15)' },
-            { name: "Obsidian Silver", bg: '#101214', primary: '#3f3f46', accent: '#71717a', text: '#f4f4f5', glow: 'rgba(113, 113, 122, 0.15)' },
-            { name: "Twilight Blue",   bg: '#0a121a', primary: '#1e3a8a', accent: '#2563eb', text: '#eff6ff', glow: 'rgba(37, 99, 235, 0.15)' },
-            { name: "Desert Bronze",   bg: '#14100c', primary: '#78350f', accent: '#b45309', text: '#fffbeb', glow: 'rgba(180, 83, 9, 0.15)' },
-            { name: "Aurora Mint",     bg: '#081a18', primary: '#115e59', accent: '#14b8a6', text: '#f0fdfa', glow: 'rgba(20, 184, 166, 0.15)' },
-            { name: "Blood Moon",      bg: '#1a0a0a', primary: '#7f1d1d', accent: '#dc2626', text: '#fef2f2', glow: 'rgba(220, 38, 38, 0.15)' },
-            { name: "Cyber Magma",     bg: '#1a0515', primary: '#831843', accent: '#be185d', text: '#fdf2f8', glow: 'rgba(190, 24, 93, 0.15)' },
-            { name: "Ghost White",     bg: '#1e242a', primary: '#64748b', accent: '#94a3b8', text: '#f8fafc', glow: 'rgba(148, 163, 184, 0.15)' },
-            // Bright & Colorful Themes
-            { name: "Tropical Paradise", bg: '#1a0b06', primary: '#c05621', accent: '#ed8936', text: '#ffedd5', glow: 'rgba(237, 137, 54, 0.15)' },
-            { name: "Neon Cyberpunk",  bg: '#090514', primary: '#b83280', accent: '#f472b6', text: '#fce7f3', glow: 'rgba(244, 114, 182, 0.15)' },
-            { name: "Sunny Melon",     bg: '#141108', primary: '#b45309', accent: '#f59e0b', text: '#fef3c7', glow: 'rgba(245, 158, 11, 0.15)' },
-            { name: "Aqua Marine",     bg: '#051414', primary: '#0369a1', accent: '#0ea5e9', text: '#e0f2fe', glow: 'rgba(14, 165, 233, 0.15)' },
-            { name: "Electric Violet", bg: '#0e0514', primary: '#5b21b6', accent: '#a78bfa', text: '#ede9fe', glow: 'rgba(167, 139, 250, 0.15)' },
-            // Golden Theme
-            { name: "Royal Gold",      bg: '#14110a', primary: '#92400e', accent: '#f59e0b', text: '#fef3c7', glow: 'rgba(245, 158, 11, 0.20)' }
-        ];
+        // Themes loaded from external themes.js (80+ premium themes)
 
         // ============ PAGE SWITCHING ============
         function switchPage(pageId) {
@@ -2617,7 +3272,8 @@
                 'archive-accessories': 'tab-accessories',
                 'archive-armature': 'tab-armature',
                 'rnd-generator': 'tab-generator',
-                'archive-armature-rnd': 'tab-rnd'
+                'archive-armature-rnd': 'tab-rnd',
+                'archive-fan': 'tab-fan'
             };
             document.getElementById(tabMap[pageId]).classList.add('active');
 
@@ -2756,6 +3412,33 @@
             }
         };
 
+        // ============ SPEED DIAL TOGGLE ============
+        window.toggleControlPanel = function() {
+            const wrap = document.getElementById('ctrl-speed-wrap');
+            const btn  = document.getElementById('ctrl-toggle-btn');
+            if (!wrap) return;
+            const items  = wrap.querySelectorAll('.ctrl-item');
+            const isOpen = wrap.classList.contains('open');
+
+            if (isOpen) {
+                // Collapse: fade items out in reverse order, then grid-collapse
+                [...items].reverse().forEach((item, i) => {
+                    setTimeout(() => item.classList.remove('visible'), i * 28);
+                });
+                setTimeout(() => {
+                    wrap.classList.remove('open');
+                }, items.length * 28 + 110);
+                btn.classList.remove('active');
+            } else {
+                // Expand: trigger grid open, then stagger each item in
+                wrap.classList.add('open');
+                btn.classList.add('active');
+                items.forEach((item, i) => {
+                    setTimeout(() => item.classList.add('visible'), i * 52 + 90);
+                });
+            }
+        };
+
         // ============ RENDER ARCHIVE PAGE ============
         function renderArchivePage(type) {
           try {
@@ -2866,25 +3549,42 @@
                 const opening = Number(item.opening) || 0;
                 const production = Number(item.production) || 0;
                 const consumption = Number(item.consumption) || 0;
-                const closing = opening + production - consumption;
-                
-                // Stock Cover as Days & Hours (1 day = 11 hours)
-                let stockCoverText = '0D 0H';
-                if (closing > 0 && targetPerDay > 0) {
-                    const totalDays = closing / targetPerDay;
-                    const wholeDays = Math.floor(totalDays);
-                    const remainingHours = Math.round((totalDays - wholeDays) * 11);
-                    stockCoverText = `${wholeDays}D ${remainingHours}H`;
+
+                let row6Html = '';
+                let closing = 0;
+
+                if (type === 'fan') {
+                    // Fan Assemble: Opening | Input | Rejection | Output | Closing
+                    const output = Number(item.output) || 0;
+                    closing = opening + production - output;
+                    row6Html = `<td style="font-weight: 900; background: rgba(8,145,178,0.06); border-left: 3px solid var(--primary-theme);">${closing.toLocaleString()}</td>`;
+                } else {
+                    // Accessories / Armature: Stock Cover as Days & Hours
+                    closing = opening + production - consumption;
+                    let stockCoverText = '0D 0H';
+                    if (closing > 0 && targetPerDay > 0) {
+                        const totalDays = closing / targetPerDay;
+                        const wholeDays = Math.floor(totalDays);
+                        const remainingHours = Math.round((totalDays - wholeDays) * 11);
+                        stockCoverText = `${wholeDays}D ${remainingHours}H`;
+                    }
+                    row6Html = `<td style="font-weight: 900; color: #a78bfa; font-family: 'JetBrains Mono', monospace;">${stockCoverText}</td>`;
                 }
-                
+
+                const col4Val = type === 'fan' ? (Number(item.output) || 0) : consumption;
+                const col3Val = production;
+                const col4Style = type === 'fan' ? 'font-weight: 900;' : 'color: #f43f5e; font-weight: 900;';
+                const col5Val = type === 'fan' ? consumption : closing;
+                const col5Style = type === 'fan' ? 'color: #f43f5e; font-weight: 900;' : 'font-weight: 900; background: rgba(255,255,255,0.03); border-right: 1px solid rgba(255,255,255,0.05);';
+
                 tableRows += `
                     <tr style="animation: rowFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${Math.min(idx, 10) * 0.05}s backwards;">
                         <td>${item.name || '—'}</td>
                         <td>${opening.toLocaleString()}</td>
-                        <td style="color: var(--accent-theme); font-weight: 900;">${production.toLocaleString()}</td>
-                        <td style="color: #f43f5e; font-weight: 900;">${consumption.toLocaleString()}</td>
-                        <td style="font-weight: 900; background: rgba(255, 255, 255, 0.03); border-right: 1px solid rgba(255,255,255,0.05);">${closing.toLocaleString()}</td>
-                        <td style="font-weight: 900; color: #a78bfa; font-family: 'JetBrains Mono', monospace;">${stockCoverText}</td>
+                        <td style="color: var(--accent-theme); font-weight: 900;">${col3Val.toLocaleString()}</td>
+                        <td style="${col4Style}">${(type === 'fan' ? consumption : col4Val).toLocaleString()}</td>
+                        <td style="${col5Style}">${col5Val.toLocaleString()}</td>
+                        ${row6Html}
                     </tr>
                 `;
             });
@@ -2975,7 +3675,8 @@
         window.calendarNavDate = {
             accessories: new Date(),
             armature: new Date(),
-            'armature-rnd': new Date()
+            'armature-rnd': new Date(),
+            fan: new Date()
         };
 
         function renderCalendarWidget(type) {
@@ -3054,6 +3755,7 @@
                 let activeType = 'accessories';
                 if(document.getElementById('page-archive-armature').classList.contains('active')) activeType = 'armature';
                 if(document.getElementById('page-archive-armature-rnd').classList.contains('active')) activeType = 'armature-rnd';
+                if(document.getElementById('page-archive-fan').classList.contains('active')) activeType = 'fan';
                 renderCalendarWidget(activeType);
                 mod.classList.add('active');
             } else {
@@ -3129,7 +3831,7 @@
 
         // ============ UPDATE BADGES ============
         function updateBadges() {
-            ['accessories', 'armature', 'armature-rnd'].forEach(type => {
+            ['accessories', 'armature', 'armature-rnd', 'fan'].forEach(type => {
                 const badge = document.getElementById('badge-' + type);
                 const storedRaw = localStorage.getItem(window.STORAGE_KEYS[type]);
                 if (storedRaw) {
@@ -3184,12 +3886,19 @@
             orbs[2].style.background = `radial-gradient(circle, ${theme.accent}25, transparent 70%)`;
         }
 
+        let _currentThemeMode = 'dark';
+        let _selectedThemeIndex = -1;
+
         function randomizeTheme(silent = false) {
-            if (document.body.classList.contains('lite-mode')) {
-                toggleLiteMode(); // Turn off lite mode when randomizing dark themes
-            }
             const random = themes[Math.floor(Math.random() * themes.length)];
+            const isLite = random.mode === 'lite';
+            if (isLite && !document.body.classList.contains('lite-mode')) {
+                document.body.classList.add('lite-mode');
+            } else if (!isLite && document.body.classList.contains('lite-mode')) {
+                document.body.classList.remove('lite-mode');
+            }
             applyTheme(random);
+            _selectedThemeIndex = themes.indexOf(random);
             if (!silent) {
                 showToast(`${random.name} Theme Applied`);
             }
@@ -3202,6 +3911,88 @@
             } else {
                 showToast("Dark Mode Restored");
             }
+        }
+
+        // ============ THEME SELECTOR FUNCTIONS ============
+        function openThemeSelector() {
+            const overlay = document.getElementById('theme-selector-overlay');
+            overlay.style.display = 'flex';
+            requestAnimationFrame(() => overlay.classList.add('active'));
+            _currentThemeMode = document.body.classList.contains('lite-mode') ? 'lite' : 'dark';
+            document.getElementById('theme-tab-dark').classList.toggle('active', _currentThemeMode === 'dark');
+            document.getElementById('theme-tab-lite').classList.toggle('active', _currentThemeMode === 'lite');
+            document.getElementById('theme-search').value = '';
+            renderThemeGrid();
+        }
+
+        function closeThemeSelector() {
+            const overlay = document.getElementById('theme-selector-overlay');
+            overlay.classList.remove('active');
+            setTimeout(() => { overlay.style.display = 'none'; }, 300);
+        }
+
+        function switchThemeTab(mode) {
+            _currentThemeMode = mode;
+            document.getElementById('theme-tab-dark').classList.toggle('active', mode === 'dark');
+            document.getElementById('theme-tab-lite').classList.toggle('active', mode === 'lite');
+            document.getElementById('theme-search').value = '';
+            renderThemeGrid();
+        }
+
+        function filterThemes() {
+            renderThemeGrid();
+        }
+
+        function renderThemeGrid() {
+            const grid = document.getElementById('theme-grid');
+            const search = (document.getElementById('theme-search').value || '').toLowerCase().trim();
+            const filtered = themes.filter(t => {
+                const mode = t.mode || 'dark';
+                if (mode !== _currentThemeMode) return false;
+                if (search && !t.name.toLowerCase().includes(search)) return false;
+                return true;
+            });
+            document.getElementById('theme-count').textContent = `${filtered.length} theme${filtered.length !== 1 ? 's' : ''}`;
+            grid.innerHTML = filtered.map((t, i) => {
+                const idx = themes.indexOf(t);
+                const sel = idx === _selectedThemeIndex ? ' selected' : '';
+                return `<div class="theme-card${sel}" style="background:${t.bg};" onclick="selectThemeCard(${idx})" title="${t.name}">
+                    <div class="theme-swatches">
+                        <div class="theme-swatch" style="background:${t.primary};"></div>
+                        <div class="theme-swatch" style="background:${t.accent};"></div>
+                        <div class="theme-swatch" style="background:${t.text};opacity:0.7;"></div>
+                    </div>
+                    <div class="theme-card-name" style="color:${t.text};">${t.name}</div>
+                </div>`;
+            }).join('');
+        }
+
+        function selectThemeCard(idx) {
+            const theme = themes[idx];
+            if (!theme) return;
+            _selectedThemeIndex = idx;
+            const isLite = theme.mode === 'lite';
+            if (isLite && !document.body.classList.contains('lite-mode')) {
+                document.body.classList.add('lite-mode');
+            } else if (!isLite && document.body.classList.contains('lite-mode')) {
+                document.body.classList.remove('lite-mode');
+            }
+            applyTheme(theme);
+            renderThemeGrid();
+            showToast(`${theme.name} Applied`);
+        }
+
+        function randomThemeFromSelector() {
+            const filtered = themes.filter(t => (t.mode || 'dark') === _currentThemeMode);
+            if (filtered.length === 0) return;
+            const random = filtered[Math.floor(Math.random() * filtered.length)];
+            const idx = themes.indexOf(random);
+            selectThemeCard(idx);
+            // Scroll the selected card into view
+            setTimeout(() => {
+                const card = document.querySelector('.theme-card.selected');
+                if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
         }
 
 
@@ -3288,6 +4079,16 @@
                 h4.innerText = "Consumption";
                 h5.innerText = "Closing";
                 h6.innerText = "Stock Cover";
+            } else if (type === 'fan') {
+                setReportTitle('Fan Assemble Report', 'MEP FAN LTD • Assembly Division');
+                sig.innerText = "Bithi Rani";
+                nameLine.innerText = "Bithi Rani";
+                descLine.innerText = "Sub Assistant Engineer";
+                h2.innerText = "Opening";
+                h3.innerText = "Input";
+                h4.innerText = "Rejection";
+                h5.innerText = "Output";
+                h6.innerText = "Closing";
             } else {
                 setReportTitle('Awaiting Report Type...', 'MEP FAN LTD • Inventory Ledger');
                 sig.innerText = "...";
@@ -3322,9 +4123,22 @@
                     if (autoDetectActive && namePart) {
                         const lowName = namePart.toLowerCase();
                         if (lowName.includes('armature')) reportType = 'armature';
+                        // Auto-detect fan assemble: 5+ numeric cols with bearing/capacitor/fan assemble keywords
+                        if (numericParts.length >= 4 && (lowName.includes('bearing') || lowName.includes('capacitor') || lowName.includes('assemble') || lowName.includes('fan'))) {
+                            reportType = 'fan';
+                        }
                     }
 
-                    if (numericParts.length >= 3) {
+                    if (reportType === 'fan' && numericParts.length >= 4) {
+                        // Fan Assemble: Opening, Input, Rejection, Output (Closing is computed)
+                        newItems.push({
+                            name: namePart,
+                            opening: parseFloat(numericParts[0].replace(/,/g, '')) || 0,
+                            production: parseFloat(numericParts[1].replace(/,/g, '')) || 0, // stored as 'input'
+                            consumption: parseFloat(numericParts[2].replace(/,/g, '')) || 0, // stored as 'rejection'
+                            output: parseFloat(numericParts[3].replace(/,/g, '')) || 0
+                        });
+                    } else if (numericParts.length >= 3) {
                         newItems.push({
                             name: namePart,
                             opening: parseFloat(numericParts[0].replace(/,/g, '')) || 0,
@@ -3379,6 +4193,35 @@
             const targetPerDay = dayTargetInput && dayTargetInput.value ? Number(dayTargetInput.value) : 1;
 
             inventoryData.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.style.animationDelay = `${Math.min(index, 10) * 0.04}s`;
+
+                if (currentReportType === 'fan') {
+                    // Fan Assemble: Opening | Input | Rejection | Output | Closing
+                    const output = Number(item.output) || 0;
+                    const closing = item.opening + item.production - output;
+                    const closingStyle = closing < 0 ? 'color:#ef4444;font-weight:900;' : 'font-weight:900;';
+                    row.innerHTML = `
+                        <td class="text-pivot-body uppercase bg-white/70">
+                            <span class="lifted-text">${item.name}</span>
+                        </td>
+                        <td>
+                            <div class="static-data-box"><span class="text-gray-600">${item.opening.toLocaleString()}</span></div>
+                        </td>
+                        <td>
+                            <div class="static-data-box"><span style="color: var(--primary-theme)">${item.production.toLocaleString()}</span></div>
+                        </td>
+                        <td>
+                            <div class="static-data-box"><span class="text-rose-600">${item.consumption.toLocaleString()}</span></div>
+                        </td>
+                        <td>
+                            <div class="static-data-box"><span style="color: var(--accent-theme); font-weight: 900;">${output.toLocaleString()}</span></div>
+                        </td>
+                        <td style="border-left: 3px solid var(--primary-theme); background: rgba(8, 145, 178, 0.04)">
+                            <div class="text-pivot-body font-black tabular-nums" style="text-align: center; padding: 8px 0; display: block; ${closingStyle}">${closing.toLocaleString()}</div>
+                        </td>
+                    `;
+                } else {
                 const closing = item.opening + item.production - item.consumption;
                 
                 // Calculate stock cover as Days & Hours (1 day = 11 hours)
@@ -3389,9 +4232,6 @@
                     const remainingHours = Math.round((totalDays - wholeDays) * 11);
                     stockCoverText = `${wholeDays}D ${remainingHours}H`;
                 }
-                
-                const row = document.createElement('tr');
-                row.style.animationDelay = `${Math.min(index, 10) * 0.04}s`;
                 
                 row.innerHTML = `
                     <td class="text-pivot-body uppercase bg-white/70">
@@ -3413,6 +4253,7 @@
                         <div class="text-pivot-body font-black tabular-nums" style="text-align: center; padding: 8px 0; display: block; color: #8b5cf6;">${stockCoverText}</div>
                     </td>
                 `;
+                } // end else (non-fan)
                 container.appendChild(row);
             });
         }
@@ -3443,11 +4284,13 @@
                     backgroundClip: hugeTitle.style.backgroundClip,
                     color: hugeTitle.style.color
                 };
-                hugeTitle.style.background = 'none';
-                hugeTitle.style.webkitBackgroundClip = 'unset';
-                hugeTitle.style.webkitTextFillColor = 'unset';
-                hugeTitle.style.backgroundClip = 'unset';
-                hugeTitle.style.color = getComputedStyle(document.documentElement).getPropertyValue('--primary-theme');
+                hugeTitle.style.setProperty('background', 'none', 'important');
+                hugeTitle.style.setProperty('-webkit-background-clip', 'unset', 'important');
+                hugeTitle.style.setProperty('-webkit-text-fill-color', 'unset', 'important');
+                hugeTitle.style.setProperty('background-clip', 'unset', 'important');
+                const isLiteCapture = document.body.classList.contains('lite-mode');
+                const titleColor = isLiteCapture ? '#0f172a' : getComputedStyle(document.documentElement).getPropertyValue('--primary-theme');
+                hugeTitle.style.setProperty('color', titleColor, 'important');
             }
 
             // JPG-only: shift weekday text up inside pill
@@ -3478,6 +4321,13 @@
                 .capturing .pivot-table th::after { display: none !important; }
                 .capturing .report-type-box::before { display: none !important; }
                 .capturing .pivot-table tbody tr { animation: none !important; }
+                body.lite-mode .capturing .text-huge {
+                    background: none !important;
+                    -webkit-background-clip: unset !important;
+                    -webkit-text-fill-color: unset !important;
+                    background-clip: unset !important;
+                    color: #0f172a !important;
+                }
             `;
             document.head.appendChild(captureStyle);
 
@@ -3708,7 +4558,7 @@
             // Wait until the main script defines STORAGE_KEYS
             if (!window.STORAGE_KEYS) return;
 
-            ['accessories', 'armature', 'armature-rnd'].forEach(type => {
+            ['accessories', 'armature', 'armature-rnd', 'fan'].forEach(type => {
                 const key = window.STORAGE_KEYS[type];
                 const remoteData = data[type];
                 
@@ -4111,6 +4961,13 @@ window.loadToGenerator = loadToGenerator;
 window.applyTheme = applyTheme;
 window.randomizeTheme = randomizeTheme;
 window.toggleLiteMode = toggleLiteMode;
+window.openThemeSelector = openThemeSelector;
+window.closeThemeSelector = closeThemeSelector;
+window.switchThemeTab = switchThemeTab;
+window.filterThemes = filterThemes;
+window.renderThemeGrid = renderThemeGrid;
+window.selectThemeCard = selectThemeCard;
+window.randomThemeFromSelector = randomThemeFromSelector;
 window.refreshData = refreshData;
 window.toggleModal = toggleModal;
 window.processPastedData = processPastedData;
