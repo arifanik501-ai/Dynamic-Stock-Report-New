@@ -1760,6 +1760,21 @@
             transform: translateY(0) scale(1);
         }
 
+        /* Fix: panel must not overflow viewport when expanded */
+        .controls-panel {
+            max-height: calc(100dvh - 48px) !important;
+            overflow-y: auto !important;
+            overflow-x: visible !important;
+            scrollbar-width: none !important;
+        }
+        .controls-panel::-webkit-scrollbar { display: none; }
+
+        /* Fix: hide golden sparkle & ring inside speed dial (overflow clips them) */
+        #ctrl-speed-wrap .btn-golden[title]::before,
+        #ctrl-speed-wrap .btn-golden::after {
+            display: none !important;
+        }
+
         /* ============ TOOLTIPS ============ */
         .btn-util[title]::before {
             content: attr(title);
@@ -3443,6 +3458,22 @@
                 });
             }
         };
+
+        // Auto-collapse on outside click
+        document.addEventListener('click', function(e) {
+            const panel = document.getElementById('generator-controls');
+            const wrap  = document.getElementById('ctrl-speed-wrap');
+            const btn   = document.getElementById('ctrl-toggle-btn');
+            if (!wrap || !wrap.classList.contains('open')) return;
+            if (panel && panel.contains(e.target)) return; // clicked inside — ignore
+            // Clicked outside — collapse
+            const items = wrap.querySelectorAll('.ctrl-item');
+            [...items].reverse().forEach((item, i) => {
+                setTimeout(() => item.classList.remove('visible'), i * 28);
+            });
+            setTimeout(() => wrap.classList.remove('open'), items.length * 28 + 110);
+            if (btn) btn.classList.remove('active');
+        });
 
         // ============ RENDER ARCHIVE PAGE ============
         function renderArchivePage(type) {
