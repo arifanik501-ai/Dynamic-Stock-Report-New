@@ -98,6 +98,38 @@ const themes = [
     { name: "Coral Reef",        bg: '#120808', primary: '#b91c1c', accent: '#fb7185', text: '#ffe4e6', glow: 'rgba(251, 113, 133, 0.15)', mode: 'dark' },
     { name: "Mystic Turquoise",  bg: '#061412', primary: '#0f766e', accent: '#2dd4bf', text: '#ccfbf1', glow: 'rgba(45, 212, 191, 0.18)', mode: 'dark' },
 
+    // ─── EXPANDED DARK VOL. 2 ───
+    { name: "Hacker Terminal",   bg: '#030805', primary: '#14532d', accent: '#00ff9c', text: '#bbf7d0', glow: 'rgba(0, 255, 156, 0.22)', mode: 'dark' },
+    { name: "Retro CRT",         bg: '#050a04', primary: '#166534', accent: '#39ff14', text: '#d9f99d', glow: 'rgba(57, 255, 20, 0.20)', mode: 'dark' },
+    { name: "Dark Matter",       bg: '#05060a', primary: '#1e1b4b', accent: '#7c3aed', text: '#e0e7ff', glow: 'rgba(124, 58, 237, 0.18)', mode: 'dark' },
+    { name: "Ink Well",          bg: '#07090f', primary: '#1e293b', accent: '#38bdf8', text: '#e2e8f0', glow: 'rgba(56, 189, 248, 0.15)', mode: 'dark' },
+    { name: "Tungsten Edge",     bg: '#0a0a0e', primary: '#292524', accent: '#a8a29e', text: '#f5f5f4', glow: 'rgba(168, 162, 158, 0.14)', mode: 'dark' },
+    { name: "Gunmetal Grey",     bg: '#0b0d10', primary: '#1f2937', accent: '#9ca3af', text: '#f3f4f6', glow: 'rgba(156, 163, 175, 0.14)', mode: 'dark' },
+    { name: "Stealth Bomber",    bg: '#04060a', primary: '#0f172a', accent: '#1e40af', text: '#cbd5e1', glow: 'rgba(30, 64, 175, 0.18)', mode: 'dark' },
+    { name: "Mariana Trench",    bg: '#04081a', primary: '#0c1e3f', accent: '#1d4ed8', text: '#dbeafe', glow: 'rgba(29, 78, 216, 0.18)', mode: 'dark' },
+    { name: "Midnight Peacock",  bg: '#040e14', primary: '#0e4a6e', accent: '#14b8a6', text: '#ccfbf1', glow: 'rgba(20, 184, 166, 0.20)', mode: 'dark' },
+    { name: "Deep Amethyst",     bg: '#0c0614', primary: '#3b0764', accent: '#a855f7', text: '#f3e8ff', glow: 'rgba(168, 85, 247, 0.20)', mode: 'dark' },
+    { name: "Obsidian Gold",     bg: '#0a0805', primary: '#1c1917', accent: '#eab308', text: '#fef9c3', glow: 'rgba(234, 179, 8, 0.22)', mode: 'dark' },
+    { name: "Black Pearl",       bg: '#060708', primary: '#111827', accent: '#e5e7eb', text: '#f9fafb', glow: 'rgba(229, 231, 235, 0.10)', mode: 'dark' },
+    { name: "Void Black",        bg: '#020204', primary: '#0a0a0a', accent: '#525252', text: '#e5e5e5', glow: 'rgba(82, 82, 82, 0.14)', mode: 'dark' },
+    { name: "Blackberry",        bg: '#0a0612', primary: '#1e1b4b', accent: '#8b5cf6', text: '#ede9fe', glow: 'rgba(139, 92, 246, 0.18)', mode: 'dark' },
+    { name: "Forest Mystic",     bg: '#04100a', primary: '#134e4a', accent: '#4ade80', text: '#dcfce7', glow: 'rgba(74, 222, 128, 0.18)', mode: 'dark' },
+    { name: "Emerald Abyss",     bg: '#04110c', primary: '#064e3b', accent: '#10b981', text: '#ecfdf5', glow: 'rgba(16, 185, 129, 0.20)', mode: 'dark' },
+    { name: "Ruby Shadow",       bg: '#120308', primary: '#881337', accent: '#f43f5e', text: '#ffe4e6', glow: 'rgba(244, 63, 94, 0.18)', mode: 'dark' },
+    { name: "Dark Cherry",       bg: '#120406', primary: '#7f1d1d', accent: '#b91c1c', text: '#fecaca', glow: 'rgba(185, 28, 28, 0.18)', mode: 'dark' },
+    { name: "Oxblood Noir",      bg: '#100608', primary: '#450a0a', accent: '#dc2626', text: '#fee2e2', glow: 'rgba(220, 38, 38, 0.15)', mode: 'dark' },
+    { name: "Teal Phantom",      bg: '#03100e', primary: '#115e59', accent: '#5eead4', text: '#ccfbf1', glow: 'rgba(94, 234, 212, 0.18)', mode: 'dark' },
+    { name: "Cobalt Edge",       bg: '#060a18', primary: '#1e3a8a', accent: '#60a5fa', text: '#dbeafe', glow: 'rgba(96, 165, 250, 0.18)', mode: 'dark' },
+    { name: "Indigo Depth",      bg: '#070820', primary: '#312e81', accent: '#6366f1', text: '#e0e7ff', glow: 'rgba(99, 102, 241, 0.20)', mode: 'dark' },
+    { name: "Noir Crimson",      bg: '#0a0406', primary: '#3f0a0a', accent: '#991b1b', text: '#fecaca', glow: 'rgba(153, 27, 27, 0.16)', mode: 'dark' },
+    { name: "Graphite Slate",    bg: '#0a0b0d', primary: '#1f2937', accent: '#4b5563', text: '#e5e7eb', glow: 'rgba(75, 85, 99, 0.14)', mode: 'dark' },
+    { name: "Plasma Pink",       bg: '#0e0412', primary: '#86198f', accent: '#f472b6', text: '#fce7f3', glow: 'rgba(244, 114, 182, 0.20)', mode: 'dark' },
+    { name: "Toxic Green",       bg: '#041404', primary: '#14532d', accent: '#84cc16', text: '#ecfccb', glow: 'rgba(132, 204, 22, 0.22)', mode: 'dark' },
+    { name: "Lava Core",         bg: '#120403', primary: '#7f1d1d', accent: '#f97316', text: '#ffedd5', glow: 'rgba(249, 115, 22, 0.22)', mode: 'dark' },
+    { name: "Arctic Aurora",     bg: '#041014', primary: '#134e4a', accent: '#22d3ee', text: '#cffafe', glow: 'rgba(34, 211, 238, 0.20)', mode: 'dark' },
+    { name: "Nightshade",        bg: '#0a0612', primary: '#4c1d95', accent: '#c084fc', text: '#f3e8ff', glow: 'rgba(192, 132, 252, 0.18)', mode: 'dark' },
+    { name: "Dark Mocha",        bg: '#140e0a', primary: '#44403c', accent: '#a78b71', text: '#fef7ed', glow: 'rgba(167, 139, 113, 0.14)', mode: 'dark' },
+
     // ═══════════════════════════════════════════════════
     // ██████  LITE / LIGHT THEMES  ██████
     // ═══════════════════════════════════════════════════
