@@ -66,12 +66,12 @@
             color: #0a0f1a;
         }
         body.lite-mode .bg-scanlines { opacity: 0.18; mix-blend-mode: multiply; }
-        body.lite-mode .btn-util:not(.btn-save):not(.btn-golden) {
+        body.lite-mode .btn-util:not(.btn-save):not(.btn-golden):not(.btn-theme-premium) {
             color: #475569;
             background: rgba(0,0,0,0.03);
             border-color: rgba(0,0,0,0.1);
         }
-        body.lite-mode .btn-util:not(.btn-save):not(.btn-golden):hover {
+        body.lite-mode .btn-util:not(.btn-save):not(.btn-golden):not(.btn-theme-premium):hover {
             color: #0f172a;
             background: rgba(0,0,0,0.08);
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
@@ -2024,7 +2024,7 @@
             transition: all 0.1s ease;
         }
 
-        body.lite-mode .btn-util:not(.btn-save):not(.btn-special-3d):not(.btn-golden) {
+        body.lite-mode .btn-util:not(.btn-save):not(.btn-special-3d):not(.btn-golden):not(.btn-theme-premium) {
             background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
             border: 1px solid rgba(0, 0, 0, 0.04) !important;
             box-shadow: 
@@ -2035,7 +2035,7 @@
             color: #64748b !important;
         }
 
-        body.lite-mode .btn-util:not(.btn-save):not(.btn-special-3d):not(.btn-golden):hover {
+        body.lite-mode .btn-util:not(.btn-save):not(.btn-special-3d):not(.btn-golden):not(.btn-theme-premium):hover {
             transform: translateY(-6px);
             box-shadow: 
                 0 9px 0 #cbd5e1,
@@ -2045,7 +2045,7 @@
             background: #ffffff !important;
         }
 
-        body.lite-mode .btn-util:not(.btn-save):not(.btn-special-3d):not(.btn-golden):active {
+        body.lite-mode .btn-util:not(.btn-save):not(.btn-special-3d):not(.btn-golden):not(.btn-theme-premium):active {
             box-shadow: 0 0 0 #cbd5e1, 0 2px 8px rgba(15, 23, 42, 0.1) !important;
         }
 
@@ -2487,6 +2487,112 @@
             border: none !important;
         }
 
+        .btn-theme-premium {
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+            background:
+                radial-gradient(circle at 28% 18%, rgba(255,255,255,0.28), transparent 30%),
+                linear-gradient(145deg, #0f172a 0%, #312e81 45%, #0891b2 100%) !important;
+            border-color: rgba(125, 211, 252, 0.32) !important;
+            color: white !important;
+            box-shadow:
+                0 6px 0 #082f49,
+                0 14px 30px rgba(8, 145, 178, 0.35),
+                inset 0 1px 0 rgba(255,255,255,0.22) !important;
+        }
+        .btn-theme-premium::after {
+            content: '';
+            position: absolute;
+            inset: -42%;
+            background: conic-gradient(from 90deg, transparent, rgba(103,232,249,0.78), transparent, rgba(192,132,252,0.72), transparent);
+            opacity: 0.42;
+            animation: fabOrbit 4.8s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .btn-theme-premium .theme-premium-icon {
+            position: relative;
+            z-index: 2;
+            width: 30px;
+            height: 30px;
+            display: grid;
+            place-items: center;
+            border-radius: 13px;
+            background:
+                radial-gradient(circle at 30% 20%, rgba(255,255,255,0.54), transparent 28%),
+                linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.04));
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.3),
+                0 10px 18px rgba(0,0,0,0.26);
+        }
+        .btn-theme-premium .theme-premium-icon svg {
+            width: 20px;
+            height: 20px;
+            color: #ecfeff;
+            filter: drop-shadow(0 5px 8px rgba(0,0,0,0.28));
+            transition: transform 0.34s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.28s ease;
+        }
+        .theme-premium-spark {
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #fef3c7;
+            box-shadow: 0 0 12px rgba(251,191,36,0.85);
+            z-index: 3;
+            animation: themeSparkPulse 2.2s ease-in-out infinite;
+        }
+        .theme-premium-spark.one { top: 9px; right: 10px; }
+        .theme-premium-spark.two { left: 9px; bottom: 12px; animation-delay: -1.1s; }
+        .btn-theme-premium:hover {
+            background:
+                radial-gradient(circle at 28% 18%, rgba(255,255,255,0.34), transparent 30%),
+                linear-gradient(145deg, #1e1b4b 0%, #2563eb 46%, #06b6d4 100%) !important;
+            box-shadow:
+                0 9px 0 #082f49,
+                0 18px 34px rgba(8, 145, 178, 0.46),
+                inset 0 1px 0 rgba(255,255,255,0.28) !important;
+        }
+        .btn-theme-premium:hover .theme-premium-icon svg {
+            transform: scale(1.12) rotate(-8deg);
+            filter: drop-shadow(0 7px 12px rgba(0,0,0,0.32));
+        }
+        body.lite-mode .btn-theme-premium {
+            background:
+                radial-gradient(circle at 28% 18%, rgba(255,255,255,0.72), transparent 32%),
+                linear-gradient(145deg, #ffffff 0%, #dbeafe 42%, #67e8f9 100%) !important;
+            border-color: rgba(8, 145, 178, 0.24) !important;
+            color: #0f172a !important;
+            box-shadow:
+                0 6px 0 #bae6fd,
+                0 14px 30px rgba(14, 116, 144, 0.22),
+                inset 0 1px 0 rgba(255,255,255,0.94) !important;
+        }
+        body.lite-mode .btn-theme-premium::after {
+            opacity: 0.34;
+        }
+        body.lite-mode .btn-theme-premium .theme-premium-icon {
+            background:
+                radial-gradient(circle at 32% 18%, rgba(255,255,255,0.92), transparent 30%),
+                linear-gradient(135deg, rgba(255,255,255,0.72), rgba(14,165,233,0.18));
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.96),
+                0 10px 18px rgba(14,116,144,0.16);
+        }
+        body.lite-mode .btn-theme-premium .theme-premium-icon svg {
+            color: #075985;
+        }
+        body.lite-mode .btn-theme-premium:hover {
+            background:
+                radial-gradient(circle at 28% 18%, rgba(255,255,255,0.8), transparent 32%),
+                linear-gradient(145deg, #ffffff 0%, #bfdbfe 40%, #22d3ee 100%) !important;
+            box-shadow:
+                0 9px 0 #bae6fd,
+                0 18px 34px rgba(14, 116, 144, 0.28),
+                inset 0 1px 0 rgba(255,255,255,0.98) !important;
+        }
+
         /* Lite mode: btn-util-label */
         body.lite-mode .btn-util-label {
             color: rgba(0, 0, 0, 0.35);
@@ -2496,6 +2602,10 @@
         }
 
         /* ─── Speed Dial Panel ─── */
+        @keyframes themeSparkPulse {
+            0%, 100% { transform: scale(0.72); opacity: 0.68; }
+            50% { transform: scale(1); opacity: 1; }
+        }
         @keyframes fabOrbit {
             from { transform: rotate(0deg) scale(1.25); }
             to { transform: rotate(360deg) scale(1.25); }
@@ -2632,6 +2742,8 @@
             .bg-orb,
             body.lite-mode .screenshot-wrapper::before,
             body.lite-mode .screenshot-wrapper::after,
+            .btn-theme-premium::after,
+            .theme-premium-spark,
             .mobile-calendar-fab,
             .mobile-calendar-fab::before,
             .fab-icon-shell::before,
@@ -3632,10 +3744,15 @@
     <!-- Theme and Global Controls (Available on all pages) -->
     <div class="controls-panel left-panel no-print" id="theme-controls">
         <!-- Theme -->
-        <button onclick="openThemeSelector()" class="btn-util" title="Theme">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
-            </svg>
+        <button onclick="openThemeSelector()" class="btn-util btn-theme-premium" title="Theme" aria-label="Open premium theme gallery">
+            <span class="theme-premium-icon" aria-hidden="true">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.35">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3.75l1.66 4.86 5.14.08-4.11 3.09 1.51 4.91L12 13.76l-4.2 2.93 1.51-4.91L5.2 8.69l5.14-.08L12 3.75z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.75 17.75l-1 2.5m1-2.5l2.5-1m-2.5 1l2.5 1m-2.5-1l-1-2.5M19.25 5.75l-.7 1.75m.7-1.75L21 5.05m-1.75.7L21 6.45m-1.75-.7l-.7-1.75"/>
+                </svg>
+            </span>
+            <span class="theme-premium-spark one" aria-hidden="true"></span>
+            <span class="theme-premium-spark two" aria-hidden="true"></span>
         </button>
 
     </div>
