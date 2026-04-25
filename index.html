@@ -51,17 +51,18 @@
 
         /* ============ LITE MODE ============ */
         body.lite-mode {
-            --bg-retro: #e2e8f0;
-            --glass-bg: rgba(255, 255, 255, 0.6);
+            --bg-retro: #eef6ff;
+            --glass-bg: rgba(255, 255, 255, 0.72);
             --glass-border: rgba(0, 0, 0, 0.08);
-            --ambient-grid: rgba(15,23,42,0.052);
-            --ambient-grid-strong: rgba(8,145,178,0.16);
-            --ambient-panel: rgba(255,255,255,0.52);
-            --ambient-vignette: rgba(255,255,255,0.5);
+            --ambient-grid: rgba(14,116,144,0.075);
+            --ambient-grid-strong: rgba(37,99,235,0.18);
+            --ambient-panel: rgba(255,255,255,0.7);
+            --ambient-vignette: rgba(37,99,235,0.12);
             background:
-                radial-gradient(circle at 12% 8%, color-mix(in srgb, var(--accent-theme) 18%, transparent), transparent 24rem),
-                radial-gradient(circle at 86% 10%, color-mix(in srgb, var(--primary-theme) 16%, transparent), transparent 26rem),
-                linear-gradient(135deg, #f8fafc 0%, color-mix(in srgb, var(--bg-retro) 72%, white 28%) 42%, #cbd5e1 100%);
+                radial-gradient(circle at 11% 7%, color-mix(in srgb, var(--accent-theme) 24%, transparent), transparent 28rem),
+                radial-gradient(circle at 85% 10%, color-mix(in srgb, var(--primary-theme) 20%, transparent), transparent 30rem),
+                radial-gradient(circle at 58% 118%, rgba(56,189,248,0.22), transparent 34rem),
+                linear-gradient(135deg, #fbfdff 0%, #eef6ff 32%, #dbeafe 64%, #e0f2fe 100%);
             color: #0a0f1a;
         }
         body.lite-mode .bg-scanlines { opacity: 0.18; mix-blend-mode: multiply; }
@@ -321,6 +322,20 @@
             animation-delay: -14s;
             animation-duration: 34s;
         }
+        .bg-orb:nth-child(4) {
+            width: min(36vw, 460px); height: min(36vw, 460px);
+            background: radial-gradient(circle, rgba(125, 211, 252, 0.22), transparent 70%);
+            top: 12%; right: 28%;
+            animation-delay: -20s;
+            animation-duration: 38s;
+        }
+        .bg-orb:nth-child(5) {
+            width: min(30vw, 380px); height: min(30vw, 380px);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.16), transparent 68%);
+            bottom: 14%; left: 22%;
+            animation-delay: -11s;
+            animation-duration: 32s;
+        }
 
         @keyframes orbFloat {
             0%, 100% { transform: translate(0, 0) scale(1); }
@@ -368,22 +383,109 @@
         }
         body.lite-mode .bg-canvas {
             background:
-                linear-gradient(120deg, rgba(15,23,42,0.035) 0 1px, transparent 1px 18px),
-                radial-gradient(circle at 50% 110%, color-mix(in srgb, var(--accent-theme) 10%, transparent), transparent 40rem);
+                linear-gradient(115deg, rgba(255,255,255,0.66), transparent 34%),
+                linear-gradient(120deg, rgba(14,116,144,0.055) 0 1px, transparent 1px 18px),
+                radial-gradient(circle at 14% 92%, rgba(56,189,248,0.18), transparent 30rem),
+                radial-gradient(circle at 84% 86%, rgba(99,102,241,0.14), transparent 34rem);
         }
         body.lite-mode .bg-canvas::before {
-            opacity: 0.34;
+            background:
+                conic-gradient(from 225deg at 50% 52%,
+                    transparent 0deg,
+                    rgba(59,130,246,0.2) 54deg,
+                    transparent 108deg,
+                    rgba(6,182,212,0.22) 172deg,
+                    transparent 240deg,
+                    rgba(168,85,247,0.14) 306deg,
+                    transparent 360deg);
+            opacity: 0.48;
             mix-blend-mode: multiply;
         }
         body.lite-mode .bg-canvas::after {
             background:
-                linear-gradient(90deg, rgba(255,255,255,0.62), transparent 20%, transparent 80%, rgba(255,255,255,0.4)),
-                radial-gradient(ellipse at center, transparent 48%, rgba(148,163,184,0.22) 100%);
+                linear-gradient(90deg, rgba(255,255,255,0.72), transparent 18%, transparent 82%, rgba(255,255,255,0.58)),
+                linear-gradient(180deg, rgba(255,255,255,0.7), transparent 26%, rgba(219,234,254,0.45) 100%),
+                radial-gradient(ellipse at center, transparent 52%, rgba(37,99,235,0.16) 100%);
         }
         body.lite-mode .bg-orb {
-            opacity: 0.42;
-            filter: blur(70px);
+            opacity: 0.62 !important;
+            filter: blur(64px);
             mix-blend-mode: multiply;
+        }
+        body.lite-mode .bg-orb:nth-child(1) {
+            width: min(66vw, 840px); height: min(66vw, 840px);
+            top: -22%; left: -16%;
+            background: radial-gradient(circle, color-mix(in srgb, var(--accent-theme) 34%, transparent), transparent 66%);
+        }
+        body.lite-mode .bg-orb:nth-child(2) {
+            width: min(58vw, 740px); height: min(58vw, 740px);
+            right: -18%; bottom: -20%;
+            background: radial-gradient(circle, color-mix(in srgb, var(--primary-theme) 30%, transparent), transparent 68%);
+        }
+        body.lite-mode .bg-orb:nth-child(3) {
+            width: min(44vw, 560px); height: min(44vw, 560px);
+            top: 24%; left: 54%;
+            background: radial-gradient(circle, rgba(59,130,246,0.2), transparent 70%);
+        }
+        body.lite-mode .bg-orb:nth-child(4) {
+            opacity: 0.76 !important;
+            background: radial-gradient(circle, rgba(14,165,233,0.18), transparent 70%);
+        }
+        body.lite-mode .bg-orb:nth-child(5) {
+            opacity: 0.78 !important;
+            background: radial-gradient(circle, rgba(255,255,255,0.78), transparent 64%);
+        }
+        body.lite-mode .bg-grid {
+            opacity: 0.9;
+            background-size: 38px 38px, 38px 38px, 190px 190px, 190px 190px;
+            mask-image: linear-gradient(180deg, black 0%, rgba(0,0,0,0.88) 58%, transparent 100%);
+            -webkit-mask-image: linear-gradient(180deg, black 0%, rgba(0,0,0,0.88) 58%, transparent 100%);
+        }
+        body.lite-mode .bg-grid::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(135deg, rgba(255,255,255,0.55), transparent 26%, rgba(255,255,255,0.32) 62%, transparent),
+                repeating-linear-gradient(135deg, transparent 0 72px, rgba(14,116,144,0.06) 72px 74px);
+            pointer-events: none;
+        }
+        body.lite-mode .bg-scanlines {
+            background:
+                repeating-linear-gradient(0deg, transparent 0 5px, rgba(14,116,144,0.035) 5px 6px),
+                repeating-linear-gradient(90deg, transparent 0 90px, rgba(37,99,235,0.035) 90px 92px);
+            opacity: 0.48;
+        }
+        body.lite-mode .screenshot-wrapper {
+            position: relative;
+        }
+        body.lite-mode .screenshot-wrapper::before {
+            content: '';
+            position: fixed;
+            inset: 82px 8vw auto 8vw;
+            height: 280px;
+            border-radius: 999px;
+            background:
+                linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent),
+                linear-gradient(135deg, color-mix(in srgb, var(--accent-theme) 18%, transparent), rgba(59,130,246,0.12), transparent);
+            filter: blur(34px);
+            opacity: 0.72;
+            pointer-events: none;
+            z-index: -1;
+        }
+        body.lite-mode .screenshot-wrapper::after {
+            content: '';
+            position: fixed;
+            left: 6vw;
+            right: 6vw;
+            bottom: 7vh;
+            height: 180px;
+            border-radius: 999px;
+            background: radial-gradient(ellipse at center, rgba(14,116,144,0.16), transparent 68%);
+            filter: blur(30px);
+            opacity: 0.7;
+            pointer-events: none;
+            z-index: -1;
         }
 
         /* ============ SCREENSHOT WRAPPER ============ */
@@ -2528,6 +2630,8 @@
             .ctrl-trigger-glow,
             .bg-canvas::before,
             .bg-orb,
+            body.lite-mode .screenshot-wrapper::before,
+            body.lite-mode .screenshot-wrapper::after,
             .mobile-calendar-fab,
             .mobile-calendar-fab::before,
             .fab-icon-shell::before,
@@ -3474,6 +3578,8 @@
 
     <!-- ============ ANIMATED BACKGROUND ============ -->
     <div class="bg-canvas" id="bg-canvas">
+        <div class="bg-orb"></div>
+        <div class="bg-orb"></div>
         <div class="bg-orb"></div>
         <div class="bg-orb"></div>
         <div class="bg-orb"></div>
