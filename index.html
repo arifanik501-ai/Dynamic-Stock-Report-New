@@ -1672,6 +1672,207 @@
             pointer-events: none;
         }
 
+        .btn-util .fab-icon-shell {
+            width: 28px;
+            height: 28px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            position: relative;
+            background:
+                radial-gradient(circle at 32% 22%, rgba(255,255,255,0.34), transparent 32%),
+                rgba(255,255,255,0.08);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.2),
+                inset 0 -10px 18px rgba(0,0,0,0.16),
+                0 10px 18px rgba(0,0,0,0.22);
+            overflow: hidden;
+            transition: transform 0.34s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.28s ease;
+        }
+
+        .btn-util .fab-icon-shell::before {
+            content: '';
+            position: absolute;
+            inset: -35%;
+            background: conic-gradient(from 180deg, transparent, rgba(255,255,255,0.34), transparent 42%, rgba(255,255,255,0.18), transparent);
+            opacity: 0;
+            transform: rotate(0deg);
+            transition: opacity 0.28s ease;
+            pointer-events: none;
+        }
+
+        .btn-util .fab-icon-shell svg {
+            width: 18px;
+            height: 18px;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.34s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.28s ease;
+        }
+
+        .btn-util:hover .fab-icon-shell {
+            transform: translateY(-2px) scale(1.08);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.28),
+                inset 0 -12px 20px rgba(0,0,0,0.12),
+                0 14px 24px rgba(0,0,0,0.28);
+        }
+
+        .btn-util:hover .fab-icon-shell::before {
+            opacity: 1;
+            animation: fabOrbit 1.8s linear infinite;
+        }
+
+        .btn-util:hover .fab-icon-shell svg {
+            transform: scale(1.08) rotate(-4deg);
+            filter: drop-shadow(0 6px 10px rgba(0,0,0,0.24));
+        }
+
+        .fab-action-save,
+        .fab-action-import,
+        .fab-action-download,
+        .fab-action-clear,
+        .fab-action-rnd,
+        .fab-action-alert {
+            height: auto;
+            min-height: 64px;
+            border-radius: 22px;
+            gap: 5px;
+            overflow: hidden;
+            isolation: isolate;
+        }
+
+        .fab-action-save,
+        .fab-action-alert {
+            background:
+                radial-gradient(circle at 28% 16%, rgba(255,255,255,0.34), transparent 34%),
+                linear-gradient(145deg, #38bdf8 0%, #0284c7 52%, #075985 100%) !important;
+            box-shadow:
+                0 7px 0 #075985,
+                0 18px 26px rgba(2,132,199,0.38),
+                inset 0 2px 0 rgba(255,255,255,0.34) !important;
+        }
+
+        .fab-action-import,
+        .fab-action-clear {
+            background:
+                radial-gradient(circle at 30% 18%, rgba(255,255,255,0.16), transparent 34%),
+                linear-gradient(145deg, #273449 0%, #192337 54%, #0f172a 100%) !important;
+            color: rgba(226,232,240,0.68) !important;
+            box-shadow:
+                0 7px 0 #070d1b,
+                0 16px 25px rgba(2,6,23,0.46),
+                inset 0 2px 0 rgba(255,255,255,0.09) !important;
+        }
+
+        .fab-action-download {
+            background:
+                radial-gradient(circle at 30% 16%, rgba(255,255,255,0.48), transparent 32%),
+                linear-gradient(145deg, #fde047 0%, #f59e0b 44%, #d97706 100%) !important;
+            box-shadow:
+                0 7px 0 #92400e,
+                0 20px 30px rgba(245,158,11,0.46),
+                inset 0 2px 0 rgba(255,255,255,0.5) !important;
+        }
+
+        .fab-action-rnd {
+            background:
+                radial-gradient(circle at 30% 16%, rgba(255,255,255,0.24), transparent 34%),
+                linear-gradient(145deg, #14b8a6 0%, #0f766e 58%, #115e59 100%) !important;
+            box-shadow:
+                0 7px 0 #115e59,
+                0 18px 27px rgba(20,184,166,0.34),
+                inset 0 2px 0 rgba(255,255,255,0.22) !important;
+        }
+
+        .fab-action-alert {
+            background:
+                radial-gradient(circle at 28% 16%, rgba(255,255,255,0.36), transparent 34%),
+                linear-gradient(145deg, #22d3ee 0%, #0ea5e9 48%, #0369a1 100%) !important;
+        }
+
+        .fab-action-save::before,
+        .fab-action-import::before,
+        .fab-action-download::before,
+        .fab-action-clear::before,
+        .fab-action-rnd::before,
+        .fab-action-alert::before {
+            content: '';
+            position: absolute;
+            inset: -45% -80%;
+            background: linear-gradient(90deg, transparent 34%, rgba(255,255,255,0.28) 50%, transparent 66%);
+            transform: translateX(-70%) rotate(18deg);
+            opacity: 0;
+            transition: opacity 0.24s ease;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .fab-action-save > *,
+        .fab-action-import > *,
+        .fab-action-download > *,
+        .fab-action-clear > *,
+        .fab-action-rnd > *,
+        .fab-action-alert > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .fab-action-save:hover,
+        .fab-action-import:hover,
+        .fab-action-download:hover,
+        .fab-action-clear:hover,
+        .fab-action-rnd:hover,
+        .fab-action-alert:hover {
+            transform: translateY(-9px) scale(1.04) !important;
+            filter: saturate(1.15) brightness(1.08);
+        }
+
+        .fab-action-save:hover::before,
+        .fab-action-import:hover::before,
+        .fab-action-download:hover::before,
+        .fab-action-clear:hover::before,
+        .fab-action-rnd:hover::before,
+        .fab-action-alert:hover::before {
+            opacity: 1;
+            animation: fabSheen 0.95s ease-out;
+        }
+
+        .fab-action-save:active,
+        .fab-action-import:active,
+        .fab-action-download:active,
+        .fab-action-clear:active,
+        .fab-action-rnd:active,
+        .fab-action-alert:active {
+            transform: translateY(3px) scale(0.96) !important;
+        }
+
+        .fab-action-download .fab-icon-shell {
+            background:
+                radial-gradient(circle at 32% 22%, rgba(255,255,255,0.52), transparent 33%),
+                rgba(146,64,14,0.13);
+        }
+
+        .fab-action-rnd .fab-icon-shell {
+            background:
+                radial-gradient(circle at 32% 22%, rgba(255,255,255,0.32), transparent 33%),
+                rgba(204,251,241,0.1);
+        }
+
+        .fab-action-save .btn-util-label,
+        .fab-action-alert .btn-util-label,
+        .fab-action-rnd .btn-util-label {
+            color: rgba(255,255,255,0.78);
+        }
+
+        .fab-action-download .btn-util-label {
+            color: rgba(69,26,3,0.66);
+        }
+
+        #ctrl-speed-wrap .btn-golden[title]::before,
+        #ctrl-speed-wrap .btn-golden::after {
+            display: none !important;
+        }
+
         .btn-util:hover .btn-util-label {
             color: rgba(255, 255, 255, 0.7);
         }
@@ -1843,17 +2044,12 @@
         }
         .controls-panel::-webkit-scrollbar { display: none; }
 
-        /* Fix: hide golden sparkle & ring inside speed dial (overflow clips them) */
-        #ctrl-speed-wrap .btn-golden[title]::before,
-        #ctrl-speed-wrap .btn-golden::after {
-            display: none !important;
-        }
-
         @media (prefers-reduced-motion: reduce) {
             .ctrl-trigger,
             .ctrl-trigger-glow,
             .mobile-calendar-fab,
             .mobile-calendar-fab::before,
+            .fab-icon-shell::before,
             .btn-save,
             .btn-golden {
                 animation: none !important;
@@ -1861,6 +2057,8 @@
             .ctrl-icon,
             .ctrl-speed-wrap,
             .ctrl-item,
+            .fab-icon-shell,
+            .fab-icon-shell svg,
             .mobile-calendar-fab {
                 transition-duration: 0.01ms !important;
             }
@@ -2657,6 +2855,15 @@
         height: 46px !important;
     }
 
+    .fab-action-save,
+    .fab-action-import,
+    .fab-action-download,
+    .fab-action-clear,
+    .fab-action-rnd,
+    .fab-action-alert {
+        min-height: 58px;
+    }
+
     .ctrl-speed-wrap {
         position: absolute;
         right: 12px;
@@ -2864,10 +3071,13 @@
 
                     <!-- SAVE -->
                     <div class="ctrl-item" style="--i:1">
-                        <button onclick="takeScreenshot(true)" class="btn-util btn-save" type="button" title="Save &amp; Sync" id="btn-save-report">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
-                            </svg>
+                        <button onclick="takeScreenshot(true)" class="btn-util btn-save fab-action-save" type="button" title="Save &amp; Sync" id="btn-save-report">
+                            <span class="fab-icon-shell" aria-hidden="true">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 16V9.5m0 0l-2.5 2.5M12 9.5l2.5 2.5"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 18.5h10.5a3.5 3.5 0 00.9-6.88A5.6 5.6 0 007.6 9.75 4.4 4.4 0 007 18.5Z"></path>
+                                </svg>
+                            </span>
                             <span class="btn-util-label" style="color:rgba(255,255,255,0.75);">SAVE</span>
                         </button>
                     </div>
@@ -2885,30 +3095,40 @@
 
                     <!-- IMPORT -->
                     <div class="ctrl-item" style="--i:4">
-                        <button onclick="toggleModal(true)" class="btn-util" type="button" title="Import Data">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75" />
-                            </svg>
+                        <button onclick="toggleModal(true)" class="btn-util fab-action-import" type="button" title="Import Data">
+                            <span class="fab-icon-shell" aria-hidden="true">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 4h8l2 2v12.5A1.5 1.5 0 0116.5 20h-9A1.5 1.5 0 016 18.5v-13A1.5 1.5 0 017.5 4H8Z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 13.2l2 2 4-5"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 8h4"></path>
+                                </svg>
+                            </span>
                             <span class="btn-util-label">IMPORT</span>
                         </button>
                     </div>
 
                     <!-- EXPORT (golden) -->
                     <div class="ctrl-item" style="--i:5">
-                        <button onclick="takeScreenshot()" class="btn-util btn-golden" type="button" title="Download JPG">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"></path>
-                            </svg>
+                        <button onclick="takeScreenshot()" class="btn-util btn-golden fab-action-download" type="button" title="Download JPG">
+                            <span class="fab-icon-shell" aria-hidden="true">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.25">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.5 8.5h2.3l1.1-1.7c.35-.54.95-.86 1.6-.86h1c.65 0 1.25.32 1.6.86l1.1 1.7h2.3A2.5 2.5 0 0120 11v5.5a2.5 2.5 0 01-2.5 2.5h-11A2.5 2.5 0 014 16.5V11a2.5 2.5 0 012.5-2.5Z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 13.8a3 3 0 11-6 0 3 3 0 016 0Z"></path>
+                                </svg>
+                            </span>
+                            <span class="btn-util-label">SHOT</span>
                         </button>
                     </div>
 
                     <!-- CLEAR -->
                     <div class="ctrl-item" style="--i:6">
-                        <button onclick="refreshData()" class="btn-util" type="button" title="Clear All">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                            </svg>
+                        <button onclick="refreshData()" class="btn-util fab-action-clear" type="button" title="Clear All">
+                            <span class="fab-icon-shell" aria-hidden="true">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.25">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 8h8m-7.2 0 .65 10.2A2 2 0 0011.45 20h1.1a2 2 0 002-1.8L15.2 8M10 8V6a2 2 0 012-2 2 2 0 012 2v2M9 12.5h6"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 16h3"></path>
+                                </svg>
+                            </span>
                             <span class="btn-util-label">CLEAR</span>
                         </button>
                     </div>
@@ -2917,10 +3137,13 @@
 
                     <!-- RND -->
                     <div class="ctrl-item" style="--i:8">
-                        <button onclick="switchPage('rnd-generator')" class="btn-util btn-rnd" type="button" title="Armature RND">
-                            <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
-                            </svg>
+                        <button onclick="switchPage('rnd-generator')" class="btn-util btn-rnd fab-action-rnd" type="button" title="Armature RND">
+                            <span class="fab-icon-shell" aria-hidden="true">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.25">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 4v5.8l-4.3 6.9A2.8 2.8 0 008.1 21h7.8a2.8 2.8 0 002.4-4.3L14 9.8V4"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 4h6M8.5 16h7"></path>
+                                </svg>
+                            </span>
                             <span class="btn-util-label">RND</span>
                         </button>
                     </div>
@@ -2929,10 +3152,14 @@
 
                     <!-- ALERT -->
                     <div class="ctrl-item" style="--i:10">
-                        <button onclick="testNotification()" class="btn-util btn-special-3d" type="button" title="Notification">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                            </svg>
+                        <button onclick="testNotification()" class="btn-util btn-special-3d fab-action-alert" type="button" title="Notification">
+                            <span class="fab-icon-shell" aria-hidden="true">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.35">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.5 16.5h11L16 14.6V11a4 4 0 10-8 0v3.6l-1.5 1.9Z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19a2.1 2.1 0 004 0"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.3l1.8-1.4M6 7.3 4.2 5.9"></path>
+                                </svg>
+                            </span>
                             <span class="btn-util-label">ALERT</span>
                         </button>
                     </div>
