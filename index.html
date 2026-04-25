@@ -447,16 +447,23 @@
         }
 
         /* ============ THEME SELECTOR MODAL ============ */
+        body.theme-selector-open {
+            overflow: hidden;
+        }
         .theme-selector-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background:
+                radial-gradient(circle at 20% 20%, rgba(8,145,178,0.18), transparent 32%),
+                radial-gradient(circle at 82% 18%, rgba(59,130,246,0.12), transparent 26%),
+                rgba(2, 6, 23, 0.82);
+            backdrop-filter: blur(18px) saturate(140%);
+            -webkit-backdrop-filter: blur(18px) saturate(140%);
             z-index: 99999;
             display: none;
             opacity: 0;
-            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 28px;
+            transition: opacity 0.38s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .theme-selector-overlay.active {
             display: flex;
@@ -465,275 +472,648 @@
             opacity: 1;
         }
         .theme-selector-panel {
-            width: 92vw;
-            max-width: 680px;
-            max-height: 85vh;
-            background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.98));
-            border-radius: 28px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-            display: flex;
-            flex-direction: column;
+            width: min(1120px, 96vw);
+            max-height: min(88vh, 860px);
+            background:
+                linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(2, 6, 23, 0.98));
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow:
+                0 36px 90px rgba(0, 0, 0, 0.58),
+                inset 0 1px 0 rgba(255, 255, 255, 0.07);
             overflow: hidden;
+            position: relative;
             animation: themeModalIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
+        .theme-selector-panel::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at top right, rgba(255,255,255,0.12), transparent 34%),
+                linear-gradient(180deg, rgba(255,255,255,0.04), transparent 30%);
+            pointer-events: none;
+        }
         @keyframes themeModalIn {
-            from { transform: scale(0.9) translateY(30px); opacity: 0; }
+            from { transform: scale(0.93) translateY(36px); opacity: 0; }
             to { transform: scale(1) translateY(0); opacity: 1; }
         }
-        .theme-selector-header {
-            padding: 24px 28px 0;
-            flex-shrink: 0;
+        .theme-selector-shell {
+            display: grid;
+            grid-template-columns: minmax(290px, 340px) minmax(0, 1fr);
+            min-height: min(82vh, 780px);
+            position: relative;
+            z-index: 1;
+        }
+        .theme-selector-sidebar {
+            padding: 28px;
+            border-right: 1px solid rgba(255,255,255,0.06);
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .theme-selector-main {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            padding: 28px 28px 22px 0;
         }
         .theme-selector-title {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: space-between;
-            margin-bottom: 18px;
+            gap: 12px;
+        }
+        .theme-selector-copy {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .theme-selector-eyebrow {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(103,232,249,0.74);
         }
         .theme-selector-title h2 {
-            font-size: 20px;
+            font-size: 28px;
+            line-height: 1.04;
             font-weight: 900;
-            background: linear-gradient(135deg, #f8fafc, #94a3b8);
+            background: linear-gradient(135deg, #f8fafc 0%, #93c5fd 52%, #67e8f9 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.04em;
             margin: 0;
         }
+        .theme-selector-subtitle {
+            margin: 0;
+            color: rgba(226,232,240,0.68);
+            font-size: 13px;
+            line-height: 1.6;
+        }
         .theme-close-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 12px;
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
             border: 1px solid rgba(255, 255, 255, 0.08);
             background: rgba(255, 255, 255, 0.04);
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255, 255, 255, 0.56);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: transform 0.26s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease, color 0.2s ease;
             font-size: 18px;
+            flex-shrink: 0;
         }
         .theme-close-btn:hover {
             background: rgba(255, 255, 255, 0.1);
             color: white;
-            transform: rotate(90deg);
+            transform: rotate(90deg) scale(1.04);
         }
-        .theme-mode-tabs {
+        .theme-preview-card {
+            --preview-bg: #0c1222;
+            --preview-primary: #164e63;
+            --preview-accent: #0891b2;
+            --preview-text: #cffafe;
+            position: relative;
+            border-radius: 24px;
+            padding: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+            background:
+                radial-gradient(circle at 82% 12%, color-mix(in srgb, var(--preview-accent) 48%, transparent), transparent 24%),
+                radial-gradient(circle at 14% 86%, color-mix(in srgb, var(--preview-primary) 42%, transparent), transparent 28%),
+                linear-gradient(145deg, color-mix(in srgb, var(--preview-bg) 82%, white 8%), var(--preview-bg));
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.08),
+                0 18px 34px rgba(0,0,0,0.28);
+        }
+        .theme-preview-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 10px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.09);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--preview-text);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+        .theme-preview-window {
+            border-radius: 18px;
+            padding: 14px;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+        .theme-preview-topbar {
             display: flex;
-            gap: 4px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 14px;
-            padding: 4px;
-            margin-bottom: 14px;
+            gap: 6px;
+            margin-bottom: 12px;
         }
-        .theme-mode-tab {
-            flex: 1;
-            padding: 10px 16px;
-            border-radius: 11px;
-            border: none;
-            background: transparent;
-            color: rgba(255, 255, 255, 0.4);
-            font-family: 'Plus Jakarta Sans', sans-serif;
+        .theme-preview-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.25);
+        }
+        .theme-preview-dot.primary { background: var(--preview-primary); }
+        .theme-preview-dot.accent { background: var(--preview-accent); }
+        .theme-preview-banner {
+            height: 54px;
+            border-radius: 14px;
+            background:
+                linear-gradient(135deg, color-mix(in srgb, var(--preview-primary) 84%, white 6%), color-mix(in srgb, var(--preview-accent) 78%, black 12%));
+            display: flex;
+            align-items: flex-end;
+            padding: 10px 12px;
             font-size: 12px;
+            font-weight: 800;
+            color: var(--preview-text);
+            letter-spacing: 0.02em;
+            margin-bottom: 12px;
+            box-shadow: 0 12px 22px rgba(0,0,0,0.18);
+        }
+        .theme-preview-bars {
+            display: grid;
+            gap: 8px;
+        }
+        .theme-preview-bar {
+            height: 10px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        .theme-preview-bar::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(90deg, var(--preview-primary), var(--preview-accent));
+            transform-origin: left center;
+        }
+        .theme-preview-bar:nth-child(1)::before { transform: scaleX(0.84); }
+        .theme-preview-bar:nth-child(2)::before { transform: scaleX(0.62); }
+        .theme-preview-bar:nth-child(3)::before { transform: scaleX(0.44); }
+        .theme-preview-meta {
+            margin-top: 16px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .theme-preview-label {
+            display: block;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(226,232,240,0.56);
+            margin-bottom: 6px;
+        }
+        .theme-preview-name {
+            display: block;
+            color: var(--preview-text);
+            font-size: 18px;
+            line-height: 1.1;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+        }
+        .theme-preview-pill {
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--preview-text);
+            font-size: 11px;
             font-weight: 800;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            white-space: nowrap;
         }
-        .theme-mode-tab.active {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-            color: white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-        .theme-mode-tab:hover:not(.active) {
-            color: rgba(255, 255, 255, 0.7);
-            background: rgba(255, 255, 255, 0.03);
+        .theme-search-wrap {
+            position: relative;
         }
         .theme-search-box {
             width: 100%;
-            padding: 12px 18px 12px 42px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 14px;
+            padding: 14px 18px 14px 44px;
+            background: rgba(0, 0, 0, 0.28);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
             color: white;
             font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 700;
             outline: none;
-            transition: all 0.3s;
-            margin-bottom: 6px;
+            transition: border-color 0.26s ease, box-shadow 0.26s ease, transform 0.26s ease;
             box-sizing: border-box;
         }
         .theme-search-box:focus {
             border-color: var(--accent-theme, #0891b2);
-            box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.15);
+            box-shadow: 0 0 0 4px rgba(8, 145, 178, 0.14);
+            transform: translateY(-1px);
         }
         .theme-search-box::placeholder {
-            color: rgba(255, 255, 255, 0.25);
-        }
-        .theme-search-wrap {
-            position: relative;
-            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.28);
         }
         .theme-search-icon {
             position: absolute;
-            left: 14px;
+            left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            width: 16px;
-            height: 16px;
-            color: rgba(255, 255, 255, 0.25);
+            width: 18px;
+            height: 18px;
+            color: rgba(255, 255, 255, 0.3);
             pointer-events: none;
         }
-        .theme-count {
+        .theme-meta-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .theme-count,
+        .theme-shortcut-hint {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.06);
             font-size: 10px;
-            font-weight: 700;
-            color: rgba(255, 255, 255, 0.3);
-            letter-spacing: 0.05em;
-            text-align: right;
-            padding: 2px 4px 8px;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        .theme-count {
+            color: rgba(226,232,240,0.82);
+        }
+        .theme-shortcut-hint {
+            color: rgba(148,163,184,0.72);
+        }
+        .theme-mode-tabs {
+            display: inline-grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.28);
+            border-radius: 18px;
+            padding: 6px;
+            border: 1px solid rgba(255,255,255,0.06);
+            margin-left: 28px;
+            margin-right: 28px;
+        }
+        .theme-mode-tab {
+            padding: 12px 18px;
+            border-radius: 14px;
+            border: none;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.46);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.22s ease, color 0.22s ease, box-shadow 0.22s ease;
+        }
+        .theme-mode-tab.active {
+            background: linear-gradient(135deg, rgba(255,255,255,0.13), rgba(255,255,255,0.05));
+            color: white;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+            transform: translateY(-1px);
+        }
+        .theme-mode-tab:hover:not(.active) {
+            color: rgba(255, 255, 255, 0.78);
+            background: rgba(255,255,255,0.04);
         }
         .theme-grid-scroll {
             flex: 1;
             overflow-y: auto;
-            padding: 0 28px 20px;
+            padding: 0 28px 8px;
             scrollbar-width: thin;
-            scrollbar-color: rgba(255,255,255,0.1) transparent;
+            scrollbar-color: rgba(255,255,255,0.12) transparent;
         }
-        .theme-grid-scroll::-webkit-scrollbar { width: 4px; }
+        .theme-grid-scroll::-webkit-scrollbar { width: 5px; }
         .theme-grid-scroll::-webkit-scrollbar-track { background: transparent; }
-        .theme-grid-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+        .theme-grid-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 999px; }
         .theme-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 14px;
+        }
+        .theme-grid .theme-empty-state {
+            grid-column: 1 / -1;
+        }
+        @keyframes themeCardIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
         .theme-card {
-            border-radius: 16px;
+            appearance: none;
+            width: 100%;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 22px;
             padding: 14px;
             cursor: pointer;
-            border: 2px solid rgba(255, 255, 255, 0.04);
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
             overflow: hidden;
+            text-align: left;
+            color: var(--theme-text, #fff);
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.01)),
+                linear-gradient(145deg, color-mix(in srgb, var(--theme-bg) 92%, white 3%), var(--theme-bg));
+            transition:
+                transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                border-color 0.24s ease,
+                box-shadow 0.24s ease;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+            animation: themeCardIn 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
         .theme-card::before {
             content: '';
             position: absolute;
-            inset: 0;
-            border-radius: 14px;
+            inset: -40%;
+            background: radial-gradient(circle, color-mix(in srgb, var(--theme-accent) 38%, transparent), transparent 55%);
             opacity: 0;
-            transition: opacity 0.3s;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+            transition: opacity 0.3s ease;
+            pointer-events: none;
         }
         .theme-card:hover {
-            transform: translateY(-4px) scale(1.03);
-            border-color: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+            transform: translateY(-6px) scale(1.02);
+            border-color: rgba(255, 255, 255, 0.18);
+            box-shadow:
+                0 18px 28px rgba(0, 0, 0, 0.26),
+                inset 0 1px 0 rgba(255,255,255,0.08);
         }
-        .theme-card:hover::before { opacity: 1; }
+        .theme-card:hover::before {
+            opacity: 1;
+        }
         .theme-card.selected {
-            border-color: var(--accent-theme, #0891b2) !important;
-            box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.2), 0 8px 20px rgba(0, 0, 0, 0.3);
+            border-color: color-mix(in srgb, var(--theme-accent) 88%, white 14%) !important;
+            box-shadow:
+                0 0 0 2px color-mix(in srgb, var(--theme-accent) 30%, transparent),
+                0 18px 28px rgba(0, 0, 0, 0.28),
+                inset 0 1px 0 rgba(255,255,255,0.09);
         }
         .theme-card.selected::after {
             content: '✓';
             position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 20px;
-            height: 20px;
-            background: var(--accent-theme, #0891b2);
+            top: 12px;
+            right: 12px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
+            display: grid;
+            place-items: center;
+            font-size: 12px;
             font-weight: 900;
             color: white;
+            background: linear-gradient(135deg, var(--theme-primary), var(--theme-accent));
+            box-shadow: 0 8px 18px color-mix(in srgb, var(--theme-accent) 36%, transparent);
         }
-        .theme-swatches {
+        .theme-card-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.09);
+            color: inherit;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .theme-card-surface {
+            border-radius: 18px;
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.07);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+            margin-bottom: 12px;
+        }
+        .theme-card-topbar {
             display: flex;
-            gap: 4px;
+            gap: 5px;
             margin-bottom: 10px;
         }
-        .theme-swatch {
-            flex: 1;
-            height: 28px;
-            border-radius: 8px;
-            transition: transform 0.2s;
+        .theme-card-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.28);
         }
-        .theme-swatch:first-child { border-radius: 8px 4px 4px 8px; }
-        .theme-swatch:last-child { border-radius: 4px 8px 8px 4px; }
-        .theme-card:hover .theme-swatch { transform: scaleY(1.15); }
-        .theme-card-name {
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 0.02em;
-            white-space: nowrap;
+        .theme-card-dot.primary { background: var(--theme-primary); }
+        .theme-card-dot.accent { background: var(--theme-accent); }
+        .theme-card-banner {
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--theme-primary), var(--theme-accent));
+            margin-bottom: 10px;
+            box-shadow: 0 10px 18px rgba(0,0,0,0.18);
+        }
+        .theme-card-lines {
+            display: grid;
+            gap: 7px;
+            margin-bottom: 10px;
+        }
+        .theme-card-lines span {
+            height: 7px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.1);
+            position: relative;
             overflow: hidden;
-            text-overflow: ellipsis;
+        }
+        .theme-card-lines span::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, var(--theme-primary), var(--theme-accent));
+            transform-origin: left center;
+        }
+        .theme-card-lines span:nth-child(1)::before { transform: scaleX(0.88); }
+        .theme-card-lines span:nth-child(2)::before { transform: scaleX(0.58); }
+        .theme-card-lines span:nth-child(3)::before { transform: scaleX(0.34); }
+        .theme-swatches {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 6px;
+        }
+        .theme-swatch {
+            height: 24px;
+            border-radius: 10px;
+            transition: transform 0.22s ease;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.16);
+        }
+        .theme-card:hover .theme-swatch {
+            transform: translateY(-2px);
+        }
+        .theme-card-meta {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .theme-card-name {
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            line-height: 1.15;
+            color: inherit;
+        }
+        .theme-card-accent {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: color-mix(in srgb, var(--theme-text) 72%, transparent);
+            white-space: nowrap;
+        }
+        .theme-empty-state {
+            min-height: 220px;
+            border-radius: 24px;
+            border: 1px dashed rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.03);
+            display: grid;
+            place-items: center;
+            padding: 30px;
+            text-align: center;
+            color: rgba(226,232,240,0.72);
+        }
+        .theme-empty-state strong {
+            display: block;
+            font-size: 18px;
+            color: white;
+            margin-bottom: 8px;
         }
         .theme-selector-footer {
-            padding: 16px 28px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin: 0 28px;
+            padding: 18px 0 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 12px;
-            flex-shrink: 0;
+            flex-wrap: wrap;
         }
-        .theme-random-btn {
-            padding: 10px 22px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(255, 255, 255, 0.05);
-            color: rgba(255, 255, 255, 0.7);
+        .theme-selection-note {
+            color: rgba(226,232,240,0.62);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        .theme-footer-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .theme-random-btn,
+        .theme-apply-btn {
+            padding: 11px 20px;
+            border-radius: 14px;
             font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: 11px;
             font-weight: 800;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
+            transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.24s ease, filter 0.24s ease, background 0.24s ease;
+            display: inline-flex;
             align-items: center;
             gap: 8px;
+        }
+        .theme-random-btn {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.78);
         }
         .theme-random-btn:hover {
             background: rgba(255, 255, 255, 0.1);
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.22);
         }
         .theme-apply-btn {
-            padding: 10px 28px;
-            border-radius: 12px;
             border: none;
             background: linear-gradient(135deg, var(--primary-theme, #164e63), var(--accent-theme, #0891b2));
             color: white;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 4px 15px rgba(8, 145, 178, 0.3);
+            box-shadow: 0 10px 24px rgba(8, 145, 178, 0.28);
         }
         .theme-apply-btn:hover {
             transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 8px 25px rgba(8, 145, 178, 0.4);
-            filter: brightness(1.1);
+            box-shadow: 0 14px 28px rgba(8, 145, 178, 0.34);
+            filter: brightness(1.08);
         }
-        @media (max-width: 480px) {
-            .theme-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-            .theme-selector-panel { max-height: 90vh; border-radius: 20px; }
-            .theme-selector-header { padding: 18px 18px 0; }
-            .theme-grid-scroll { padding: 0 18px 16px; }
-            .theme-selector-footer { padding: 12px 18px; }
+        @media (max-width: 900px) {
+            .theme-selector-overlay {
+                padding: 18px;
+            }
+            .theme-selector-shell {
+                grid-template-columns: 1fr;
+            }
+            .theme-selector-sidebar {
+                border-right: none;
+                border-bottom: 1px solid rgba(255,255,255,0.06);
+            }
+            .theme-selector-main {
+                padding: 20px;
+            }
+            .theme-mode-tabs,
+            .theme-selector-footer {
+                margin-left: 0;
+                margin-right: 0;
+            }
+        }
+        @media (max-width: 640px) {
+            .theme-selector-overlay {
+                padding: 10px;
+            }
+            .theme-selector-panel {
+                width: 100%;
+                max-height: 94vh;
+                border-radius: 24px;
+            }
+            .theme-selector-sidebar,
+            .theme-selector-main {
+                padding: 18px;
+            }
+            .theme-selector-title h2 {
+                font-size: 24px;
+            }
+            .theme-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+            }
+            .theme-card {
+                padding: 12px;
+                border-radius: 18px;
+            }
+            .theme-selector-footer {
+                padding-top: 14px;
+            }
+            .theme-footer-actions,
+            .theme-random-btn,
+            .theme-apply-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .theme-selection-note {
+                width: 100%;
+            }
         }
 
         /* Disable ALL wrapper styling for HTML2Canvas JPG export */
@@ -2050,6 +2430,8 @@
             .mobile-calendar-fab,
             .mobile-calendar-fab::before,
             .fab-icon-shell::before,
+            .theme-selector-panel,
+            .theme-card,
             .btn-save,
             .btn-golden {
                 animation: none !important;
@@ -2059,6 +2441,12 @@
             .ctrl-item,
             .fab-icon-shell,
             .fab-icon-shell svg,
+            .theme-selector-overlay,
+            .theme-card,
+            .theme-close-btn,
+            .theme-mode-tab,
+            .theme-random-btn,
+            .theme-apply-btn,
             .mobile-calendar-fab {
                 transition-duration: 0.01ms !important;
             }
@@ -3557,32 +3945,69 @@
     </div>
 
     <!-- ============ THEME SELECTOR MODAL ============ -->
-    <div class="theme-selector-overlay" id="theme-selector-overlay" onclick="if(event.target===this)closeThemeSelector()">
-        <div class="theme-selector-panel">
-            <div class="theme-selector-header">
+    <div class="theme-selector-overlay" id="theme-selector-overlay" onclick="if(event.target===this)closeThemeSelector()" aria-hidden="true">
+        <div class="theme-selector-panel" role="dialog" aria-modal="true" aria-labelledby="theme-selector-title">
+            <div class="theme-selector-shell">
+            <aside class="theme-selector-sidebar">
                 <div class="theme-selector-title">
-                    <h2>🎨 Theme Gallery</h2>
-                    <button class="theme-close-btn" onclick="closeThemeSelector()">✕</button>
+                    <div class="theme-selector-copy">
+                        <span class="theme-selector-eyebrow">Theme Studio</span>
+                        <h2 id="theme-selector-title">Color your ledger</h2>
+                    </div>
+                    <button class="theme-close-btn" onclick="closeThemeSelector()" type="button" aria-label="Close theme selector">✕</button>
                 </div>
-                <div class="theme-mode-tabs">
-                    <button class="theme-mode-tab active" id="theme-tab-dark" onclick="switchThemeTab('dark')">🌙 Dark Themes</button>
-                    <button class="theme-mode-tab" id="theme-tab-lite" onclick="switchThemeTab('lite')">☀️ Lite Themes</button>
+                <p class="theme-selector-subtitle">Preview palettes instantly, search fast, and switch between dark or lite report moods.</p>
+                <div class="theme-preview-card" id="theme-preview-card">
+                    <span class="theme-preview-badge">Live preview</span>
+                    <div class="theme-preview-window">
+                        <div class="theme-preview-topbar">
+                            <span class="theme-preview-dot primary"></span>
+                            <span class="theme-preview-dot accent"></span>
+                            <span class="theme-preview-dot"></span>
+                        </div>
+                        <div class="theme-preview-banner" id="theme-preview-banner">MEP FAN LTD.</div>
+                        <div class="theme-preview-bars">
+                            <span class="theme-preview-bar"></span>
+                            <span class="theme-preview-bar"></span>
+                            <span class="theme-preview-bar"></span>
+                        </div>
+                    </div>
+                    <div class="theme-preview-meta">
+                        <div>
+                            <span class="theme-preview-label">Selected</span>
+                            <span class="theme-preview-name" id="theme-preview-name">Midnight Teal</span>
+                        </div>
+                        <span class="theme-preview-pill" id="theme-preview-mode">Dark</span>
+                    </div>
                 </div>
                 <div class="theme-search-wrap">
                     <svg class="theme-search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     <input type="text" class="theme-search-box" id="theme-search" placeholder="Search themes..." oninput="filterThemes()">
                 </div>
-                <div class="theme-count" id="theme-count"></div>
-            </div>
-            <div class="theme-grid-scroll">
-                <div class="theme-grid" id="theme-grid"></div>
-            </div>
-            <div class="theme-selector-footer">
-                <button class="theme-random-btn" onclick="randomThemeFromSelector()">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3"/></svg>
-                    Surprise Me
-                </button>
-                <button class="theme-apply-btn" onclick="closeThemeSelector()">Done</button>
+                <div class="theme-meta-row">
+                    <div class="theme-count" id="theme-count"></div>
+                    <span class="theme-shortcut-hint">Esc to close</span>
+                </div>
+            </aside>
+            <main class="theme-selector-main">
+                <div class="theme-mode-tabs" role="tablist" aria-label="Theme mode">
+                    <button class="theme-mode-tab active" id="theme-tab-dark" onclick="switchThemeTab('dark')" type="button" role="tab" aria-selected="true">Dark Themes</button>
+                    <button class="theme-mode-tab" id="theme-tab-lite" onclick="switchThemeTab('lite')" type="button" role="tab" aria-selected="false">Lite Themes</button>
+                </div>
+                <div class="theme-grid-scroll">
+                    <div class="theme-grid" id="theme-grid"></div>
+                </div>
+                <div class="theme-selector-footer">
+                    <span class="theme-selection-note" id="theme-selection-note">Choose a palette to apply it instantly.</span>
+                    <div class="theme-footer-actions">
+                        <button class="theme-random-btn" onclick="randomThemeFromSelector()" type="button">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3"/></svg>
+                            Surprise Me
+                        </button>
+                        <button class="theme-apply-btn" onclick="closeThemeSelector()" type="button">Done</button>
+                    </div>
+                </div>
+            </main>
             </div>
         </div>
     </div>
@@ -3860,6 +4285,11 @@
             if (e.key !== 'Escape') return;
             const wrap = document.getElementById('ctrl-speed-wrap');
             const btn = document.getElementById('ctrl-toggle-btn');
+            const themeOverlay = document.getElementById('theme-selector-overlay');
+            if (themeOverlay && themeOverlay.classList.contains('active')) {
+                closeThemeSelector();
+                return;
+            }
             if (!wrap || !btn || !wrap.classList.contains('open')) return;
             closeControlPanel(wrap, btn, wrap.querySelectorAll('.ctrl-item'));
             btn.focus();
@@ -4321,6 +4751,7 @@
 
         let _currentThemeMode = 'dark';
         let _selectedThemeIndex = -1;
+        let _themeCloseTimer = null;
 
         function randomizeTheme(silent = false) {
             const random = themes[Math.floor(Math.random() * themes.length)];
@@ -4349,25 +4780,35 @@
         // ============ THEME SELECTOR FUNCTIONS ============
         function openThemeSelector() {
             const overlay = document.getElementById('theme-selector-overlay');
+            clearTimeout(_themeCloseTimer);
             overlay.style.display = 'flex';
+            overlay.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('theme-selector-open');
             requestAnimationFrame(() => overlay.classList.add('active'));
             _currentThemeMode = document.body.classList.contains('lite-mode') ? 'lite' : 'dark';
             document.getElementById('theme-tab-dark').classList.toggle('active', _currentThemeMode === 'dark');
             document.getElementById('theme-tab-lite').classList.toggle('active', _currentThemeMode === 'lite');
             document.getElementById('theme-search').value = '';
             renderThemeGrid();
+            updateThemePreview(themes[_selectedThemeIndex] || themes[0]);
+            setTimeout(() => document.getElementById('theme-search')?.focus(), 120);
         }
 
         function closeThemeSelector() {
             const overlay = document.getElementById('theme-selector-overlay');
             overlay.classList.remove('active');
-            setTimeout(() => { overlay.style.display = 'none'; }, 300);
+            overlay.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('theme-selector-open');
+            clearTimeout(_themeCloseTimer);
+            _themeCloseTimer = setTimeout(() => { overlay.style.display = 'none'; }, 300);
         }
 
         function switchThemeTab(mode) {
             _currentThemeMode = mode;
             document.getElementById('theme-tab-dark').classList.toggle('active', mode === 'dark');
             document.getElementById('theme-tab-lite').classList.toggle('active', mode === 'lite');
+            document.getElementById('theme-tab-dark').setAttribute('aria-selected', mode === 'dark' ? 'true' : 'false');
+            document.getElementById('theme-tab-lite').setAttribute('aria-selected', mode === 'lite' ? 'true' : 'false');
             document.getElementById('theme-search').value = '';
             renderThemeGrid();
         }
@@ -4379,25 +4820,65 @@
         function renderThemeGrid() {
             const grid = document.getElementById('theme-grid');
             const search = (document.getElementById('theme-search').value || '').toLowerCase().trim();
-            const filtered = themes.filter(t => {
+            const modeThemes = themes.filter(t => (t.mode || 'dark') === _currentThemeMode);
+            const filtered = modeThemes.filter(t => {
                 const mode = t.mode || 'dark';
                 if (mode !== _currentThemeMode) return false;
                 if (search && !t.name.toLowerCase().includes(search)) return false;
                 return true;
             });
-            document.getElementById('theme-count').textContent = `${filtered.length} theme${filtered.length !== 1 ? 's' : ''}`;
+            document.getElementById('theme-count').textContent = `${filtered.length}/${modeThemes.length} ${_currentThemeMode} themes`;
+            const note = document.getElementById('theme-selection-note');
+            if (note) note.textContent = search ? `Showing matches for “${search}”.` : 'Choose a palette to apply it instantly.';
+            if (!filtered.length) {
+                grid.innerHTML = `<div class="theme-empty-state"><div><strong>No palettes found</strong><span>Try another search term or switch theme mode.</span></div></div>`;
+                return;
+            }
             grid.innerHTML = filtered.map((t, i) => {
                 const idx = themes.indexOf(t);
                 const sel = idx === _selectedThemeIndex ? ' selected' : '';
-                return `<div class="theme-card${sel}" style="background:${t.bg};" onclick="selectThemeCard(${idx})" title="${t.name}">
-                    <div class="theme-swatches">
-                        <div class="theme-swatch" style="background:${t.primary};"></div>
-                        <div class="theme-swatch" style="background:${t.accent};"></div>
-                        <div class="theme-swatch" style="background:${t.text};opacity:0.7;"></div>
+                const mode = t.mode || 'dark';
+                const displayAccent = String(t.accent).replace('#', '');
+                return `<button class="theme-card${sel}" style="--theme-bg:${t.bg};--theme-primary:${t.primary};--theme-accent:${t.accent};--theme-text:${t.text};animation-delay:${Math.min(i, 12) * 22}ms;" onclick="selectThemeCard(${idx})" type="button" title="${t.name}" aria-label="Apply ${t.name} theme">
+                    <span class="theme-card-tag">${mode}</span>
+                    <div class="theme-card-surface">
+                        <div class="theme-card-topbar">
+                            <span class="theme-card-dot primary"></span>
+                            <span class="theme-card-dot accent"></span>
+                            <span class="theme-card-dot"></span>
+                        </div>
+                        <div class="theme-card-banner"></div>
+                        <div class="theme-card-lines"><span></span><span></span><span></span></div>
+                        <div class="theme-swatches">
+                            <div class="theme-swatch" style="background:${t.bg};"></div>
+                            <div class="theme-swatch" style="background:${t.primary};"></div>
+                            <div class="theme-swatch" style="background:${t.accent};"></div>
+                            <div class="theme-swatch" style="background:${t.text};"></div>
+                        </div>
                     </div>
-                    <div class="theme-card-name" style="color:${t.text};">${t.name}</div>
-                </div>`;
+                    <span class="theme-card-meta">
+                        <span class="theme-card-name">${t.name}</span>
+                        <span class="theme-card-accent">#${displayAccent}</span>
+                    </span>
+                </button>`;
             }).join('');
+        }
+
+        function updateThemePreview(theme) {
+            if (!theme) return;
+            const card = document.getElementById('theme-preview-card');
+            const name = document.getElementById('theme-preview-name');
+            const mode = document.getElementById('theme-preview-mode');
+            const banner = document.getElementById('theme-preview-banner');
+            if (card) {
+                card.style.setProperty('--preview-bg', theme.bg);
+                card.style.setProperty('--preview-primary', theme.primary);
+                card.style.setProperty('--preview-accent', theme.accent);
+                card.style.setProperty('--preview-text', theme.text);
+            }
+            if (name) name.textContent = theme.name;
+            if (mode) mode.textContent = theme.mode === 'lite' ? 'Lite' : 'Dark';
+            if (banner) banner.textContent = theme.name;
         }
 
         function selectThemeCard(idx) {
@@ -4411,6 +4892,7 @@
                 document.body.classList.remove('lite-mode');
             }
             applyTheme(theme);
+            updateThemePreview(theme);
             renderThemeGrid();
             showToast(`${theme.name} Applied`);
         }
