@@ -473,6 +473,7 @@
         }
         .theme-selector-panel {
             width: min(1120px, 96vw);
+            height: min(88vh, 860px);
             max-height: min(88vh, 860px);
             background:
                 linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(2, 6, 23, 0.98));
@@ -501,7 +502,8 @@
         .theme-selector-shell {
             display: grid;
             grid-template-columns: minmax(290px, 340px) minmax(0, 1fr);
-            min-height: min(82vh, 780px);
+            height: 100%;
+            min-height: 0;
             position: relative;
             z-index: 1;
         }
@@ -513,9 +515,17 @@
             display: flex;
             flex-direction: column;
             gap: 18px;
+            min-height: 0;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.12) transparent;
         }
+        .theme-selector-sidebar::-webkit-scrollbar { width: 5px; }
+        .theme-selector-sidebar::-webkit-scrollbar-track { background: transparent; }
+        .theme-selector-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 999px; }
         .theme-selector-main {
             min-width: 0;
+            min-height: 0;
             display: flex;
             flex-direction: column;
             gap: 18px;
@@ -800,6 +810,7 @@
         }
         .theme-grid-scroll {
             flex: 1;
+            min-height: 0;
             overflow-y: auto;
             padding: 0 28px 8px;
             scrollbar-width: thin;
@@ -1064,12 +1075,16 @@
             }
             .theme-selector-shell {
                 grid-template-columns: 1fr;
+                display: flex;
+                flex-direction: column;
             }
             .theme-selector-sidebar {
+                flex: 0 0 auto;
                 border-right: none;
                 border-bottom: 1px solid rgba(255,255,255,0.06);
             }
             .theme-selector-main {
+                flex: 1 1 auto;
                 padding: 20px;
             }
             .theme-mode-tabs,
@@ -1084,12 +1099,25 @@
             }
             .theme-selector-panel {
                 width: 100%;
+                height: 94vh;
                 max-height: 94vh;
                 border-radius: 24px;
             }
             .theme-selector-sidebar,
             .theme-selector-main {
                 padding: 18px;
+            }
+            .theme-selector-sidebar {
+                gap: 12px;
+            }
+            .theme-preview-card {
+                padding: 14px;
+            }
+            .theme-preview-window {
+                display: none;
+            }
+            .theme-preview-meta {
+                margin-top: 0;
             }
             .theme-selector-title h2 {
                 font-size: 24px;
