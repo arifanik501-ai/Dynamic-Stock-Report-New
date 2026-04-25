@@ -25,12 +25,20 @@
             --glow-color: rgba(8, 145, 178, 0.15);
             --glass-bg: rgba(255, 255, 255, 0.06);
             --glass-border: rgba(255, 255, 255, 0.08);
+            --ambient-grid: rgba(255,255,255,0.035);
+            --ambient-grid-strong: rgba(103,232,249,0.11);
+            --ambient-panel: rgba(255,255,255,0.055);
+            --ambient-vignette: rgba(0,0,0,0.84);
         }
 
         * { box-sizing: border-box; }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
+            background:
+                radial-gradient(circle at 14% 10%, color-mix(in srgb, var(--accent-theme) 20%, transparent), transparent 26rem),
+                radial-gradient(circle at 88% 4%, color-mix(in srgb, var(--primary-theme) 30%, transparent), transparent 28rem),
+                linear-gradient(135deg, color-mix(in srgb, var(--bg-retro) 82%, #020617 18%), var(--bg-retro) 46%, #020617);
             background-color: var(--bg-retro);
             color: var(--text-main);
             min-height: 100vh;
@@ -38,7 +46,7 @@
             justify-content: center;
             overflow-x: hidden;
             position: relative;
-            transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* ============ LITE MODE ============ */
@@ -46,9 +54,17 @@
             --bg-retro: #e2e8f0;
             --glass-bg: rgba(255, 255, 255, 0.6);
             --glass-border: rgba(0, 0, 0, 0.08);
+            --ambient-grid: rgba(15,23,42,0.052);
+            --ambient-grid-strong: rgba(8,145,178,0.16);
+            --ambient-panel: rgba(255,255,255,0.52);
+            --ambient-vignette: rgba(255,255,255,0.5);
+            background:
+                radial-gradient(circle at 12% 8%, color-mix(in srgb, var(--accent-theme) 18%, transparent), transparent 24rem),
+                radial-gradient(circle at 86% 10%, color-mix(in srgb, var(--primary-theme) 16%, transparent), transparent 26rem),
+                linear-gradient(135deg, #f8fafc 0%, color-mix(in srgb, var(--bg-retro) 72%, white 28%) 42%, #cbd5e1 100%);
             color: #0a0f1a;
         }
-        body.lite-mode .bg-grid, body.lite-mode .bg-scanlines { display: none; }
+        body.lite-mode .bg-scanlines { opacity: 0.18; mix-blend-mode: multiply; }
         body.lite-mode .btn-util:not(.btn-save):not(.btn-golden) {
             color: #475569;
             background: rgba(0,0,0,0.03);
@@ -237,46 +253,73 @@
             z-index: 0;
             overflow: hidden;
             pointer-events: none;
+            background:
+                linear-gradient(120deg, rgba(255,255,255,0.045) 0 1px, transparent 1px 18px),
+                radial-gradient(circle at 50% 120%, color-mix(in srgb, var(--accent-theme) 12%, transparent), transparent 42rem);
+            opacity: 1;
+            transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* Ambient Vignette Shadow */
+        .bg-canvas::before {
+            content: '';
+            position: absolute;
+            inset: -12%;
+            background:
+                conic-gradient(from 180deg at 50% 50%,
+                    transparent 0deg,
+                    color-mix(in srgb, var(--accent-theme) 16%, transparent) 54deg,
+                    transparent 116deg,
+                    color-mix(in srgb, var(--primary-theme) 18%, transparent) 196deg,
+                    transparent 290deg,
+                    color-mix(in srgb, var(--accent-theme) 10%, transparent) 360deg);
+            opacity: 0.45;
+            filter: blur(24px);
+            animation: ambientSpin 44s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
         .bg-canvas::after {
             content: '';
             position: absolute;
             inset: 0;
-            box-shadow: inset 0 0 200px rgba(0, 0, 0, 0.85);
+            background:
+                linear-gradient(90deg, rgba(255,255,255,0.035), transparent 18%, transparent 82%, rgba(255,255,255,0.02)),
+                radial-gradient(ellipse at center, transparent 32%, var(--ambient-vignette) 100%);
             pointer-events: none;
-            z-index: 2;
+            z-index: 4;
         }
 
         .bg-orb {
             position: absolute;
             border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.5;
+            filter: blur(76px);
+            opacity: 0.74;
+            mix-blend-mode: screen;
             animation: orbFloat 20s ease-in-out infinite;
+            transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s ease, filter 0.8s ease;
         }
 
         .bg-orb:nth-child(1) {
-            width: 500px; height: 500px;
-            background: radial-gradient(circle, rgba(8, 145, 178, 0.25), transparent 70%);
-            top: -10%; left: -5%;
+            width: min(58vw, 720px); height: min(58vw, 720px);
+            background: radial-gradient(circle, rgba(8, 145, 178, 0.38), transparent 68%);
+            top: -16%; left: -10%;
             animation-delay: 0s;
-            animation-duration: 25s;
+            animation-duration: 28s;
         }
         .bg-orb:nth-child(2) {
-            width: 400px; height: 400px;
-            background: radial-gradient(circle, rgba(22, 78, 99, 0.3), transparent 70%);
-            bottom: -15%; right: -5%;
+            width: min(50vw, 620px); height: min(50vw, 620px);
+            background: radial-gradient(circle, rgba(22, 78, 99, 0.45), transparent 70%);
+            bottom: -18%; right: -10%;
             animation-delay: -8s;
-            animation-duration: 22s;
+            animation-duration: 24s;
         }
         .bg-orb:nth-child(3) {
-            width: 300px; height: 300px;
-            background: radial-gradient(circle, rgba(6, 182, 212, 0.15), transparent 70%);
-            top: 40%; left: 50%;
+            width: min(42vw, 520px); height: min(42vw, 520px);
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.28), transparent 72%);
+            top: 36%; left: 44%;
             animation-delay: -14s;
-            animation-duration: 30s;
+            animation-duration: 34s;
         }
 
         @keyframes orbFloat {
@@ -285,6 +328,10 @@
             50% { transform: translate(-30px, 50px) scale(0.95); }
             75% { transform: translate(40px, 20px) scale(1.05); }
         }
+        @keyframes ambientSpin {
+            from { transform: rotate(0deg) scale(1); }
+            to { transform: rotate(360deg) scale(1.08); }
+        }
 
         /* Grid overlay */
         .bg-grid {
@@ -292,12 +339,15 @@
             inset: 0;
             z-index: 1;
             background-image:
-                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-            background-size: 60px 60px;
+                linear-gradient(var(--ambient-grid) 1px, transparent 1px),
+                linear-gradient(90deg, var(--ambient-grid) 1px, transparent 1px),
+                linear-gradient(var(--ambient-grid-strong) 1px, transparent 1px),
+                linear-gradient(90deg, var(--ambient-grid-strong) 1px, transparent 1px);
+            background-size: 48px 48px, 48px 48px, 240px 240px, 240px 240px;
             pointer-events: none;
-            mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
-            -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+            opacity: 0.78;
+            mask-image: radial-gradient(ellipse at center, black 16%, transparent 84%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 16%, transparent 84%);
         }
 
         /* Scan line effect */
@@ -309,10 +359,31 @@
                 0deg,
                 transparent,
                 transparent 2px,
-                rgba(255,255,255,0.005) 2px,
-                rgba(255,255,255,0.005) 4px
+                rgba(255,255,255,0.018) 2px,
+                rgba(255,255,255,0.018) 4px
             );
             pointer-events: none;
+            opacity: 0.42;
+            mix-blend-mode: overlay;
+        }
+        body.lite-mode .bg-canvas {
+            background:
+                linear-gradient(120deg, rgba(15,23,42,0.035) 0 1px, transparent 1px 18px),
+                radial-gradient(circle at 50% 110%, color-mix(in srgb, var(--accent-theme) 10%, transparent), transparent 40rem);
+        }
+        body.lite-mode .bg-canvas::before {
+            opacity: 0.34;
+            mix-blend-mode: multiply;
+        }
+        body.lite-mode .bg-canvas::after {
+            background:
+                linear-gradient(90deg, rgba(255,255,255,0.62), transparent 20%, transparent 80%, rgba(255,255,255,0.4)),
+                radial-gradient(ellipse at center, transparent 48%, rgba(148,163,184,0.22) 100%);
+        }
+        body.lite-mode .bg-orb {
+            opacity: 0.42;
+            filter: blur(70px);
+            mix-blend-mode: multiply;
         }
 
         /* ============ SCREENSHOT WRAPPER ============ */
@@ -2455,6 +2526,8 @@
         @media (prefers-reduced-motion: reduce) {
             .ctrl-trigger,
             .ctrl-trigger-glow,
+            .bg-canvas::before,
+            .bg-orb,
             .mobile-calendar-fab,
             .mobile-calendar-fab::before,
             .fab-icon-shell::before,
@@ -2469,6 +2542,8 @@
             .ctrl-item,
             .fab-icon-shell,
             .fab-icon-shell svg,
+            .bg-canvas,
+            .bg-orb,
             .theme-selector-overlay,
             .theme-card,
             .theme-close-btn,
@@ -4770,11 +4845,10 @@
             root.style.setProperty('--text-on-primary', theme.text);
             if (theme.glow) root.style.setProperty('--glow-color', theme.glow);
 
-            // Animate background orbs with new theme
             const orbs = document.querySelectorAll('.bg-orb');
-            orbs[0].style.background = `radial-gradient(circle, ${theme.accent}40, transparent 70%)`;
-            orbs[1].style.background = `radial-gradient(circle, ${theme.primary}50, transparent 70%)`;
-            orbs[2].style.background = `radial-gradient(circle, ${theme.accent}25, transparent 70%)`;
+            if (orbs[0]) orbs[0].style.background = `radial-gradient(circle, ${theme.accent}66, transparent 68%)`;
+            if (orbs[1]) orbs[1].style.background = `radial-gradient(circle, ${theme.primary}78, transparent 70%)`;
+            if (orbs[2]) orbs[2].style.background = `radial-gradient(circle, ${theme.accent}48, transparent 72%)`;
         }
 
         let _currentThemeMode = 'dark';
