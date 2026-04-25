@@ -4185,8 +4185,8 @@
 
             if (newItems.length > 0) {
                 inventoryData = newItems;
-                renderTable();
                 updateReportBranding(reportType);
+                renderTable();
                 toggleModal(false);
                 showToast(`Sync Success: ${newItems.length} Items`);
                 
