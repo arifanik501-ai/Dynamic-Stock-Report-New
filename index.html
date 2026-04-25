@@ -1714,15 +1714,58 @@
         }
 
         /* ─── Speed Dial Panel ─── */
+        @keyframes fabOrbit {
+            from { transform: rotate(0deg) scale(1.25); }
+            to { transform: rotate(360deg) scale(1.25); }
+        }
+        @keyframes fabBreath {
+            0%, 100% { transform: translateY(-3px) scale(1); filter: brightness(1); }
+            50% { transform: translateY(-5px) scale(1.03); filter: brightness(1.12); }
+        }
+        @keyframes mobileFabFloat {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.08); }
+        }
+        @keyframes fabSheen {
+            0% { transform: translateX(-130%) skewX(-18deg); opacity: 0; }
+            18%, 55% { opacity: 0.7; }
+            100% { transform: translateX(150%) skewX(-18deg); opacity: 0; }
+        }
         .ctrl-trigger {
             position: relative;
             overflow: hidden;
+            isolation: isolate;
+            background:
+                radial-gradient(circle at 30% 18%, rgba(255,255,255,0.24), transparent 32%),
+                linear-gradient(135deg, #0f172a, #1e3a8a 54%, var(--accent-theme)) !important;
+            color: white !important;
+            animation: fabBreath 4s ease-in-out infinite;
+        }
+        .ctrl-trigger-glow {
+            position: absolute;
+            inset: -38%;
+            background: conic-gradient(from 90deg, transparent, rgba(34,211,238,0.78), transparent, rgba(96,165,250,0.72), transparent);
+            opacity: 0.45;
+            animation: fabOrbit 5.5s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .ctrl-trigger::after {
+            content: '';
+            position: absolute;
+            inset: 2px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.03) 44%, rgba(0,0,0,0.18));
+            pointer-events: none;
+            z-index: 1;
         }
         .ctrl-icon {
-            width: 20px;
-            height: 20px;
+            width: 21px;
+            height: 21px;
             position: absolute;
-            transition: opacity 0.28s ease, transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 2;
+            filter: drop-shadow(0 6px 10px rgba(0,0,0,0.28));
+            transition: opacity 0.28s ease, transform 0.42s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
         }
         .ctrl-icon-menu  { opacity: 1; transform: rotate(0deg)   scale(1); }
         .ctrl-icon-close { opacity: 0; transform: rotate(-180deg) scale(0.3); }
@@ -1734,30 +1777,61 @@
             box-shadow: 0 6px 0 #1e3a8a, 0 8px 20px rgba(59,130,246,0.4), inset 0 2px 0 rgba(255,255,255,0.25) !important;
             border-color: rgba(59,130,246,0.4) !important;
         }
+        .ctrl-trigger.active .ctrl-trigger-glow {
+            opacity: 0.95;
+            animation-duration: 2.4s;
+        }
         .ctrl-trigger.active .btn-util-label { color: rgba(255,255,255,0.8); }
 
         /* Speed Dial - grid reveal */
         .ctrl-speed-wrap {
             display: grid;
             grid-template-rows: 0fr;
-            transition: grid-template-rows 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-10px) scale(0.96);
+            transform-origin: top center;
+            transition:
+                grid-template-rows 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.22s ease,
+                transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .ctrl-speed-wrap.open { grid-template-rows: 1fr; }
+        .ctrl-speed-wrap.open {
+            grid-template-rows: 1fr;
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0) scale(1);
+        }
         .ctrl-speed-inner {
             overflow: hidden;
             display: flex;
             flex-direction: column;
             gap: 8px;
             min-height: 0;
+            padding-top: 4px;
         }
         .ctrl-item {
             opacity: 0;
             transform: translateY(-14px) scale(0.85);
-            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.48s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: blur(2px);
+            pointer-events: none;
+            transition:
+                opacity 0.36s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.46s cubic-bezier(0.34, 1.56, 0.64, 1),
+                filter 0.36s ease;
+            transition-delay: calc(var(--i, 0) * 18ms);
         }
         .ctrl-item.visible {
             opacity: 1;
             transform: translateY(0) scale(1);
+            filter: blur(0);
+            pointer-events: auto;
+        }
+        .ctrl-trigger:focus-visible,
+        .mobile-calendar-fab:focus-visible,
+        .btn-util:focus-visible {
+            outline: 3px solid color-mix(in srgb, var(--accent-theme) 70%, white);
+            outline-offset: 4px;
         }
 
         /* Fix: panel must not overflow viewport when expanded */
@@ -1773,6 +1847,23 @@
         #ctrl-speed-wrap .btn-golden[title]::before,
         #ctrl-speed-wrap .btn-golden::after {
             display: none !important;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .ctrl-trigger,
+            .ctrl-trigger-glow,
+            .mobile-calendar-fab,
+            .mobile-calendar-fab::before,
+            .btn-save,
+            .btn-golden {
+                animation: none !important;
+            }
+            .ctrl-icon,
+            .ctrl-speed-wrap,
+            .ctrl-item,
+            .mobile-calendar-fab {
+                transition-duration: 0.01ms !important;
+            }
         }
 
         /* ============ TOOLTIPS ============ */
@@ -2437,22 +2528,61 @@
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background: linear-gradient(135deg, var(--primary-theme), var(--accent-theme));
+    background:
+        radial-gradient(circle at 20% 18%, rgba(255,255,255,0.32), transparent 30%),
+        linear-gradient(135deg, var(--primary-theme), var(--accent-theme));
     color: white;
-    border: none;
+    border: 1px solid rgba(255,255,255,0.2);
     border-radius: 30px;
-    height: 50px;
-    padding: 0 24px;
-    font-weight: 800;
+    height: 56px;
+    padding: 0 26px;
+    font-weight: 900;
     font-size: 13px;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     display: none;
     align-items: center;
     gap: 8px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 20px var(--glow-color);
+    box-shadow:
+        0 12px 0 color-mix(in srgb, var(--primary-theme) 72%, #020617),
+        0 22px 40px rgba(0,0,0,0.42),
+        0 0 26px var(--glow-color),
+        inset 0 2px 0 rgba(255,255,255,0.26);
     z-index: 900;
     font-family: 'Plus Jakarta Sans', sans-serif;
+    overflow: hidden;
+    isolation: isolate;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, filter 0.25s ease;
+    animation: mobileFabFloat 3.8s ease-in-out infinite;
+}
+.mobile-calendar-fab::before {
+    content: '';
+    position: absolute;
+    top: -35%;
+    bottom: -35%;
+    left: 0;
+    width: 48%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.42), transparent);
+    animation: fabSheen 3.2s ease-in-out infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+.mobile-calendar-fab:hover {
+    transform: translateX(-50%) translateY(-6px) scale(1.03);
+    filter: brightness(1.08);
+    box-shadow:
+        0 16px 0 color-mix(in srgb, var(--primary-theme) 72%, #020617),
+        0 30px 52px rgba(0,0,0,0.48),
+        0 0 34px var(--glow-color),
+        inset 0 2px 0 rgba(255,255,255,0.3);
+}
+.mobile-calendar-fab:active {
+    transform: translateX(-50%) translateY(4px) scale(0.98);
+    box-shadow:
+        0 4px 0 color-mix(in srgb, var(--primary-theme) 72%, #020617),
+        0 12px 24px rgba(0,0,0,0.42),
+        0 0 18px var(--glow-color),
+        inset 0 2px 0 rgba(255,255,255,0.2);
 }
 
 .glass-modal {
@@ -2525,6 +2655,17 @@
     .btn-util {
         width: 46px !important;
         height: 46px !important;
+    }
+
+    .ctrl-speed-wrap {
+        position: absolute;
+        right: 12px;
+        bottom: calc(100% + 10px);
+        width: 70px;
+    }
+
+    .ctrl-speed-inner {
+        align-items: center;
     }
 
     .btn-util[title]::before {
@@ -2701,29 +2842,29 @@
         <div class="controls-panel no-print" id="generator-controls">
 
             <!-- ☰ Trigger — always visible -->
-            <button class="btn-util ctrl-trigger" id="ctrl-toggle-btn" onclick="toggleControlPanel()" title="Tools">
-                <!-- Menu: premium 2×2 grid -->
-                <svg class="ctrl-icon ctrl-icon-menu" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-                    <rect x="3.5" y="3.5" width="7" height="7" rx="2.2"/>
-                    <rect x="13.5" y="3.5" width="7" height="7" rx="2.2"/>
-                    <rect x="3.5" y="13.5" width="7" height="7" rx="2.2"/>
-                    <rect x="13.5" y="13.5" width="7" height="7" rx="2.2"/>
+            <button class="btn-util ctrl-trigger" id="ctrl-toggle-btn" onclick="toggleControlPanel()" type="button" title="Tools" aria-label="Open quick tools" aria-controls="ctrl-speed-wrap" aria-expanded="false">
+                <span class="ctrl-trigger-glow" aria-hidden="true"></span>
+                <svg class="ctrl-icon ctrl-icon-menu" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M7 4.5H5.8c-.7 0-1.3.6-1.3 1.3V7c0 .7.6 1.3 1.3 1.3H7c.7 0 1.3-.6 1.3-1.3V5.8c0-.7-.6-1.3-1.3-1.3Z" fill="currentColor"/>
+                    <path d="M18.2 4.5H17c-.7 0-1.3.6-1.3 1.3V7c0 .7.6 1.3 1.3 1.3h1.2c.7 0 1.3-.6 1.3-1.3V5.8c0-.7-.6-1.3-1.3-1.3Z" fill="currentColor" opacity=".82"/>
+                    <path d="M7 15.7H5.8c-.7 0-1.3.6-1.3 1.3v1.2c0 .7.6 1.3 1.3 1.3H7c.7 0 1.3-.6 1.3-1.3V17c0-.7-.6-1.3-1.3-1.3Z" fill="currentColor" opacity=".82"/>
+                    <path d="M18.2 15.7H17c-.7 0-1.3.6-1.3 1.3v1.2c0 .7.6 1.3 1.3 1.3h1.2c.7 0 1.3-.6 1.3-1.3V17c0-.7-.6-1.3-1.3-1.3Z" fill="currentColor"/>
+                    <path d="M12 7.2v9.6M7.2 12h9.6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" opacity=".7"/>
                 </svg>
-                <!-- Close: bold rounded X -->
-                <svg class="ctrl-icon ctrl-icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round">
+                <svg class="ctrl-icon ctrl-icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true">
                     <path d="M5 5l14 14M19 5L5 19"/>
                 </svg>
             </button>
 
             <!-- Speed Dial Wrapper -->
-            <div class="ctrl-speed-wrap" id="ctrl-speed-wrap">
+            <div class="ctrl-speed-wrap" id="ctrl-speed-wrap" aria-hidden="true">
                 <div class="ctrl-speed-inner">
 
-                    <div class="ctrl-item"><div class="controls-divider" style="margin-top:4px;"></div></div>
+                    <div class="ctrl-item" style="--i:0"><div class="controls-divider" style="margin-top:4px;"></div></div>
 
                     <!-- SAVE -->
-                    <div class="ctrl-item">
-                        <button onclick="takeScreenshot(true)" class="btn-util btn-save" title="Save &amp; Sync" id="btn-save-report">
+                    <div class="ctrl-item" style="--i:1">
+                        <button onclick="takeScreenshot(true)" class="btn-util btn-save" type="button" title="Save &amp; Sync" id="btn-save-report">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
                             </svg>
@@ -2732,7 +2873,7 @@
                     </div>
 
                     <!-- TARGET -->
-                    <div class="ctrl-item">
+                    <div class="ctrl-item" style="--i:2">
                         <div style="background:rgba(15,23,42,0.45);padding:8px 6px 7px;border-radius:14px;border:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;align-items:center;justify-content:center;width:52px;box-sizing:border-box;">
                             <span style="font-size:6.5px;font-weight:900;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent-theme);margin-bottom:3px;font-family:'Plus Jakarta Sans',sans-serif;">TARGET</span>
                             <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:900;color:white;letter-spacing:-0.02em;line-height:1;">1600</span>
@@ -2740,11 +2881,11 @@
                         </div>
                     </div>
 
-                    <div class="ctrl-item"><div class="controls-divider"></div></div>
+                    <div class="ctrl-item" style="--i:3"><div class="controls-divider"></div></div>
 
                     <!-- IMPORT -->
-                    <div class="ctrl-item">
-                        <button onclick="toggleModal(true)" class="btn-util" title="Import Data">
+                    <div class="ctrl-item" style="--i:4">
+                        <button onclick="toggleModal(true)" class="btn-util" type="button" title="Import Data">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75" />
                             </svg>
@@ -2753,8 +2894,8 @@
                     </div>
 
                     <!-- EXPORT (golden) -->
-                    <div class="ctrl-item">
-                        <button onclick="takeScreenshot()" class="btn-util btn-golden" title="Download JPG">
+                    <div class="ctrl-item" style="--i:5">
+                        <button onclick="takeScreenshot()" class="btn-util btn-golden" type="button" title="Download JPG">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"></path>
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"></path>
@@ -2763,8 +2904,8 @@
                     </div>
 
                     <!-- CLEAR -->
-                    <div class="ctrl-item">
-                        <button onclick="refreshData()" class="btn-util" title="Clear All">
+                    <div class="ctrl-item" style="--i:6">
+                        <button onclick="refreshData()" class="btn-util" type="button" title="Clear All">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                             </svg>
@@ -2772,11 +2913,11 @@
                         </button>
                     </div>
 
-                    <div class="ctrl-item"><div class="controls-divider"></div></div>
+                    <div class="ctrl-item" style="--i:7"><div class="controls-divider"></div></div>
 
                     <!-- RND -->
-                    <div class="ctrl-item">
-                        <button onclick="switchPage('rnd-generator')" class="btn-util btn-rnd" title="Armature RND">
+                    <div class="ctrl-item" style="--i:8">
+                        <button onclick="switchPage('rnd-generator')" class="btn-util btn-rnd" type="button" title="Armature RND">
                             <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
                             </svg>
@@ -2784,11 +2925,11 @@
                         </button>
                     </div>
 
-                    <div class="ctrl-item"><div class="controls-divider"></div></div>
+                    <div class="ctrl-item" style="--i:9"><div class="controls-divider"></div></div>
 
                     <!-- ALERT -->
-                    <div class="ctrl-item">
-                        <button onclick="testNotification()" class="btn-util btn-special-3d" title="Notification">
+                    <div class="ctrl-item" style="--i:10">
+                        <button onclick="testNotification()" class="btn-util btn-special-3d" type="button" title="Notification">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                             </svg>
@@ -3140,14 +3281,15 @@
     </div>
 
     <!-- ============ MOBILE CALENDAR FAB & MODAL ============ -->
-    <button class="mobile-calendar-fab no-print" onclick="toggleMobileCalendar(true)">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+    <button class="mobile-calendar-fab no-print" onclick="toggleMobileCalendar(true)" type="button" aria-label="Open report history calendar" aria-controls="calendar-modal" aria-expanded="false">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.4" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3M5.5 10.5h13M7 21h10a3 3 0 003-3V8a3 3 0 00-3-3H7a3 3 0 00-3 3v10a3 3 0 003 3z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 15l2 2 4-4"></path>
         </svg>
         History
     </button>
 
-    <div id="calendar-modal" class="glass-modal no-print" onclick="if(event.target === this) toggleMobileCalendar(false)">
+    <div id="calendar-modal" class="glass-modal no-print" onclick="if(event.target === this) toggleMobileCalendar(false)" aria-hidden="true">
         <div style="position: relative; width: 100%; max-width: 350px;">
             <div id="mobile-calendar-container"></div>
             <button onclick="toggleMobileCalendar(false)" style="position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.1); border: none; width: 30px; height: 30px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer;">
@@ -3279,6 +3421,12 @@
 
         // ============ PAGE SWITCHING ============
         function switchPage(pageId) {
+            const openWrap = document.getElementById('ctrl-speed-wrap');
+            const openBtn = document.getElementById('ctrl-toggle-btn');
+            if (openWrap && openBtn && openWrap.classList.contains('open')) {
+                closeControlPanel(openWrap, openBtn, openWrap.querySelectorAll('.ctrl-item'));
+            }
+
             // Hide all pages
             document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
@@ -3328,6 +3476,7 @@
             } else {
                 const fab = document.querySelector('.mobile-calendar-fab');
                 if(fab) fab.classList.add('hidden-fab');
+                if (window.toggleMobileCalendar) window.toggleMobileCalendar(false);
             }
         }
 
@@ -3436,43 +3585,57 @@
         window.toggleControlPanel = function() {
             const wrap = document.getElementById('ctrl-speed-wrap');
             const btn  = document.getElementById('ctrl-toggle-btn');
-            if (!wrap) return;
+            if (!wrap || !btn) return;
             const items  = wrap.querySelectorAll('.ctrl-item');
             const isOpen = wrap.classList.contains('open');
 
             if (isOpen) {
-                // Collapse: fade items out in reverse order, then grid-collapse
-                [...items].reverse().forEach((item, i) => {
-                    setTimeout(() => item.classList.remove('visible'), i * 28);
-                });
-                setTimeout(() => {
-                    wrap.classList.remove('open');
-                }, items.length * 28 + 110);
-                btn.classList.remove('active');
+                closeControlPanel(wrap, btn, items);
             } else {
-                // Expand: trigger grid open, then stagger each item in
+                window.clearTimeout(window.ctrlPanelCloseTimer);
                 wrap.classList.add('open');
+                wrap.setAttribute('aria-hidden', 'false');
                 btn.classList.add('active');
+                btn.setAttribute('aria-expanded', 'true');
+                btn.setAttribute('aria-label', 'Close quick tools');
                 items.forEach((item, i) => {
+                    item.style.setProperty('--i', i);
                     setTimeout(() => item.classList.add('visible'), i * 52 + 90);
                 });
             }
         };
+
+        function closeControlPanel(wrap, btn, items) {
+            window.clearTimeout(window.ctrlPanelCloseTimer);
+            [...items].reverse().forEach((item, i) => {
+                setTimeout(() => item.classList.remove('visible'), i * 24);
+            });
+            window.ctrlPanelCloseTimer = setTimeout(() => {
+                wrap.classList.remove('open');
+                wrap.setAttribute('aria-hidden', 'true');
+            }, items.length * 24 + 90);
+            btn.classList.remove('active');
+            btn.setAttribute('aria-expanded', 'false');
+            btn.setAttribute('aria-label', 'Open quick tools');
+        }
 
         // Auto-collapse on outside click
         document.addEventListener('click', function(e) {
             const panel = document.getElementById('generator-controls');
             const wrap  = document.getElementById('ctrl-speed-wrap');
             const btn   = document.getElementById('ctrl-toggle-btn');
-            if (!wrap || !wrap.classList.contains('open')) return;
+            if (!wrap || !btn || !wrap.classList.contains('open')) return;
             if (panel && panel.contains(e.target)) return; // clicked inside — ignore
-            // Clicked outside — collapse
-            const items = wrap.querySelectorAll('.ctrl-item');
-            [...items].reverse().forEach((item, i) => {
-                setTimeout(() => item.classList.remove('visible'), i * 28);
-            });
-            setTimeout(() => wrap.classList.remove('open'), items.length * 28 + 110);
-            if (btn) btn.classList.remove('active');
+            closeControlPanel(wrap, btn, wrap.querySelectorAll('.ctrl-item'));
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key !== 'Escape') return;
+            const wrap = document.getElementById('ctrl-speed-wrap');
+            const btn = document.getElementById('ctrl-toggle-btn');
+            if (!wrap || !btn || !wrap.classList.contains('open')) return;
+            closeControlPanel(wrap, btn, wrap.querySelectorAll('.ctrl-item'));
+            btn.focus();
         });
 
         // ============ RENDER ARCHIVE PAGE ============
@@ -3771,7 +3934,8 @@
             `;
             
             if (targetDesktop) targetDesktop.innerHTML = calHtml;
-            if (targetMobile && document.getElementById('page-archive-' + type).classList.contains('active')) {
+            const activeArchivePage = document.getElementById('page-archive-' + type);
+            if (targetMobile && activeArchivePage && activeArchivePage.classList.contains('active')) {
                 targetMobile.innerHTML = calHtml;
             }
         }
@@ -3784,15 +3948,24 @@
 
         window.toggleMobileCalendar = function(show) {
             const mod = document.getElementById('calendar-modal');
+            const fab = document.querySelector('.mobile-calendar-fab');
+            if (!mod) return;
             if(show) {
                 let activeType = 'accessories';
-                if(document.getElementById('page-archive-armature').classList.contains('active')) activeType = 'armature';
-                if(document.getElementById('page-archive-armature-rnd').classList.contains('active')) activeType = 'armature-rnd';
-                if(document.getElementById('page-archive-fan').classList.contains('active')) activeType = 'fan';
+                const archiveArmature = document.getElementById('page-archive-armature');
+                const archiveRnd = document.getElementById('page-archive-armature-rnd');
+                const archiveFan = document.getElementById('page-archive-fan');
+                if(archiveArmature && archiveArmature.classList.contains('active')) activeType = 'armature';
+                if(archiveRnd && archiveRnd.classList.contains('active')) activeType = 'armature-rnd';
+                if(archiveFan && archiveFan.classList.contains('active')) activeType = 'fan';
                 renderCalendarWidget(activeType);
                 mod.classList.add('active');
+                mod.setAttribute('aria-hidden', 'false');
+                if (fab) fab.setAttribute('aria-expanded', 'true');
             } else {
                 mod.classList.remove('active');
+                mod.setAttribute('aria-hidden', 'true');
+                if (fab) fab.setAttribute('aria-expanded', 'false');
             }
         }
 
