@@ -3269,7 +3269,7 @@
                 title: 'FAN ASSEMBLE REPORT',
                 sigName: 'Bithi Rani',
                 sigDesc: 'Sub Assistant Engineer',
-                headers: ['Opening', 'Input', 'Rejection', 'Output', 'Closing'],
+                headers: ['Opening', 'Input', 'Rejection', 'Output'],
                 themeIndex: 2,
                 emoji: '🌀'
             }
@@ -3590,10 +3590,7 @@
                 let closing = 0;
 
                 if (type === 'fan') {
-                    // Fan Assemble: Opening | Input | Rejection | Output | Closing
-                    const output = Number(item.output) || 0;
-                    closing = opening + production - output;
-                    row6Html = `<td style="font-weight: 900; background: rgba(8,145,178,0.06); border-left: 3px solid var(--primary-theme);">${closing.toLocaleString()}</td>`;
+                    row6Html = '';
                 } else {
                     // Accessories / Armature: Stock Cover as Days & Hours
                     closing = opening + production - consumption;
@@ -3653,7 +3650,7 @@
                                     <th style="width: 16%; padding: 12px 6px; font-size: 9px; letter-spacing: 0.1em;">${headers[1]}</th>
                                     <th style="width: 16%; padding: 12px 6px; font-size: 9px; letter-spacing: 0.1em;">${headers[2]}</th>
                                     <th style="width: 15%; padding: 12px 6px; font-size: 9px; letter-spacing: 0.1em;">${headers[3]}</th>
-                                    <th style="width: 17%; padding: 12px 6px; font-size: 9px; letter-spacing: 0.1em; white-space: nowrap;">${headers[4]}</th>
+                                    ${type === 'fan' ? '' : `<th style="width: 17%; padding: 12px 6px; font-size: 9px; letter-spacing: 0.1em; white-space: nowrap;">${headers[4]}</th>`}
                                 </tr>
                             </thead>
                             <tbody>
@@ -4094,6 +4091,7 @@
             const h4 = document.getElementById('header-4');
             const h5 = document.getElementById('header-5');
             const h6 = document.getElementById('header-6');
+            h6.style.display = "";
 
             if (type === 'armature') {
                 setReportTitle('Fan Armature Stock Report', 'MEP FAN LTD • Armature Division');
@@ -4124,7 +4122,8 @@
                 h3.innerText = "Input";
                 h4.innerText = "Rejection";
                 h5.innerText = "Output";
-                h6.innerText = "Closing";
+                h6.innerText = "";
+                h6.style.display = "none";
             } else {
                 setReportTitle('Awaiting Report Type...', 'MEP FAN LTD • Inventory Ledger');
                 sig.innerText = "...";
@@ -4166,7 +4165,6 @@
                     }
 
                     if (reportType === 'fan' && numericParts.length >= 4) {
-                        // Fan Assemble: Opening, Input, Rejection, Output (Closing is computed)
                         newItems.push({
                             name: namePart,
                             opening: parseFloat(numericParts[0].replace(/,/g, '')) || 0,
@@ -4233,10 +4231,7 @@
                 row.style.animationDelay = `${Math.min(index, 10) * 0.04}s`;
 
                 if (currentReportType === 'fan') {
-                    // Fan Assemble: Opening | Input | Rejection | Output | Closing
                     const output = Number(item.output) || 0;
-                    const closing = item.opening + item.production - output;
-                    const closingStyle = closing < 0 ? 'color:#ef4444;font-weight:900;' : 'font-weight:900;';
                     row.innerHTML = `
                         <td class="text-pivot-body uppercase bg-white/70">
                             <span class="lifted-text">${item.name}</span>
@@ -4252,9 +4247,6 @@
                         </td>
                         <td>
                             <div class="static-data-box"><span style="color: var(--accent-theme); font-weight: 900;">${output.toLocaleString()}</span></div>
-                        </td>
-                        <td style="border-left: 3px solid var(--primary-theme); background: rgba(8, 145, 178, 0.04)">
-                            <div class="text-pivot-body font-black tabular-nums" style="text-align: center; padding: 8px 0; display: block; ${closingStyle}">${closing.toLocaleString()}</div>
                         </td>
                     `;
                 } else {
