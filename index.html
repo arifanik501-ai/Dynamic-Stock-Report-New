@@ -6,7 +6,6 @@
     <title>MEP FAN LTD | Industrial Technical Ledger</title>
     <meta name="description" content="MEP FAN LTD Stock Report Generator — Industrial inventory management and reporting tool.">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0891b2">
     <style>
@@ -245,6 +244,117 @@
         body.lite-mode .calendar-day.active-day {
             background: var(--primary-theme) !important;
             color: #ffffff !important;
+        }
+
+        /* ============ HIDDEN PERFORMANCE TOGGLE ============ */
+        .performance-corner-hotspot {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 128px;
+            height: 128px;
+            z-index: 100000;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-end;
+            padding: 14px;
+            pointer-events: auto;
+        }
+
+        .performance-toggle {
+            width: 50px;
+            height: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 18px;
+            background:
+                radial-gradient(circle at 30% 18%, rgba(255,255,255,0.34), transparent 34%),
+                linear-gradient(145deg, #0f172a, #020617);
+            color: rgba(255, 255, 255, 0.68);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            opacity: 0;
+            transform: translate(18px, -18px) scale(0.86);
+            box-shadow:
+                0 10px 26px rgba(0,0,0,0.42),
+                inset 0 1px 0 rgba(255,255,255,0.16);
+            transition: opacity 0.2s ease, transform 0.2s ease, color 0.2s ease;
+            pointer-events: auto;
+        }
+
+        .performance-corner-hotspot:hover .performance-toggle,
+        .performance-corner-hotspot.is-visible .performance-toggle,
+        .performance-toggle:focus-visible,
+        .performance-toggle.is-active {
+            opacity: 1;
+            transform: translate(0, 0) scale(1);
+        }
+
+        .performance-toggle:hover,
+        .performance-toggle.is-active {
+            color: #ffffff;
+            border-color: rgba(34, 211, 238, 0.5);
+            background:
+                radial-gradient(circle at 30% 18%, rgba(255,255,255,0.36), transparent 34%),
+                linear-gradient(145deg, #155e75, #0f172a);
+        }
+
+        .performance-toggle svg {
+            width: 22px;
+            height: 22px;
+            margin: 0 auto 2px;
+            display: block;
+        }
+
+        .performance-toggle span {
+            display: block;
+            font-size: 6px;
+            font-weight: 900;
+            letter-spacing: 0.14em;
+            line-height: 1;
+        }
+
+        body.performance-mode .performance-toggle {
+            opacity: 1;
+            color: #ecfeff;
+            border-color: rgba(34, 211, 238, 0.65);
+            background:
+                radial-gradient(circle at 30% 18%, rgba(255,255,255,0.4), transparent 34%),
+                linear-gradient(145deg, #0891b2, #164e63);
+        }
+
+        body.performance-mode *,
+        body.performance-mode *::before,
+        body.performance-mode *::after {
+            animation: none !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+
+        body.performance-mode .bg-canvas {
+            background: var(--bg-retro) !important;
+        }
+
+        body.performance-mode .bg-canvas::before,
+        body.performance-mode .bg-orb,
+        body.performance-mode .bg-grid,
+        body.performance-mode .bg-scanlines {
+            display: none !important;
+        }
+
+        body.performance-mode .tab-navigation,
+        body.performance-mode .controls-panel,
+        body.performance-mode .theme-selector-overlay,
+        body.performance-mode .premium-date-wrapper,
+        body.performance-mode .archive-card,
+        body.performance-mode .static-data-box,
+        body.performance-mode .btn-util {
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            filter: none !important;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.14) !important;
         }
 
         /* ============ ANIMATED BACKGROUND ============ */
@@ -3505,6 +3615,11 @@
         height: 46px !important;
     }
 
+    .performance-toggle {
+        width: 50px !important;
+        height: 50px !important;
+    }
+
     .fab-action-save,
     .fab-action-import,
     .fab-action-download,
@@ -3630,6 +3745,15 @@
 </style>
 </head>
 <body class="mobile-active">
+
+    <div class="performance-corner-hotspot no-print" aria-hidden="false">
+        <button id="performance-toggle" class="performance-toggle" type="button" aria-pressed="false" title="Toggle performance mode">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 3L4 14h7l-1 7 10-12h-7l0-6Z"></path>
+            </svg>
+            <span>FAST</span>
+        </button>
+    </div>
 
     <!-- ============ ANIMATED BACKGROUND ============ -->
     <div class="bg-canvas" id="bg-canvas">
@@ -4340,6 +4464,23 @@
 
         // Themes loaded from external themes.js (80+ premium themes)
 
+        let _html2canvasPromise = null;
+
+        function loadHtml2Canvas() {
+            if (window.html2canvas) return Promise.resolve(window.html2canvas);
+            if (_html2canvasPromise) return _html2canvasPromise;
+
+            _html2canvasPromise = new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+                script.onload = () => resolve(window.html2canvas);
+                script.onerror = () => reject(new Error('Screenshot engine failed to load'));
+                document.head.appendChild(script);
+            });
+
+            return _html2canvasPromise;
+        }
+
         // ============ PAGE SWITCHING ============
         function switchPage(pageId) {
             const openWrap = document.getElementById('ctrl-speed-wrap');
@@ -5046,6 +5187,40 @@
             }
         }
 
+        function setPerformanceMode(enabled, silent = false) {
+            document.body.classList.toggle('performance-mode', enabled);
+            localStorage.setItem('mep_performance_mode', enabled ? 'on' : 'off');
+
+            const btn = document.getElementById('performance-toggle');
+            if (btn) {
+                btn.classList.toggle('is-active', enabled);
+                btn.setAttribute('aria-pressed', enabled ? 'true' : 'false');
+                btn.title = enabled ? 'Disable performance mode' : 'Enable performance mode';
+            }
+
+            if (!silent) {
+                showToast(enabled ? 'Performance Mode Enabled' : 'Performance Mode Disabled');
+            }
+        }
+
+        function togglePerformanceMode() {
+            setPerformanceMode(!document.body.classList.contains('performance-mode'));
+        }
+
+        function initPerformanceHotspot() {
+            const hotspot = document.querySelector('.performance-corner-hotspot');
+            const btn = document.getElementById('performance-toggle');
+            if (!hotspot || !btn) return;
+
+            btn.addEventListener('click', togglePerformanceMode);
+            const updateVisibility = (event) => {
+                hotspot.classList.toggle('is-visible', event.clientX >= window.innerWidth - 128 && event.clientY <= 128);
+            };
+            document.addEventListener('mousemove', updateVisibility);
+            window.addEventListener('pointermove', updateVisibility);
+            setPerformanceMode(localStorage.getItem('mep_performance_mode') === 'on', true);
+        }
+
         // ============ THEME SELECTOR FUNCTIONS ============
         function openThemeSelector() {
             const overlay = document.getElementById('theme-selector-overlay');
@@ -5449,6 +5624,15 @@
                 showToast("Generating Ultra-HD Capture...");
             }
 
+            let capture;
+            try {
+                capture = await loadHtml2Canvas();
+            } catch (err) {
+                console.error('Screenshot engine error:', err);
+                showToast(err.message || 'Screenshot Engine Failed');
+                return;
+            }
+
             // Save originals
             const originalShadow = sheet.style.boxShadow;
             const originalBorderRadius = sheet.style.borderRadius;
@@ -5517,7 +5701,7 @@
             await new Promise(r => setTimeout(r, 100));
 
             try {
-                const canvasImg = await html2canvas(sheet, {
+                const canvasImg = await capture(sheet, {
                     scale: 4,
                     useCORS: true,
                     backgroundColor: '#ffffff',
@@ -5678,6 +5862,8 @@
                     clockEl.innerText = new Date().toLocaleTimeString('en-US', { hour12: true });
                 }, 1000);
             }
+
+            initPerformanceHotspot();
 
             // Initialize slider position safely after fonts layout
             if (document.fonts && document.fonts.ready) {
@@ -6087,6 +6273,14 @@ async function takeRndScreenshot(silentDownload = false) {
     const sheet = document.getElementById('rnd-report-page');
     if (!sheet) return;
     showToast(silentDownload ? 'Syncing RND Snapshot...' : 'Generating RND Ultra-HD Capture...');
+    let capture;
+    try {
+        capture = await loadHtml2Canvas();
+    } catch (err) {
+        console.error('RND screenshot engine error:', err);
+        showToast(err.message || 'Screenshot Engine Failed');
+        return;
+    }
     const origShadow = sheet.style.boxShadow;
     const origRadius = sheet.style.borderRadius;
     const origAnim = sheet.style.animation;
@@ -6103,7 +6297,7 @@ async function takeRndScreenshot(silentDownload = false) {
     sheet.classList.add('capturing');
     await new Promise(r => setTimeout(r, 100));
     try {
-        const canvasImg = await html2canvas(sheet, { scale: 4, useCORS: true, backgroundColor: '#ffffff', logging: false, allowTaint: true, removeContainer: true });
+        const canvasImg = await capture(sheet, { scale: 4, useCORS: true, backgroundColor: '#ffffff', logging: false, allowTaint: true, removeContainer: true });
         const dataUrl = canvasImg.toDataURL('image/jpeg', 1.0);
         const link = document.createElement('a');
         link.download = `Armature-RND-Report-${new Date().toISOString().split('T')[0]}.jpg`;
@@ -6143,6 +6337,7 @@ window.loadToGenerator = loadToGenerator;
 window.applyTheme = applyTheme;
 window.randomizeTheme = randomizeTheme;
 window.toggleLiteMode = toggleLiteMode;
+window.togglePerformanceMode = togglePerformanceMode;
 window.openThemeSelector = openThemeSelector;
 window.closeThemeSelector = closeThemeSelector;
 window.switchThemeTab = switchThemeTab;
