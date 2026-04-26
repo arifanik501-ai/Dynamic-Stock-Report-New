@@ -4332,7 +4332,7 @@
                 title: 'FAN ASSEMBLE REPORT',
                 sigName: 'Bithi Rani',
                 sigDesc: 'Sub Assistant Engineer',
-                headers: ['Opening', 'Input', 'Rejection', 'Output'],
+                headers: ['Opening', 'Input', 'Rejection', 'Output', 'Closing'],
                 themeIndex: 2,
                 emoji: '🌀'
             }
@@ -4679,7 +4679,8 @@
                 let closing = 0;
 
                 if (type === 'fan') {
-                    row6Html = '';
+                    closing = opening + production - consumption - (Number(item.output) || 0);
+                    row6Html = `<td style="font-weight: 900; background: rgba(255,255,255,0.03); border-right: 1px solid rgba(255,255,255,0.05);">${closing.toLocaleString()}</td>`;
                 } else {
                     // Accessories / Armature: Stock Cover as Days & Hours
                     closing = opening + production - consumption;
@@ -4696,8 +4697,8 @@
                 const col4Val = type === 'fan' ? (Number(item.output) || 0) : consumption;
                 const col3Val = production;
                 const col4Style = type === 'fan' ? 'font-weight: 900;' : 'color: #f43f5e; font-weight: 900;';
-                const col5Val = type === 'fan' ? consumption : closing;
-                const col5Style = type === 'fan' ? 'color: #f43f5e; font-weight: 900;' : 'font-weight: 900; background: rgba(255,255,255,0.03); border-right: 1px solid rgba(255,255,255,0.05);';
+                const col5Val = type === 'fan' ? col4Val : closing;
+                const col5Style = type === 'fan' ? 'font-weight: 900;' : 'font-weight: 900; background: rgba(255,255,255,0.03); border-right: 1px solid rgba(255,255,255,0.05);';
 
                 tableRows += `
                     <tr style="animation: rowFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${Math.min(idx, 10) * 0.05}s backwards;">
@@ -4739,7 +4740,7 @@
                                     <th style="width: 16%; padding: 12px 6px; font-size: 9px; letter-spacing: 0.1em;">${headers[1]}</th>
                                     <th style="width: 16%; padding: 12px 6px; font-size: 9px; letter-spacing: 0.1em;">${headers[2]}</th>
                                     <th style="width: 15%; padding: 12px 6px; font-size: 9px; letter-spacing: 0.1em;">${headers[3]}</th>
-                                    ${type === 'fan' ? '' : `<th style="width: 17%; padding: 12px 6px; font-size: 9px; letter-spacing: 0.1em; white-space: nowrap;">${headers[4]}</th>`}
+                                    <th style="width: 17%; padding: 12px 6px; font-size: 9px; letter-spacing: 0.1em; white-space: nowrap;">${headers[4]}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -5272,8 +5273,7 @@
                 h3.innerText = "Input";
                 h4.innerText = "Rejection";
                 h5.innerText = "Output";
-                h6.innerText = "";
-                h6.style.display = "none";
+                h6.innerText = "Closing";
             } else {
                 setReportTitle('Awaiting Report Type...', 'MEP FAN LTD • Inventory Ledger');
                 sig.innerText = "...";
@@ -5362,7 +5362,7 @@
             container.innerHTML = '';
             
             if (inventoryData.length === 0) {
-                container.innerHTML = `<tr><td colspan="5" style="padding: 80px 20px; text-align: center; color: #94a3b8; font-weight: 800; text-transform: uppercase; font-size: 11px; letter-spacing: 0.15em; background: rgba(255,255,255,0.4);">
+                container.innerHTML = `<tr><td colspan="6" style="padding: 80px 20px; text-align: center; color: #94a3b8; font-weight: 800; text-transform: uppercase; font-size: 11px; letter-spacing: 0.15em; background: rgba(255,255,255,0.4);">
                     <div style="margin-bottom: 8px; opacity: 0.4;">
                         <svg style="width: 32px; height: 32px; margin: 0 auto; display: block;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
                             <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
@@ -5382,6 +5382,7 @@
 
                 if (currentReportType === 'fan') {
                     const output = Number(item.output) || 0;
+                    const closing = item.opening + item.production - item.consumption - output;
                     row.innerHTML = `
                         <td class="text-pivot-body uppercase bg-white/70">
                             <span class="lifted-text">${item.name}</span>
@@ -5397,6 +5398,9 @@
                         </td>
                         <td>
                             <div class="static-data-box"><span style="color: var(--accent-theme); font-weight: 900;">${output.toLocaleString()}</span></div>
+                        </td>
+                        <td style="border-left: 3px solid var(--primary-theme); border-right: 1px dashed var(--primary-theme); background: rgba(8, 145, 178, 0.04)">
+                            <div class="text-pivot-body font-black tabular-nums" style="text-align: center; padding: 8px 0; display: block;">${closing.toLocaleString()}</div>
                         </td>
                     `;
                 } else {
