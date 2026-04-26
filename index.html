@@ -288,8 +288,8 @@
         .performance-corner-hotspot.is-visible .performance-toggle,
         .performance-toggle:focus-visible,
         .performance-toggle.is-active {
-            opacity: 1;
-            transform: translate(0, 0) scale(1);
+            opacity: 1 !important;
+            transform: translate(0, 0) scale(1) !important;
         }
 
         .performance-toggle:hover,
@@ -317,7 +317,7 @@
         }
 
         body.performance-mode .performance-toggle {
-            opacity: 1;
+            opacity: 1 !important;
             color: #ecfeff;
             border-color: rgba(34, 211, 238, 0.65);
             background:
@@ -348,13 +348,54 @@
         body.performance-mode .controls-panel,
         body.performance-mode .theme-selector-overlay,
         body.performance-mode .premium-date-wrapper,
+        body.performance-mode .premium-date-wrapper::before,
+        body.performance-mode .premium-date-glass,
         body.performance-mode .archive-card,
+        body.performance-mode .a4-sheet,
+        body.performance-mode .report-type-box,
         body.performance-mode .static-data-box,
-        body.performance-mode .btn-util {
+        body.performance-mode .btn-util,
+        body.performance-mode .btn-util::before,
+        body.performance-mode .fab-icon-shell,
+        body.performance-mode .theme-premium-spark,
+        body.performance-mode .ctrl-trigger-glow {
             backdrop-filter: none !important;
             -webkit-backdrop-filter: none !important;
             filter: none !important;
             box-shadow: 0 6px 18px rgba(0,0,0,0.14) !important;
+        }
+
+        body.performance-mode .premium-date-glass,
+        body.performance-mode .theme-premium-spark,
+        body.performance-mode .ctrl-trigger-glow {
+            display: none !important;
+        }
+
+        body.performance-mode .a4-sheet,
+        body.performance-mode .premium-date-wrapper,
+        body.performance-mode .header-logo,
+        body.performance-mode .text-huge,
+        body.performance-mode .report-type-box,
+        body.performance-mode .pivot-table th,
+        body.performance-mode .pivot-table td,
+        body.performance-mode .static-data-box,
+        body.performance-mode .btn-save,
+        body.performance-mode .btn-golden,
+        body.performance-mode .modal-content,
+        body.performance-mode .theme-card,
+        body.performance-mode .archive-card {
+            box-shadow: none !important;
+            text-shadow: none !important;
+            filter: none !important;
+        }
+
+        body.performance-mode .text-huge,
+        body.performance-mode .lifted-text,
+        body.performance-mode .report-type-box span {
+            background: none !important;
+            -webkit-background-clip: initial !important;
+            background-clip: initial !important;
+            -webkit-text-fill-color: currentColor !important;
         }
 
         /* ============ ANIMATED BACKGROUND ============ */
@@ -4464,6 +4505,10 @@
 
         // Themes loaded from external themes.js (80+ premium themes)
 
+        const PERFORMANCE_STORAGE_KEY = 'mep_performance_mode';
+        const THEME_RANDOMIZED_KEY = 'mep_theme_randomized_today';
+        const currentDayKey = new Date().toISOString().split('T')[0];
+
         let _html2canvasPromise = null;
 
         function loadHtml2Canvas() {
@@ -4474,11 +4519,23 @@
                 const script = document.createElement('script');
                 script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
                 script.onload = () => resolve(window.html2canvas);
-                script.onerror = () => reject(new Error('Screenshot engine failed to load'));
+                script.onerror = () => {
+                    script.remove();
+                    _html2canvasPromise = null;
+                    reject(new Error('Screenshot engine failed to load'));
+                };
                 document.head.appendChild(script);
             });
 
             return _html2canvasPromise;
+        }
+
+        function shouldRandomizeTheme() {
+            return localStorage.getItem(THEME_RANDOMIZED_KEY) !== currentDayKey;
+        }
+
+        function markThemeRandomized() {
+            localStorage.setItem(THEME_RANDOMIZED_KEY, currentDayKey);
         }
 
         // ============ PAGE SWITCHING ============
@@ -5189,7 +5246,7 @@
 
         function setPerformanceMode(enabled, silent = false) {
             document.body.classList.toggle('performance-mode', enabled);
-            localStorage.setItem('mep_performance_mode', enabled ? 'on' : 'off');
+            localStorage.setItem(PERFORMANCE_STORAGE_KEY, enabled ? 'on' : 'off');
 
             const btn = document.getElementById('performance-toggle');
             if (btn) {
@@ -5213,12 +5270,22 @@
             if (!hotspot || !btn) return;
 
             btn.addEventListener('click', togglePerformanceMode);
+            let pendingEvent = null;
+            let scheduled = false;
             const updateVisibility = (event) => {
-                hotspot.classList.toggle('is-visible', event.clientX >= window.innerWidth - 128 && event.clientY <= 128);
+                pendingEvent = event;
+                if (scheduled) return;
+
+                scheduled = true;
+                requestAnimationFrame(() => {
+                    scheduled = false;
+                    if (!pendingEvent) return;
+                    hotspot.classList.toggle('is-visible', pendingEvent.clientX >= window.innerWidth - 128 && pendingEvent.clientY <= 128);
+                });
             };
             document.addEventListener('mousemove', updateVisibility);
             window.addEventListener('pointermove', updateVisibility);
-            setPerformanceMode(localStorage.getItem('mep_performance_mode') === 'on', true);
+            setPerformanceMode(localStorage.getItem(PERFORMANCE_STORAGE_KEY) === 'on', true);
         }
 
         // ============ THEME SELECTOR FUNCTIONS ============
@@ -5849,6 +5916,7 @@
             const picker = document.getElementById('statement-date-picker');
             if(picker) picker.value = dateStr;
             updateFormattedDate(dateStr);
+            initPerformanceHotspot();
             applyTheme(themes[0]);
             renderTable();
             updateReportBranding('initial');
@@ -5862,8 +5930,6 @@
                     clockEl.innerText = new Date().toLocaleTimeString('en-US', { hour12: true });
                 }, 1000);
             }
-
-            initPerformanceHotspot();
 
             // Initialize slider position safely after fonts layout
             if (document.fonts && document.fonts.ready) {
@@ -5883,7 +5949,6 @@
     
     // --- Firebase Realtime Sync Module ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-database.js";
         import { getStorage, ref as storageRef, uploadString } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-storage.js";
 
@@ -5899,7 +5964,6 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
         const database = getDatabase(app);
         const storage = getStorage(app);
 
@@ -6382,7 +6446,10 @@ if (rndDatePicker) {
 }
 
 // Auto-randomize theme silently on every page refresh
-randomizeTheme(true);
+if (shouldRandomizeTheme()) {
+    randomizeTheme(true);
+    markThemeRandomized();
+}
 
 </script>
 
@@ -6401,8 +6468,9 @@ randomizeTheme(true);
         }
 
         setTimeout(function() {
-            if (typeof window.randomizeTheme === 'function') {
+            if (typeof window.randomizeTheme === 'function' && localStorage.getItem('mep_theme_randomized_today') !== new Date().toISOString().split('T')[0]) {
                 window.randomizeTheme(true);
+                localStorage.setItem('mep_theme_randomized_today', new Date().toISOString().split('T')[0]);
             }
         }, 300);
     });
