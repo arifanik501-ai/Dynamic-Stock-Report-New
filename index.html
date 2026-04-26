@@ -4544,7 +4544,9 @@
 
         function getSavedDailyThemeIndex() {
             if (shouldRandomizeTheme()) return null;
-            const index = Number(localStorage.getItem(THEME_RANDOMIZED_INDEX_KEY));
+            const rawIndex = localStorage.getItem(THEME_RANDOMIZED_INDEX_KEY);
+            if (rawIndex === null) return null;
+            const index = Number(rawIndex);
             return Number.isInteger(index) && themes[index] ? index : null;
         }
 
