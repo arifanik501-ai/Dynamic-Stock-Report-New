@@ -4613,6 +4613,7 @@
 
         const PERFORMANCE_STORAGE_KEY = 'mep_performance_mode';
         const THEME_RANDOMIZED_KEY = 'mep_theme_randomized_today';
+        const THEME_RANDOMIZED_INDEX_KEY = 'mep_theme_randomized_index';
         const currentDayKey = new Date().toISOString().split('T')[0];
 
         let _html2canvasPromise = null;
@@ -4640,8 +4641,19 @@
             return localStorage.getItem(THEME_RANDOMIZED_KEY) !== currentDayKey;
         }
 
-        function markThemeRandomized() {
+        function markThemeRandomized(index) {
             localStorage.setItem(THEME_RANDOMIZED_KEY, currentDayKey);
+            if (Number.isInteger(index)) {
+                localStorage.setItem(THEME_RANDOMIZED_INDEX_KEY, String(index));
+            }
+        }
+
+        function getSavedDailyThemeIndex() {
+            if (shouldRandomizeTheme()) return null;
+            const rawIndex = localStorage.getItem(THEME_RANDOMIZED_INDEX_KEY);
+            if (rawIndex === null) return null;
+            const index = Number(rawIndex);
+            return Number.isInteger(index) && themes[index] ? index : null;
         }
 
         // ============ PAGE SWITCHING ============
@@ -5326,19 +5338,28 @@
         let _selectedThemeIndex = -1;
         let _themeCloseTimer = null;
 
-        function randomizeTheme(silent = false) {
-            const random = themes[Math.floor(Math.random() * themes.length)];
-            const isLite = random.mode === 'lite';
+        function applyThemeByIndex(index) {
+            const theme = themes[index];
+            if (!theme) return null;
+            const isLite = theme.mode === 'lite';
             if (isLite && !document.body.classList.contains('lite-mode')) {
                 document.body.classList.add('lite-mode');
             } else if (!isLite && document.body.classList.contains('lite-mode')) {
                 document.body.classList.remove('lite-mode');
             }
-            applyTheme(random);
-            _selectedThemeIndex = themes.indexOf(random);
+            applyTheme(theme);
+            _selectedThemeIndex = index;
+            return theme;
+        }
+
+        function randomizeTheme(silent = false) {
+            const randomIndex = Math.floor(Math.random() * themes.length);
+            const random = applyThemeByIndex(randomIndex);
+            if (!random) return -1;
             if (!silent) {
                 showToast(`${random.name} Theme Applied`);
             }
+            return randomIndex;
         }
 
         function toggleLiteMode() {
@@ -5499,16 +5520,8 @@
         }
 
         function selectThemeCard(idx) {
-            const theme = themes[idx];
+            const theme = applyThemeByIndex(idx);
             if (!theme) return;
-            _selectedThemeIndex = idx;
-            const isLite = theme.mode === 'lite';
-            if (isLite && !document.body.classList.contains('lite-mode')) {
-                document.body.classList.add('lite-mode');
-            } else if (!isLite && document.body.classList.contains('lite-mode')) {
-                document.body.classList.remove('lite-mode');
-            }
-            applyTheme(theme);
             updateThemePreview(theme);
             renderThemeGrid();
             showToast(`${theme.name} Applied`);
@@ -6023,7 +6036,12 @@
             if(picker) picker.value = dateStr;
             updateFormattedDate(dateStr);
             initPerformanceHotspot();
-            applyTheme(themes[0]);
+            const savedThemeIndex = getSavedDailyThemeIndex();
+            if (savedThemeIndex !== null) {
+                applyThemeByIndex(savedThemeIndex);
+            } else {
+                applyTheme(themes[0]);
+            }
             renderTable();
             updateReportBranding('initial');
             updateBadges();
@@ -6553,8 +6571,7 @@ if (rndDatePicker) {
 
 // Auto-randomize theme silently on every page refresh
 if (shouldRandomizeTheme()) {
-    randomizeTheme(true);
-    markThemeRandomized();
+    markThemeRandomized(randomizeTheme(true));
 }
 
 </script>
@@ -6575,8 +6592,11 @@ if (shouldRandomizeTheme()) {
 
         setTimeout(function() {
             if (typeof window.randomizeTheme === 'function' && localStorage.getItem('mep_theme_randomized_today') !== new Date().toISOString().split('T')[0]) {
-                window.randomizeTheme(true);
+                const randomIndex = window.randomizeTheme(true);
                 localStorage.setItem('mep_theme_randomized_today', new Date().toISOString().split('T')[0]);
+                if (Number.isInteger(randomIndex)) {
+                    localStorage.setItem('mep_theme_randomized_index', String(randomIndex));
+                }
             }
         }, 300);
     });
