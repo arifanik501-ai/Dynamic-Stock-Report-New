@@ -5378,12 +5378,19 @@
         }
 
         function toggleLiteMode() {
-            document.body.classList.toggle('lite-mode');
-            if (document.body.classList.contains('lite-mode')) {
-                showToast("Lite Mode Enabled");
-            } else {
-                showToast("Dark Mode Restored");
+            const goingLite = !document.body.classList.contains('lite-mode');
+            document.body.classList.toggle('lite-mode', goingLite);
+            const targetMode = goingLite ? 'lite' : 'dark';
+            const currentTheme = themes[_selectedThemeIndex];
+            if (!currentTheme || (currentTheme.mode || 'dark') !== targetMode) {
+                const fallback = themes.find(t => (t.mode || 'dark') === targetMode);
+                if (fallback) {
+                    _selectedThemeIndex = themes.indexOf(fallback);
+                    applyTheme(fallback);
+                    saveSelectedTheme(_selectedThemeIndex);
+                }
             }
+            showToast(goingLite ? "Lite Mode Enabled" : "Dark Mode Restored");
         }
 
         function setPerformanceMode(enabled, silent = false) {
