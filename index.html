@@ -16,6 +16,8 @@
             --bg-retro: #0c1222;
             --sheet-bg: #f9fbf9;
             --text-main: #083344;
+            --report-ink: #083344;
+            --report-ink-muted: rgba(8, 51, 68, 0.72);
             --primary-theme: #164e63;
             --accent-theme: #0891b2;
             --text-on-primary: #cffafe;
@@ -171,7 +173,7 @@
             color: var(--on-accent-color) !important;
             text-shadow: 0 1px 3px rgba(var(--text-theme-rgb), 0.22) !important;
         }
-        body.lite-mode .text-pivot-body {
+        body.lite-mode .text-pivot-body:not(.num-closing):not(.num-stock-cover) {
             color: var(--theme-ink) !important;
         }
         body.lite-mode .pivot-table td {
@@ -180,11 +182,26 @@
         body.lite-mode .pivot-table td:first-child {
             color: var(--theme-ink) !important;
         }
-        body.lite-mode .static-data-box span {
+        body.lite-mode .static-data-box span:not(.num-production):not(.num-consumption):not(.num-output):not(.num-stock-cover) {
             color: var(--theme-ink) !important;
         }
+        body.lite-mode .num-production,
+        body.lite-mode .num-closing {
+            color: color-mix(in srgb, var(--primary-theme) 76%, var(--theme-ink) 24%) !important;
+        }
+        body.lite-mode .num-consumption {
+            color: #e11d48 !important;
+        }
+        body.lite-mode .num-output {
+            color: color-mix(in srgb, var(--accent-theme) 76%, var(--theme-ink) 24%) !important;
+        }
+        body.lite-mode .num-stock-cover {
+            color: #7c3aed !important;
+        }
         body.lite-mode .text-signature {
-            color: var(--accent-theme) !important;
+            color: color-mix(in srgb, var(--accent-theme) 72%, var(--theme-ink) 28%) !important;
+            opacity: 1 !important;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.72), 0 0 1px rgba(var(--accent-theme-rgb), 0.26) !important;
         }
         body.lite-mode .report-type-box .report-title-text {
             color: var(--theme-ink) !important;
@@ -275,16 +292,31 @@
             border-color: var(--theme-border) !important;
             box-shadow: 0 12px 30px var(--theme-shadow), inset 0 0 0 1px var(--theme-border) !important;
         }
+        body.lite-mode .signature-name,
         body.lite-mode #reported-by-name,
         body.lite-mode #sig-line-2 {
             color: var(--theme-ink) !important;
         }
+        body.lite-mode .signature-desc,
         body.lite-mode #reported-by-desc,
         body.lite-mode #sig-desc-2 {
             color: var(--theme-ink-muted) !important;
+            opacity: 1 !important;
         }
         body.lite-mode .static-data-box {
             border-color: var(--theme-border) !important;
+        }
+        body.lite-mode .rnd-table td {
+            color: var(--theme-ink) !important;
+            background: var(--theme-surface-strong) !important;
+            border-color: var(--theme-border) !important;
+        }
+        body.lite-mode .rnd-table input {
+            color: var(--theme-ink) !important;
+        }
+        body.lite-mode .rnd-table td:first-child {
+            color: var(--theme-ink) !important;
+            background: color-mix(in srgb, var(--theme-surface-strong) 82%, var(--accent-theme) 18%) !important;
         }
         body.lite-mode .lifted-text {
             color: var(--theme-ink) !important;
@@ -1673,17 +1705,20 @@
             text-shadow: 0 1px 3px rgba(0,0,0,0.15);
         }
 
-        .text-pivot-body { font-size: calc(14px * var(--font-scale)); font-weight: 800; color: var(--text-main); line-height: 1.2; }
+        .text-pivot-body { font-size: calc(14px * var(--font-scale)); font-weight: 800; color: var(--report-ink); line-height: 1.2; }
         .text-label { font-size: calc(12px * var(--font-scale)); font-weight: 900; letter-spacing: 0.25em; color: var(--accent-theme); }
+        .signature-name { color: var(--report-ink); }
+        .signature-desc { color: var(--report-ink-muted); opacity: 1; }
 
         .text-signature {
             font-family: 'Sacramento', cursive;
             font-size: 32px;
-            color: var(--accent-theme) !important;
-            opacity: 0.9;
+            color: color-mix(in srgb, var(--accent-theme) 78%, var(--report-ink) 22%) !important;
+            opacity: 1;
             text-transform: none;
             font-weight: 400;
             min-height: 48px;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.34);
         }
 
         /* ============ REPORT TYPE BOX ============ */
@@ -1853,6 +1888,7 @@
         .lifted-text {
             display: block;
             line-height: 1.4;
+            color: var(--report-ink);
         }
 
         /* ============ TAB NAVIGATION ============ */
@@ -3287,6 +3323,10 @@
             font-weight: 900;
             font-variant-numeric: tabular-nums;
         }
+        .num-production { color: var(--primary-theme); }
+        .num-consumption { color: #e11d48; }
+        .num-output { color: var(--accent-theme); }
+        .num-stock-cover { color: #8b5cf6; }
 
         /* ============ PRINT STYLES ============ */
         @media print {
@@ -4251,8 +4291,8 @@
                         <div id="reported-by-sig" class="text-signature" style="position: absolute; bottom: 45px; left: 10px; transform: rotate(-1deg); z-index: 2; line-height: 1;">...</div>
 
                         <div style="border-top: 2px solid var(--primary-theme); padding-top: 12px; margin-top: 100px;">
-                            <span id="reported-by-name" style="font-size: 20px; display: block; letter-spacing: -0.05em; line-height: 1;">...</span>
-                            <span id="reported-by-desc" style="font-size: 11px; opacity: 0.8; display: block; margin-top: 4px; line-height: 1;">...</span>
+                            <span id="reported-by-name" class="signature-name" style="font-size: 20px; display: block; letter-spacing: -0.05em; line-height: 1;">...</span>
+                            <span id="reported-by-desc" class="signature-desc" style="font-size: 11px; display: block; margin-top: 4px; line-height: 1;">...</span>
                         </div>
                      </div>
 
@@ -4264,8 +4304,8 @@
                         <div class="text-signature" style="position: absolute; bottom: 45px; right: 10px; transform: rotate(-1deg); z-index: 2; line-height: 1;">Arif Ahmed</div>
 
                         <div style="border-top: 2px solid var(--primary-theme); padding-top: 12px; margin-top: 100px;">
-                            <span id="sig-line-2" style="font-size: 20px; display: block; letter-spacing: -0.05em; line-height: 1;">Arif Ahmed Anik</span>
-                            <span style="font-size: 11px; opacity: 0.8; display: block; margin-top: 4px; line-height: 1;">Incharge</span>
+                            <span id="sig-line-2" class="signature-name" style="font-size: 20px; display: block; letter-spacing: -0.05em; line-height: 1;">Arif Ahmed Anik</span>
+                            <span class="signature-desc" style="font-size: 11px; display: block; margin-top: 4px; line-height: 1;">Incharge</span>
                         </div>
                      </div>
                 </div>
@@ -4446,16 +4486,16 @@
                         <span class="text-label" style="font-size: 11px; display: block; position: absolute; bottom: 110px; left: 0; letter-spacing: 0.1em;">Tested by</span>
                         <div class="text-signature" style="position: absolute; bottom: 35px; left: 10px; transform: rotate(-1deg); z-index: 2; line-height: 1;">Takbir Hossain</div>
                         <div style="border-top: 2px solid var(--primary-theme); padding-top: 12px; margin-top: 70px;">
-                            <span style="font-size: 20px; display: block; letter-spacing: -0.05em; line-height: 1;">Takbir Hossain</span>
-                            <span style="font-size: 11px; opacity: 0.8; display: block; margin-top: 4px; line-height: 1;">Asst. Engineer</span>
+                            <span class="signature-name" style="font-size: 20px; display: block; letter-spacing: -0.05em; line-height: 1;">Takbir Hossain</span>
+                            <span class="signature-desc" style="font-size: 11px; display: block; margin-top: 4px; line-height: 1;">Asst. Engineer</span>
                         </div>
                     </div>
                     <div style="position: absolute; right: 0; bottom: 0; width: 280px; text-align: right; font-size: 13px; font-weight: 900; text-transform: uppercase;">
                         <span class="text-label" style="font-size: 11px; display: block; position: absolute; bottom: 110px; right: 0; letter-spacing: 0.1em;">Authorized By</span>
                         <div class="text-signature" style="position: absolute; bottom: 35px; right: 10px; transform: rotate(-1deg); z-index: 2; line-height: 1;">Arif Ahmed</div>
                         <div style="border-top: 2px solid var(--primary-theme); padding-top: 12px; margin-top: 70px;">
-                            <span style="font-size: 20px; display: block; letter-spacing: -0.05em; line-height: 1;">Arif Ahmed Anik</span>
-                            <span style="font-size: 11px; opacity: 0.8; display: block; margin-top: 4px; line-height: 1;">Incharge</span>
+                            <span class="signature-name" style="font-size: 20px; display: block; letter-spacing: -0.05em; line-height: 1;">Arif Ahmed Anik</span>
+                            <span class="signature-desc" style="font-size: 11px; display: block; margin-top: 4px; line-height: 1;">Incharge</span>
                         </div>
                     </div>
                 </div>
@@ -4691,6 +4731,17 @@
             });
 
             return _html2canvasPromise;
+        }
+
+        function triggerJpgDownload(dataUrl, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = dataUrl;
+            link.rel = 'noopener';
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+            setTimeout(() => link.remove(), 0);
         }
 
         function shouldRandomizeTheme() {
@@ -5052,7 +5103,7 @@
 
                 if (type === 'fan') {
                     closing = opening + production - consumption - (Number(item.output) || 0);
-                    row6Html = `<td style="font-weight: 900; background: rgba(255,255,255,0.03); border-right: 1px solid rgba(255,255,255,0.05);">${closing.toLocaleString()}</td>`;
+                    row6Html = `<td class="num-closing" style="font-weight: 900; background: rgba(255,255,255,0.03); border-right: 1px solid rgba(255,255,255,0.05);">${closing.toLocaleString()}</td>`;
                 } else {
                     // Accessories / Armature: Stock Cover as Days & Hours
                     closing = opening + production - consumption;
@@ -5063,22 +5114,24 @@
                         const remainingHours = Math.round((totalDays - wholeDays) * 11);
                         stockCoverText = `${wholeDays}D ${remainingHours}H`;
                     }
-                    row6Html = `<td style="font-weight: 900; color: #a78bfa; font-family: 'JetBrains Mono', monospace;">${stockCoverText}</td>`;
+                    row6Html = `<td class="num-stock-cover" style="font-weight: 900; font-family: 'JetBrains Mono', monospace;">${stockCoverText}</td>`;
                 }
 
                 const col4Val = type === 'fan' ? (Number(item.output) || 0) : consumption;
                 const col3Val = production;
-                const col4Style = type === 'fan' ? 'font-weight: 900;' : 'color: #f43f5e; font-weight: 900;';
+                const col4Class = type === 'fan' ? '' : ' class="num-consumption"';
+                const col4Style = 'font-weight: 900;';
                 const col5Val = type === 'fan' ? col4Val : closing;
+                const col5Class = type === 'fan' ? '' : ' class="num-closing"';
                 const col5Style = type === 'fan' ? 'font-weight: 900;' : 'font-weight: 900; background: rgba(255,255,255,0.03); border-right: 1px solid rgba(255,255,255,0.05);';
 
                 tableRows += `
                     <tr style="animation: rowFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${Math.min(idx, 10) * 0.05}s backwards;">
                         <td>${item.name || '—'}</td>
                         <td>${opening.toLocaleString()}</td>
-                        <td style="color: var(--accent-theme); font-weight: 900;">${col3Val.toLocaleString()}</td>
-                        <td style="${col4Style}">${(type === 'fan' ? consumption : col4Val).toLocaleString()}</td>
-                        <td style="${col5Style}">${col5Val.toLocaleString()}</td>
+                        <td class="num-production" style="font-weight: 900;">${col3Val.toLocaleString()}</td>
+                        <td${col4Class} style="${col4Style}">${(type === 'fan' ? consumption : col4Val).toLocaleString()}</td>
+                        <td${col5Class} style="${col5Style}">${col5Val.toLocaleString()}</td>
                         ${row6Html}
                     </tr>
                 `;
@@ -5383,6 +5436,12 @@
             root.style.setProperty('--accent-theme', theme.accent);
             root.style.setProperty('--text-on-primary', theme.text);
             root.style.setProperty('--text-main', theme.text);
+            root.style.setProperty('--report-ink', '#083344');
+            root.style.setProperty('--report-ink-muted', 'rgba(8, 51, 68, 0.72)');
+            if (document.body.classList.contains('lite-mode')) {
+                root.style.setProperty('--theme-ink', '#0f172a');
+                root.style.setProperty('--theme-ink-muted', '#475569');
+            }
             root.style.setProperty('--primary-theme-rgb', hexToRgbValues(theme.primary));
             root.style.setProperty('--accent-theme-rgb', hexToRgbValues(theme.accent));
             root.style.setProperty('--text-theme-rgb', hexToRgbValues(theme.text));
@@ -5831,16 +5890,16 @@
                             <div class="static-data-box"><span class="text-gray-600">${item.opening.toLocaleString()}</span></div>
                         </td>
                         <td>
-                            <div class="static-data-box"><span style="color: var(--primary-theme)">${item.production.toLocaleString()}</span></div>
+                            <div class="static-data-box"><span class="num-production">${item.production.toLocaleString()}</span></div>
                         </td>
                         <td>
-                            <div class="static-data-box"><span class="text-rose-600">${item.consumption.toLocaleString()}</span></div>
+                            <div class="static-data-box"><span class="num-consumption">${item.consumption.toLocaleString()}</span></div>
                         </td>
                         <td>
-                            <div class="static-data-box"><span style="color: var(--accent-theme); font-weight: 900;">${output.toLocaleString()}</span></div>
+                            <div class="static-data-box"><span class="num-output" style="font-weight: 900;">${output.toLocaleString()}</span></div>
                         </td>
                         <td style="border-left: 3px solid var(--primary-theme); border-right: 1px dashed var(--primary-theme); background: rgba(var(--accent-theme-rgb), 0.04)">
-                            <div class="text-pivot-body font-black tabular-nums" style="text-align: center; padding: 8px 0; display: block;">${closing.toLocaleString()}</div>
+                            <div class="text-pivot-body font-black tabular-nums num-closing" style="text-align: center; padding: 8px 0; display: block;">${closing.toLocaleString()}</div>
                         </td>
                     `;
                 } else {
@@ -5863,16 +5922,16 @@
                         <div class="static-data-box"><span class="text-gray-600">${item.opening.toLocaleString()}</span></div>
                     </td>
                     <td>
-                        <div class="static-data-box"><span style="color: var(--primary-theme)">${item.production.toLocaleString()}</span></div>
+                        <div class="static-data-box"><span class="num-production">${item.production.toLocaleString()}</span></div>
                     </td>
                     <td>
-                        <div class="static-data-box"><span class="text-rose-600">${item.consumption.toLocaleString()}</span></div>
+                        <div class="static-data-box"><span class="num-consumption">${item.consumption.toLocaleString()}</span></div>
                     </td>
                     <td style="border-left: 3px solid var(--primary-theme); border-right: 1px dashed var(--primary-theme); background: rgba(var(--accent-theme-rgb), 0.04)">
-                        <div class="text-pivot-body font-black tabular-nums" style="text-align: center; padding: 8px 0; display: block;">${closing.toLocaleString()}</div>
+                        <div class="text-pivot-body font-black tabular-nums num-closing" style="text-align: center; padding: 8px 0; display: block;">${closing.toLocaleString()}</div>
                     </td>
                     <td style="background: rgba(139, 92, 246, 0.04)">
-                        <div class="text-pivot-body font-black tabular-nums" style="text-align: center; padding: 8px 0; display: block; color: #8b5cf6;">${stockCoverText}</div>
+                        <div class="text-pivot-body font-black tabular-nums num-stock-cover" style="text-align: center; padding: 8px 0; display: block;">${stockCoverText}</div>
                     </td>
                 `;
                 } // end else (non-fan)
@@ -5975,12 +6034,10 @@
                     removeContainer: true,
                 });
                 const dataUrl = canvasImg.toDataURL('image/jpeg', 1.0);
-                const link = document.createElement('a');
-                link.download = `MEP-Ledger-${new Date().toISOString().split('T')[0]}.jpg`;
-                link.href = dataUrl;
+                const filename = `MEP-Ledger-${new Date().toISOString().split('T')[0]}.jpg`;
 
                 if (!silentDownload) {
-                    link.click();
+                    triggerJpgDownload(dataUrl, filename);
                 }
 
                 // Upload to Firebase Storage
@@ -6564,10 +6621,8 @@ async function takeRndScreenshot(silentDownload = false) {
     try {
         const canvasImg = await capture(sheet, { scale: 4, useCORS: true, backgroundColor: '#ffffff', logging: false, allowTaint: true, removeContainer: true });
         const dataUrl = canvasImg.toDataURL('image/jpeg', 1.0);
-        const link = document.createElement('a');
-        link.download = `Armature-RND-Report-${new Date().toISOString().split('T')[0]}.jpg`;
-        link.href = dataUrl;
-        if (!silentDownload) link.click();
+        const filename = `Armature-RND-Report-${new Date().toISOString().split('T')[0]}.jpg`;
+        if (!silentDownload) triggerJpgDownload(dataUrl, filename);
         if (window.firebaseStorageSet && window.firebaseStorageRef && window.firebaseStorage) {
             const filename = `mep_reports/armature-rnd/RND-Report-${new Date().toISOString().split('T')[0]}_${Date.now()}.jpg`;
             const imgRef = window.firebaseStorageRef(window.firebaseStorage, filename);
