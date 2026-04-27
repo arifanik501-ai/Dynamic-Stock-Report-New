@@ -187,19 +187,19 @@
         }
         body.lite-mode .num-production,
         body.lite-mode .num-closing {
-            color: color-mix(in srgb, var(--primary-theme) 76%, var(--theme-ink) 24%) !important;
+            color: #164e63 !important;
         }
         body.lite-mode .num-consumption {
             color: #e11d48 !important;
         }
         body.lite-mode .num-output {
-            color: color-mix(in srgb, var(--accent-theme) 76%, var(--theme-ink) 24%) !important;
+            color: #075985 !important;
         }
         body.lite-mode .num-stock-cover {
             color: #7c3aed !important;
         }
         body.lite-mode .text-signature {
-            color: color-mix(in srgb, var(--accent-theme) 72%, var(--theme-ink) 28%) !important;
+            color: #0e7490 !important;
             opacity: 1 !important;
             text-shadow: 0 1px 2px rgba(255,255,255,0.72), 0 0 1px rgba(var(--accent-theme-rgb), 0.26) !important;
         }
@@ -208,7 +208,7 @@
             text-shadow: 0 1px 2px rgba(255,255,255,0.65) !important;
         }
         body.lite-mode .report-type-box .report-title-sub {
-            color: color-mix(in srgb, var(--theme-ink-muted) 72%, var(--accent-theme) 28%) !important;
+            color: var(--theme-ink-muted) !important;
             text-shadow: 0 1px 2px rgba(255,255,255,0.55) !important;
         }
         body.lite-mode .premium-date-wrapper span,
@@ -251,7 +251,7 @@
         body.lite-mode .pivot-table th,
         body.lite-mode .archive-table th,
         body.lite-mode .archive-card-header {
-            background: linear-gradient(135deg, var(--primary-theme) 0%, color-mix(in srgb, var(--primary-theme) 55%, var(--accent-theme) 45%) 52%, var(--accent-theme) 100%) !important;
+            background: linear-gradient(135deg, var(--primary-theme) 0%, var(--accent-theme) 100%) !important;
             color: var(--on-accent-color) !important;
             text-shadow: 0 1px 4px rgba(var(--text-theme-rgb), 0.3) !important;
         }
@@ -272,7 +272,7 @@
             border-left-color: var(--accent-theme) !important;
         }
         body.lite-mode .report-type-box {
-            background: linear-gradient(135deg, var(--theme-surface-strong) 0%, color-mix(in srgb, var(--accent-theme) 14%, #ffffff 86%) 54%, color-mix(in srgb, var(--accent-theme) 24%, #ffffff 76%) 100%) !important;
+            background: linear-gradient(135deg, var(--theme-surface-strong) 0%, rgba(var(--accent-theme-rgb), 0.10) 54%, rgba(var(--accent-theme-rgb), 0.18) 100%) !important;
             border: 1px solid rgba(var(--accent-theme-rgb), 0.28) !important;
             box-shadow: 0 12px 28px rgba(var(--accent-theme-rgb), 0.18), 4px 4px 0px rgba(var(--accent-theme-rgb), 0.12) !important;
         }
@@ -316,7 +316,7 @@
         }
         body.lite-mode .rnd-table td:first-child {
             color: var(--theme-ink) !important;
-            background: color-mix(in srgb, var(--theme-surface-strong) 82%, var(--accent-theme) 18%) !important;
+            background: rgba(var(--accent-theme-rgb), 0.12) !important;
         }
         body.lite-mode .lifted-text {
             color: var(--theme-ink) !important;
@@ -379,7 +379,7 @@
             color: var(--theme-ink-muted) !important;
         }
         body.lite-mode #import-modal .modal-content > div:first-child {
-            background: linear-gradient(135deg, var(--primary-theme) 0%, color-mix(in srgb, var(--primary-theme) 55%, var(--accent-theme) 45%) 52%, var(--accent-theme) 100%) !important;
+            background: linear-gradient(135deg, var(--primary-theme) 0%, var(--accent-theme) 100%) !important;
             color: var(--on-accent-color) !important;
         }
         body.lite-mode #import-modal .modal-content > div:last-child > div > span {
@@ -1713,7 +1713,7 @@
         .text-signature {
             font-family: 'Sacramento', cursive;
             font-size: 32px;
-            color: color-mix(in srgb, var(--accent-theme) 78%, var(--report-ink) 22%) !important;
+            color: #0e7490 !important;
             opacity: 1;
             text-transform: none;
             font-weight: 400;
@@ -1767,7 +1767,7 @@
         .report-type-box .report-title-icon svg {
             width: 20px;
             height: 20px;
-            stroke: color-mix(in srgb, var(--on-accent-color) 90%, transparent);
+            stroke: var(--on-accent-color);
             stroke-width: 2;
             fill: none;
         }
@@ -1788,7 +1788,8 @@
             font-weight: 700;
             letter-spacing: 0.18em;
             text-transform: uppercase;
-            color: color-mix(in srgb, var(--on-accent-color) 68%, transparent);
+            color: var(--on-accent-color);
+            opacity: 0.72;
             margin-top: 5px;
             position: relative;
         }
@@ -6007,16 +6008,69 @@
             const captureStyle = document.createElement('style');
             captureStyle.id = 'capture-fix-style';
             captureStyle.textContent = `
+                .capturing, .capturing * {
+                    color-scheme: light !important;
+                }
                 .capturing .corner::before, .capturing .corner::after { display: block !important; }
                 .capturing .pivot-table th::after { display: none !important; }
                 .capturing .report-type-box::before { display: none !important; }
                 .capturing .pivot-table tbody tr { animation: none !important; }
+                .capturing .text-huge,
                 body.lite-mode .capturing .text-huge {
                     background: none !important;
                     -webkit-background-clip: unset !important;
                     -webkit-text-fill-color: unset !important;
                     background-clip: unset !important;
-                    color: var(--theme-ink) !important;
+                    color: #0f172a !important;
+                }
+                .capturing .text-label,
+                body.lite-mode .capturing .text-label {
+                    color: #164e63 !important;
+                }
+                .capturing .num-production,
+                .capturing .num-closing,
+                body.lite-mode .capturing .num-production,
+                body.lite-mode .capturing .num-closing {
+                    color: #164e63 !important;
+                }
+                .capturing .num-output,
+                body.lite-mode .capturing .num-output {
+                    color: #075985 !important;
+                }
+                .capturing .num-stock-cover,
+                body.lite-mode .capturing .num-stock-cover {
+                    color: #7c3aed !important;
+                }
+                .capturing .text-signature,
+                body.lite-mode .capturing .text-signature {
+                    color: #0e7490 !important;
+                    text-shadow: 0 1px 2px rgba(255,255,255,0.72) !important;
+                }
+                .capturing .report-type-box,
+                body.lite-mode .capturing .report-type-box {
+                    background: #ffffff !important;
+                }
+                .capturing .report-title-text,
+                .capturing .signature-name,
+                body.lite-mode .capturing .report-title-text,
+                body.lite-mode .capturing .signature-name {
+                    color: #0f172a !important;
+                }
+                .capturing .report-title-sub,
+                .capturing .signature-desc,
+                body.lite-mode .capturing .report-title-sub,
+                body.lite-mode .capturing .signature-desc {
+                    color: #475569 !important;
+                }
+                .capturing .pivot-table th,
+                body.lite-mode .capturing .pivot-table th {
+                    background: #164e63 !important;
+                    color: #ffffff !important;
+                }
+                .capturing .a4-sheet,
+                body.lite-mode .capturing.a4-sheet {
+                    background-color: #ffffff !important;
+                    background-image: none !important;
                 }
             `;
             document.head.appendChild(captureStyle);
@@ -6619,6 +6673,37 @@ async function takeRndScreenshot(silentDownload = false) {
     sheet.classList.add('capturing');
     await new Promise(r => setTimeout(r, 100));
     try {
+        const captureStyle = document.createElement('style');
+        captureStyle.id = 'rnd-capture-fix-style';
+        captureStyle.textContent = `
+            .capturing, .capturing * { color-scheme: light !important; }
+            .capturing .text-huge,
+            body.lite-mode .capturing .text-huge {
+                background: none !important;
+                -webkit-background-clip: unset !important;
+                -webkit-text-fill-color: unset !important;
+                background-clip: unset !important;
+                color: #0f172a !important;
+            }
+            .capturing .text-label,
+            body.lite-mode .capturing .text-label { color: #164e63 !important; }
+            .capturing .text-signature,
+            body.lite-mode .capturing .text-signature {
+                color: #0e7490 !important;
+                text-shadow: 0 1px 2px rgba(255,255,255,0.72) !important;
+            }
+            .capturing .report-type-box,
+            body.lite-mode .capturing .report-type-box { background: #ffffff !important; }
+            .capturing .report-title-text, .capturing .signature-name,
+            body.lite-mode .capturing .report-title-text, body.lite-mode .capturing .signature-name { color: #0f172a !important; }
+            .capturing .report-title-sub, .capturing .signature-desc,
+            body.lite-mode .capturing .report-title-sub, body.lite-mode .capturing .signature-desc { color: #475569 !important; }
+            .capturing .rnd-table th,
+            body.lite-mode .capturing .rnd-table th { background: #164e63 !important; color: #ffffff !important; }
+            .capturing.a4-sheet,
+            body.lite-mode .capturing.a4-sheet { background-color: #ffffff !important; background-image: none !important; }
+        `;
+        document.head.appendChild(captureStyle);
         const canvasImg = await capture(sheet, { scale: 4, useCORS: true, backgroundColor: '#ffffff', logging: false, allowTaint: true, removeContainer: true });
         const dataUrl = canvasImg.toDataURL('image/jpeg', 1.0);
         const filename = `Armature-RND-Report-${new Date().toISOString().split('T')[0]}.jpg`;
@@ -6636,6 +6721,8 @@ async function takeRndScreenshot(silentDownload = false) {
     } finally {
         sheet.style.boxShadow = origShadow; sheet.style.borderRadius = origRadius; sheet.style.animation = origAnim; sheet.style.overflow = origOverflow;
         sheet.classList.remove('capturing');
+        const tempStyle = document.getElementById('rnd-capture-fix-style');
+        if (tempStyle) tempStyle.remove();
         if (hugeTitle) { hugeTitle.style.background = origT.background; hugeTitle.style.webkitBackgroundClip = origT.webkitBackgroundClip; hugeTitle.style.webkitTextFillColor = origT.webkitTextFillColor; hugeTitle.style.backgroundClip = origT.backgroundClip; hugeTitle.style.color = origT.color; }
         document.body.classList.add('mobile-active');
     }
