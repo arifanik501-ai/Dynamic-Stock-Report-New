@@ -160,11 +160,12 @@
 
         /* ── Lite Mode: Report Sheet Text Visibility ── */
         body.lite-mode .text-huge {
-            background: linear-gradient(135deg, var(--theme-ink) 0%, color-mix(in srgb, var(--theme-ink) 72%, var(--accent-theme) 28%) 58%, color-mix(in srgb, var(--theme-ink) 54%, var(--accent-theme) 46%) 100%) !important;
-            -webkit-background-clip: text !important;
-            -webkit-text-fill-color: transparent !important;
-            background-clip: text !important;
-            filter: drop-shadow(0 2px 6px rgba(var(--accent-theme-rgb), 0.14)) !important;
+            background: none !important;
+            -webkit-background-clip: unset !important;
+            -webkit-text-fill-color: #0f172a !important;
+            background-clip: unset !important;
+            color: #0f172a !important;
+            filter: drop-shadow(0 2px 4px rgba(15, 23, 42, 0.18)) !important;
         }
         body.lite-mode .text-label {
             color: color-mix(in srgb, var(--theme-ink) 88%, var(--accent-theme) 12%) !important;
