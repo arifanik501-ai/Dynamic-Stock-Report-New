@@ -51,6 +51,8 @@
         /* ============ LITE MODE ============ */
         body.lite-mode {
             --bg-retro: #eef6ff;
+            --text-main: #0f172a;
+            --text-on-primary: #ffffff;
             --glass-bg: rgba(255, 255, 255, 0.72);
             --glass-border: rgba(0, 0, 0, 0.08);
             --ambient-grid: rgba(14,116,144,0.075);
@@ -88,9 +90,27 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
         body.lite-mode .tab-slider::before { background: var(--accent-theme); }
-        body.lite-mode .archive-title { background: linear-gradient(135deg, #0f172a, #475569); -webkit-background-clip: text; }
-        body.lite-mode .archive-table td { color: #1e293b; border-color: rgba(0,0,0,0.06); }
+        body.lite-mode .archive-title {
+            background: linear-gradient(135deg, #020617, #1e3a8a) !important;
+            -webkit-background-clip: text !important;
+            background-clip: text !important;
+        }
+        body.lite-mode .archive-subtitle {
+            color: #1e3a8a !important;
+            opacity: 1 !important;
+        }
+        body.lite-mode .archive-table td {
+            color: #1e293b;
+            border-color: rgba(15, 23, 42, 0.08);
+            background: rgba(255, 255, 255, 0.9);
+        }
         body.lite-mode .archive-table td:first-child { color: #020617; }
+        body.lite-mode .archive-table tr:nth-child(even) {
+            background: rgba(15, 23, 42, 0.035);
+        }
+        body.lite-mode .archive-table tr:hover {
+            background: rgba(37, 99, 235, 0.08);
+        }
         body.lite-mode .controls-panel { box-shadow: 0 16px 40px rgba(0,0,0,0.05); }
         body.lite-mode .archive-card { box-shadow: 0 16px 40px rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.1); }
         body.lite-mode .archive-empty { border-color: rgba(0,0,0,0.1); }
@@ -105,7 +125,7 @@
 
         /* ── Lite Mode: Report Sheet Text Visibility ── */
         body.lite-mode .text-huge {
-            background: linear-gradient(135deg, #0f172a, var(--accent-theme)) !important;
+            background: linear-gradient(135deg, #020617 0%, #1e3a8a 58%, #0f766e 100%) !important;
             -webkit-background-clip: text !important;
             -webkit-text-fill-color: transparent !important;
             background-clip: text !important;
@@ -134,9 +154,11 @@
         }
         body.lite-mode .report-type-box .report-title-text {
             color: #ffffff !important;
+            text-shadow: 0 2px 5px rgba(15, 23, 42, 0.36) !important;
         }
         body.lite-mode .report-type-box .report-title-sub {
-            color: rgba(255, 255, 255, 0.7) !important;
+            color: rgba(255, 255, 255, 0.9) !important;
+            text-shadow: 0 1px 4px rgba(15, 23, 42, 0.34) !important;
         }
         body.lite-mode .premium-date-wrapper span,
         body.lite-mode .premium-date-wrapper div {
@@ -160,6 +182,11 @@
 
         /* ── Lite Mode: Full UI Polish ── */
         body.lite-mode .a4-sheet {
+            background-color: #ffffff !important;
+            background-image:
+                linear-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px) !important;
+            background-size: 20px 20px !important;
             box-shadow:
                 0 0 0 1px rgba(0,0,0,0.08),
                 0 20px 60px -10px rgba(0, 0, 0, 0.12),
@@ -170,8 +197,19 @@
             border: 3px solid #1e293b !important;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
         }
+        body.lite-mode .pivot-table th,
+        body.lite-mode .archive-table th,
+        body.lite-mode .archive-card-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 52%, #0891b2 100%) !important;
+            color: #ffffff !important;
+            text-shadow: 0 1px 4px rgba(15, 23, 42, 0.32) !important;
+        }
         body.lite-mode .pivot-table td {
             border-color: rgba(0, 0, 0, 0.08) !important;
+        }
+        body.lite-mode .pivot-table td[colspan="6"] {
+            color: #334155 !important;
+            background: rgba(248, 250, 252, 0.96) !important;
         }
         body.lite-mode .pivot-table tbody tr:nth-child(even) {
             background: rgba(0, 0, 0, 0.02) !important;
@@ -183,6 +221,7 @@
             border-left-color: #1e293b !important;
         }
         body.lite-mode .report-type-box {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 52%, #0891b2 100%) !important;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12), 4px 4px 0px rgba(0, 0, 0, 0.06) !important;
         }
         body.lite-mode .premium-date-wrapper {
@@ -205,6 +244,73 @@
         }
         body.lite-mode .toast-notification {
             background: rgba(0, 0, 0, 0.85) !important;
+            color: #ffffff !important;
+        }
+        body.lite-mode .btn-util-label,
+        body.lite-mode .fab-action-import .btn-util-label,
+        body.lite-mode .fab-action-clear .btn-util-label {
+            color: rgba(15, 23, 42, 0.78) !important;
+        }
+        body.lite-mode .fab-action-save .btn-util-label,
+        body.lite-mode .fab-action-alert .btn-util-label,
+        body.lite-mode .fab-action-rnd .btn-util-label {
+            color: rgba(255, 255, 255, 0.92) !important;
+            text-shadow: 0 1px 3px rgba(15, 23, 42, 0.32) !important;
+        }
+        body.lite-mode .fab-action-download .btn-util-label {
+            color: rgba(69, 26, 3, 0.88) !important;
+        }
+        body.lite-mode .archive-card {
+            background: rgba(255, 255, 255, 0.94) !important;
+        }
+        body.lite-mode .archive-card-body {
+            background: #ffffff !important;
+        }
+        body.lite-mode .archive-footer {
+            background: #f8fafc !important;
+            border-top-color: rgba(15, 23, 42, 0.08) !important;
+        }
+        body.lite-mode .archive-meta-label {
+            color: rgba(255, 255, 255, 0.88) !important;
+            opacity: 1 !important;
+        }
+        body.lite-mode .archive-meta-value,
+        body.lite-mode .archive-card-header .report-name {
+            color: #ffffff !important;
+        }
+        body.lite-mode .archive-date-selector {
+            background: rgba(255, 255, 255, 0.96) !important;
+            color: #0f172a !important;
+            border-color: rgba(255, 255, 255, 0.5) !important;
+        }
+        body.lite-mode .archive-table td[style*="#a78bfa"] {
+            color: #4c1d95 !important;
+        }
+        body.lite-mode .modal-content {
+            background: rgba(255, 255, 255, 0.96) !important;
+            border-color: rgba(15, 23, 42, 0.08) !important;
+            box-shadow: 0 32px 80px rgba(15, 23, 42, 0.16) !important;
+        }
+        body.lite-mode .modal-textarea {
+            background: #f8fafc !important;
+            color: #0f172a !important;
+            border-color: rgba(15, 23, 42, 0.12) !important;
+        }
+        body.lite-mode .modal-textarea::placeholder {
+            color: #64748b !important;
+        }
+        body.lite-mode #import-modal .modal-content > div:first-child {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 52%, #0891b2 100%) !important;
+            color: #ffffff !important;
+        }
+        body.lite-mode #import-modal .modal-content > div:last-child > div > span {
+            color: #475569 !important;
+        }
+        body.lite-mode #import-modal button[onclick="toggleModal(false)"] {
+            color: #475569 !important;
+        }
+        body.lite-mode #import-modal button[onclick="processPastedData()"] {
+            background: linear-gradient(135deg, #1e3a8a, #0891b2) !important;
             color: #ffffff !important;
         }
 
@@ -2744,7 +2850,7 @@
 
         /* Lite mode: btn-util-label */
         body.lite-mode .btn-util-label {
-            color: rgba(0, 0, 0, 0.35);
+            color: rgba(15, 23, 42, 0.78);
         }
         body.lite-mode .btn-util:hover .btn-util-label {
             color: #0f172a;
