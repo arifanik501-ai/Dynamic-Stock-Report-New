@@ -19,6 +19,10 @@
             --primary-theme: #164e63;
             --accent-theme: #0891b2;
             --text-on-primary: #cffafe;
+            --primary-theme-rgb: 22, 78, 99;
+            --accent-theme-rgb: 8, 145, 178;
+            --text-theme-rgb: 207, 250, 254;
+            --on-accent-color: #ffffff;
             --border-thick: 3px solid var(--primary-theme);
             --font-scale: 1.2;
             --glow-color: rgba(8, 145, 178, 0.15);
@@ -50,21 +54,18 @@
 
         /* ============ LITE MODE ============ */
         body.lite-mode {
-            --bg-retro: #eef6ff;
-            --text-main: #0f172a;
-            --text-on-primary: #ffffff;
             --glass-bg: rgba(255, 255, 255, 0.72);
             --glass-border: rgba(0, 0, 0, 0.08);
-            --ambient-grid: rgba(14,116,144,0.075);
-            --ambient-grid-strong: rgba(37,99,235,0.18);
+            --ambient-grid: rgba(var(--accent-theme-rgb), 0.075);
+            --ambient-grid-strong: rgba(var(--accent-theme-rgb), 0.18);
             --ambient-panel: rgba(255,255,255,0.7);
-            --ambient-vignette: rgba(37,99,235,0.12);
+            --ambient-vignette: rgba(var(--accent-theme-rgb), 0.12);
             background:
                 radial-gradient(circle at 11% 7%, color-mix(in srgb, var(--accent-theme) 24%, transparent), transparent 28rem),
                 radial-gradient(circle at 85% 10%, color-mix(in srgb, var(--primary-theme) 20%, transparent), transparent 30rem),
-                radial-gradient(circle at 58% 118%, rgba(56,189,248,0.22), transparent 34rem),
-                linear-gradient(135deg, #fbfdff 0%, #eef6ff 32%, #dbeafe 64%, #e0f2fe 100%);
-            color: #0a0f1a;
+                radial-gradient(circle at 58% 118%, rgba(var(--accent-theme-rgb), 0.22), transparent 34rem),
+                linear-gradient(135deg, color-mix(in srgb, var(--bg-retro) 94%, #ffffff 6%) 0%, var(--bg-retro) 34%, color-mix(in srgb, var(--primary-theme) 72%, #ffffff 28%) 68%, color-mix(in srgb, var(--accent-theme) 18%, #ffffff 82%) 100%);
+            color: var(--text-main);
         }
         body.lite-mode .bg-scanlines { opacity: 0.18; mix-blend-mode: multiply; }
         body.lite-mode .btn-util:not(.btn-save):not(.btn-golden):not(.btn-theme-premium) {
@@ -91,12 +92,12 @@
         }
         body.lite-mode .tab-slider::before { background: var(--accent-theme); }
         body.lite-mode .archive-title {
-            background: linear-gradient(135deg, #020617, #1e3a8a) !important;
+            background: linear-gradient(135deg, var(--text-main), var(--accent-theme)) !important;
             -webkit-background-clip: text !important;
             background-clip: text !important;
         }
         body.lite-mode .archive-subtitle {
-            color: #1e3a8a !important;
+            color: var(--accent-theme) !important;
             opacity: 1 !important;
         }
         body.lite-mode .archive-table td {
@@ -109,7 +110,7 @@
             background: rgba(15, 23, 42, 0.035);
         }
         body.lite-mode .archive-table tr:hover {
-            background: rgba(37, 99, 235, 0.08);
+            background: rgba(var(--accent-theme-rgb), 0.08);
         }
         body.lite-mode .controls-panel { box-shadow: 0 16px 40px rgba(0,0,0,0.05); }
         body.lite-mode .archive-card { box-shadow: 0 16px 40px rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.1); }
@@ -125,7 +126,7 @@
 
         /* ── Lite Mode: Report Sheet Text Visibility ── */
         body.lite-mode .text-huge {
-            background: linear-gradient(135deg, #020617 0%, #1e3a8a 58%, #0f766e 100%) !important;
+            background: linear-gradient(135deg, var(--text-main) 0%, var(--accent-theme) 58%, color-mix(in srgb, var(--primary-theme) 70%, var(--accent-theme) 30%) 100%) !important;
             -webkit-background-clip: text !important;
             -webkit-text-fill-color: transparent !important;
             background-clip: text !important;
@@ -134,8 +135,8 @@
             color: #1e293b !important;
         }
         body.lite-mode .text-pivot-header {
-            color: #ffffff !important;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
+            color: var(--on-accent-color) !important;
+            text-shadow: 0 1px 3px rgba(var(--text-theme-rgb), 0.22) !important;
         }
         body.lite-mode .text-pivot-body {
             color: #0f172a !important;
@@ -150,15 +151,15 @@
             color: #1e293b !important;
         }
         body.lite-mode .text-signature {
-            color: #1e3a8a !important;
+            color: var(--accent-theme) !important;
         }
         body.lite-mode .report-type-box .report-title-text {
-            color: #ffffff !important;
-            text-shadow: 0 2px 5px rgba(15, 23, 42, 0.36) !important;
+            color: var(--on-accent-color) !important;
+            text-shadow: 0 2px 5px rgba(var(--text-theme-rgb), 0.34) !important;
         }
         body.lite-mode .report-type-box .report-title-sub {
-            color: rgba(255, 255, 255, 0.9) !important;
-            text-shadow: 0 1px 4px rgba(15, 23, 42, 0.34) !important;
+            color: color-mix(in srgb, var(--on-accent-color) 88%, transparent) !important;
+            text-shadow: 0 1px 4px rgba(var(--text-theme-rgb), 0.32) !important;
         }
         body.lite-mode .premium-date-wrapper span,
         body.lite-mode .premium-date-wrapper div {
@@ -171,7 +172,7 @@
             color: var(--accent-theme) !important;
         }
         body.lite-mode #display-date-weekday {
-            color: #ffffff !important;
+            color: var(--on-accent-color) !important;
         }
         body.lite-mode #digital-clock {
             color: #475569 !important;
@@ -200,9 +201,9 @@
         body.lite-mode .pivot-table th,
         body.lite-mode .archive-table th,
         body.lite-mode .archive-card-header {
-            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 52%, #0891b2 100%) !important;
-            color: #ffffff !important;
-            text-shadow: 0 1px 4px rgba(15, 23, 42, 0.32) !important;
+            background: linear-gradient(135deg, var(--primary-theme) 0%, color-mix(in srgb, var(--primary-theme) 55%, var(--accent-theme) 45%) 52%, var(--accent-theme) 100%) !important;
+            color: var(--on-accent-color) !important;
+            text-shadow: 0 1px 4px rgba(var(--text-theme-rgb), 0.3) !important;
         }
         body.lite-mode .pivot-table td {
             border-color: rgba(0, 0, 0, 0.08) !important;
@@ -221,8 +222,8 @@
             border-left-color: #1e293b !important;
         }
         body.lite-mode .report-type-box {
-            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 52%, #0891b2 100%) !important;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12), 4px 4px 0px rgba(0, 0, 0, 0.06) !important;
+            background: linear-gradient(135deg, var(--primary-theme) 0%, color-mix(in srgb, var(--primary-theme) 55%, var(--accent-theme) 45%) 52%, var(--accent-theme) 100%) !important;
+            box-shadow: 0 6px 20px rgba(var(--accent-theme-rgb), 0.16), 4px 4px 0px rgba(var(--primary-theme-rgb), 0.1) !important;
         }
         body.lite-mode .premium-date-wrapper {
             border-color: rgba(0, 0, 0, 0.1) !important;
@@ -254,8 +255,8 @@
         body.lite-mode .fab-action-save .btn-util-label,
         body.lite-mode .fab-action-alert .btn-util-label,
         body.lite-mode .fab-action-rnd .btn-util-label {
-            color: rgba(255, 255, 255, 0.92) !important;
-            text-shadow: 0 1px 3px rgba(15, 23, 42, 0.32) !important;
+            color: color-mix(in srgb, var(--on-accent-color) 92%, transparent) !important;
+            text-shadow: 0 1px 3px rgba(var(--text-theme-rgb), 0.3) !important;
         }
         body.lite-mode .fab-action-download .btn-util-label {
             color: rgba(69, 26, 3, 0.88);
@@ -271,12 +272,12 @@
             border-top-color: rgba(15, 23, 42, 0.08) !important;
         }
         body.lite-mode .archive-meta-label {
-            color: rgba(255, 255, 255, 0.88) !important;
+            color: color-mix(in srgb, var(--on-accent-color) 88%, transparent) !important;
             opacity: 1 !important;
         }
         body.lite-mode .archive-meta-value,
         body.lite-mode .archive-card-header .report-name {
-            color: #ffffff !important;
+            color: var(--on-accent-color) !important;
         }
         body.lite-mode .archive-date-selector {
             background: rgba(255, 255, 255, 0.96) !important;
@@ -284,7 +285,7 @@
             border-color: rgba(255, 255, 255, 0.5) !important;
         }
         body.lite-mode .archive-table td[style*="#a78bfa"] {
-            color: #4c1d95 !important;
+            color: var(--accent-theme) !important;
         }
         body.lite-mode .modal-content {
             background: rgba(255, 255, 255, 0.96) !important;
@@ -300,8 +301,8 @@
             color: #64748b !important;
         }
         body.lite-mode #import-modal .modal-content > div:first-child {
-            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 52%, #0891b2 100%) !important;
-            color: #ffffff !important;
+            background: linear-gradient(135deg, var(--primary-theme) 0%, color-mix(in srgb, var(--primary-theme) 55%, var(--accent-theme) 45%) 52%, var(--accent-theme) 100%) !important;
+            color: var(--on-accent-color) !important;
         }
         body.lite-mode #import-modal .modal-content > div:last-child > div > span {
             color: #475569 !important;
@@ -310,8 +311,8 @@
             color: #475569 !important;
         }
         body.lite-mode #import-modal button[onclick="processPastedData()"] {
-            background: linear-gradient(135deg, #1e3a8a, #0891b2) !important;
-            color: #ffffff !important;
+            background: linear-gradient(135deg, var(--primary-theme), var(--accent-theme)) !important;
+            color: var(--on-accent-color) !important;
         }
 
         /* ── Lite Mode: Calendar Widget ── */
@@ -345,11 +346,11 @@
         }
         body.lite-mode .calendar-day.has-data:hover {
             background: var(--accent-theme) !important;
-            color: #ffffff !important;
+            color: var(--on-accent-color) !important;
         }
         body.lite-mode .calendar-day.active-day {
             background: var(--primary-theme) !important;
-            color: #ffffff !important;
+            color: var(--on-accent-color) !important;
         }
 
         /* ============ HIDDEN PERFORMANCE TOGGLE ============ */
@@ -428,7 +429,7 @@
             border-color: rgba(34, 211, 238, 0.65);
             background:
                 radial-gradient(circle at 30% 18%, rgba(255,255,255,0.4), transparent 34%),
-                linear-gradient(145deg, #0891b2, #164e63);
+                linear-gradient(145deg, var(--accent-theme), var(--primary-theme));
         }
 
         body.performance-mode *,
@@ -641,19 +642,19 @@
         body.lite-mode .bg-canvas {
             background:
                 linear-gradient(115deg, rgba(255,255,255,0.66), transparent 34%),
-                linear-gradient(120deg, rgba(14,116,144,0.055) 0 1px, transparent 1px 18px),
-                radial-gradient(circle at 14% 92%, rgba(56,189,248,0.18), transparent 30rem),
-                radial-gradient(circle at 84% 86%, rgba(99,102,241,0.14), transparent 34rem);
+                linear-gradient(120deg, rgba(var(--accent-theme-rgb), 0.055) 0 1px, transparent 1px 18px),
+                radial-gradient(circle at 14% 92%, rgba(var(--accent-theme-rgb), 0.18), transparent 30rem),
+                radial-gradient(circle at 84% 86%, rgba(var(--primary-theme-rgb), 0.14), transparent 34rem);
         }
         body.lite-mode .bg-canvas::before {
             background:
                 conic-gradient(from 225deg at 50% 52%,
                     transparent 0deg,
-                    rgba(59,130,246,0.2) 54deg,
+                    rgba(var(--primary-theme-rgb), 0.2) 54deg,
                     transparent 108deg,
-                    rgba(6,182,212,0.22) 172deg,
+                    rgba(var(--accent-theme-rgb), 0.22) 172deg,
                     transparent 240deg,
-                    rgba(168,85,247,0.14) 306deg,
+                    rgba(var(--text-theme-rgb), 0.14) 306deg,
                     transparent 360deg);
             opacity: 0.48;
             mix-blend-mode: multiply;
@@ -661,8 +662,8 @@
         body.lite-mode .bg-canvas::after {
             background:
                 linear-gradient(90deg, rgba(255,255,255,0.72), transparent 18%, transparent 82%, rgba(255,255,255,0.58)),
-                linear-gradient(180deg, rgba(255,255,255,0.7), transparent 26%, rgba(219,234,254,0.45) 100%),
-                radial-gradient(ellipse at center, transparent 52%, rgba(37,99,235,0.16) 100%);
+                linear-gradient(180deg, rgba(255,255,255,0.7), transparent 26%, color-mix(in srgb, var(--primary-theme) 14%, transparent) 100%),
+                radial-gradient(ellipse at center, transparent 52%, rgba(var(--accent-theme-rgb), 0.16) 100%);
         }
         body.lite-mode .bg-orb {
             opacity: 0.62 !important;
@@ -682,11 +683,11 @@
         body.lite-mode .bg-orb:nth-child(3) {
             width: min(44vw, 560px); height: min(44vw, 560px);
             top: 24%; left: 54%;
-            background: radial-gradient(circle, rgba(59,130,246,0.2), transparent 70%);
+            background: radial-gradient(circle, rgba(var(--primary-theme-rgb), 0.2), transparent 70%);
         }
         body.lite-mode .bg-orb:nth-child(4) {
             opacity: 0.76 !important;
-            background: radial-gradient(circle, rgba(14,165,233,0.18), transparent 70%);
+            background: radial-gradient(circle, rgba(var(--accent-theme-rgb), 0.18), transparent 70%);
         }
         body.lite-mode .bg-orb:nth-child(5) {
             opacity: 0.78 !important;
@@ -704,13 +705,13 @@
             inset: 0;
             background:
                 linear-gradient(135deg, rgba(255,255,255,0.55), transparent 26%, rgba(255,255,255,0.32) 62%, transparent),
-                repeating-linear-gradient(135deg, transparent 0 72px, rgba(14,116,144,0.06) 72px 74px);
+                repeating-linear-gradient(135deg, transparent 0 72px, rgba(var(--accent-theme-rgb), 0.06) 72px 74px);
             pointer-events: none;
         }
         body.lite-mode .bg-scanlines {
             background:
-                repeating-linear-gradient(0deg, transparent 0 5px, rgba(14,116,144,0.035) 5px 6px),
-                repeating-linear-gradient(90deg, transparent 0 90px, rgba(37,99,235,0.035) 90px 92px);
+                repeating-linear-gradient(0deg, transparent 0 5px, rgba(var(--accent-theme-rgb), 0.035) 5px 6px),
+                repeating-linear-gradient(90deg, transparent 0 90px, rgba(var(--primary-theme-rgb), 0.035) 90px 92px);
             opacity: 0.48;
         }
         body.lite-mode .screenshot-wrapper {
@@ -724,7 +725,7 @@
             border-radius: 999px;
             background:
                 linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent),
-                linear-gradient(135deg, color-mix(in srgb, var(--accent-theme) 18%, transparent), rgba(59,130,246,0.12), transparent);
+                linear-gradient(135deg, color-mix(in srgb, var(--accent-theme) 18%, transparent), rgba(var(--primary-theme-rgb), 0.12), transparent);
             filter: blur(34px);
             opacity: 0.72;
             pointer-events: none;
@@ -738,7 +739,7 @@
             bottom: 7vh;
             height: 180px;
             border-radius: 999px;
-            background: radial-gradient(ellipse at center, rgba(14,116,144,0.16), transparent 68%);
+            background: radial-gradient(ellipse at center, rgba(var(--accent-theme-rgb), 0.16), transparent 68%);
             filter: blur(30px);
             opacity: 0.7;
             pointer-events: none;
@@ -1160,8 +1161,8 @@
             box-sizing: border-box;
         }
         .theme-search-box:focus {
-            border-color: var(--accent-theme, #0891b2);
-            box-shadow: 0 0 0 4px rgba(8, 145, 178, 0.14);
+            border-color: var(--accent-theme);
+            box-shadow: 0 0 0 4px rgba(var(--accent-theme-rgb), 0.14);
             transform: translateY(-1px);
         }
         .theme-search-box::placeholder {
@@ -1490,13 +1491,13 @@
         }
         .theme-apply-btn {
             border: none;
-            background: linear-gradient(135deg, var(--primary-theme, #164e63), var(--accent-theme, #0891b2));
+            background: linear-gradient(135deg, var(--primary-theme), var(--accent-theme));
             color: white;
-            box-shadow: 0 10px 24px rgba(8, 145, 178, 0.28);
+            box-shadow: 0 10px 24px rgba(var(--accent-theme-rgb), 0.28);
         }
         .theme-apply-btn:hover {
             transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 14px 28px rgba(8, 145, 178, 0.34);
+            box-shadow: 0 14px 28px rgba(var(--accent-theme-rgb), 0.34);
             filter: brightness(1.08);
         }
         @media (max-width: 900px) {
@@ -1632,7 +1633,7 @@
         .text-signature {
             font-family: 'Sacramento', cursive;
             font-size: 32px;
-            color: #1e3a8a !important;
+            color: var(--accent-theme) !important;
             opacity: 0.9;
             text-transform: none;
             font-weight: 400;
@@ -2307,7 +2308,7 @@
         }
 
         .btn-save {
-            background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
+            background: linear-gradient(135deg, var(--accent-theme), var(--primary-theme)) !important;
             color: white !important;
             box-shadow: 
                 0 6px 0 #0369a1, 
@@ -2571,7 +2572,7 @@
         .fab-action-alert {
             background:
                 radial-gradient(circle at 28% 16%, rgba(255,255,255,0.34), transparent 34%),
-                linear-gradient(145deg, #38bdf8 0%, #0284c7 52%, #075985 100%) !important;
+                linear-gradient(145deg, var(--accent-theme) 0%, color-mix(in srgb, var(--accent-theme) 60%, var(--primary-theme) 40%) 52%, var(--primary-theme) 100%) !important;
             box-shadow:
                 0 7px 0 #075985,
                 0 18px 26px rgba(2,132,199,0.38),
@@ -2603,7 +2604,7 @@
         .fab-action-rnd {
             background:
                 radial-gradient(circle at 30% 16%, rgba(255,255,255,0.24), transparent 34%),
-                linear-gradient(145deg, #14b8a6 0%, #0f766e 58%, #115e59 100%) !important;
+                linear-gradient(145deg, color-mix(in srgb, var(--accent-theme) 82%, #ffffff 18%) 0%, var(--primary-theme) 58%, color-mix(in srgb, var(--primary-theme) 84%, #000000 16%) 100%) !important;
             box-shadow:
                 0 7px 0 #115e59,
                 0 18px 27px rgba(20,184,166,0.34),
@@ -2613,7 +2614,7 @@
         .fab-action-alert {
             background:
                 radial-gradient(circle at 28% 16%, rgba(255,255,255,0.36), transparent 34%),
-                linear-gradient(145deg, #22d3ee 0%, #0ea5e9 48%, #0369a1 100%) !important;
+                linear-gradient(145deg, color-mix(in srgb, var(--accent-theme) 82%, #ffffff 18%) 0%, var(--accent-theme) 48%, var(--primary-theme) 100%) !important;
         }
 
         .fab-action-save::before,
@@ -2705,20 +2706,20 @@
 
         /* Teal square RND button */
         .btn-rnd {
-            background: linear-gradient(135deg, #0f766e, #0891b2) !important;
+            background: linear-gradient(135deg, var(--primary-theme), var(--accent-theme)) !important;
             color: #a7f3d0 !important;
             border: none !important;
             box-shadow: 
                 0 6px 0 #065f46,
-                0 8px 15px rgba(8, 145, 178, 0.35),
+                0 8px 15px rgba(var(--accent-theme-rgb), 0.35),
                 inset 0 2px 0 rgba(255,255,255,0.15) !important;
         }
 
         .btn-rnd:hover {
-            background: linear-gradient(135deg, #0d9488, #0ea5e9) !important;
+            background: linear-gradient(135deg, color-mix(in srgb, var(--primary-theme) 72%, var(--accent-theme) 28%), var(--accent-theme)) !important;
             box-shadow: 
                 0 9px 0 #065f46,
-                0 14px 25px rgba(8, 145, 178, 0.5),
+                0 14px 25px rgba(var(--accent-theme-rgb), 0.5),
                 inset 0 2px 0 rgba(255,255,255,0.25) !important;
         }
 
@@ -2727,8 +2728,8 @@
         }
 
         body.lite-mode .btn-rnd {
-            background: linear-gradient(135deg, #0f766e, #0891b2) !important;
-            color: white !important;
+            background: linear-gradient(135deg, var(--primary-theme), var(--accent-theme)) !important;
+            color: var(--on-accent-color) !important;
             border: none !important;
         }
 
@@ -2746,12 +2747,12 @@
             gap: 0;
             background:
                 radial-gradient(circle at 28% 18%, rgba(255,255,255,0.28), transparent 30%),
-                linear-gradient(145deg, #0f172a 0%, #312e81 45%, #0891b2 100%) !important;
+                linear-gradient(145deg, color-mix(in srgb, var(--primary-theme) 62%, #0f172a 38%) 0%, var(--primary-theme) 45%, var(--accent-theme) 100%) !important;
             border-color: rgba(125, 211, 252, 0.32) !important;
             color: white !important;
             box-shadow:
                 0 6px 0 #082f49,
-                0 14px 30px rgba(8, 145, 178, 0.35),
+                0 14px 30px rgba(var(--accent-theme-rgb), 0.35),
                 inset 0 1px 0 rgba(255,255,255,0.22) !important;
         }
         .btn-theme-premium::after {
@@ -2803,10 +2804,10 @@
         .btn-theme-premium:hover {
             background:
                 radial-gradient(circle at 28% 18%, rgba(255,255,255,0.34), transparent 30%),
-                linear-gradient(145deg, #1e1b4b 0%, #2563eb 46%, #06b6d4 100%) !important;
+                linear-gradient(145deg, color-mix(in srgb, var(--primary-theme) 70%, #0f172a 30%) 0%, var(--primary-theme) 46%, var(--accent-theme) 100%) !important;
             box-shadow:
                 0 9px 0 #082f49,
-                0 18px 34px rgba(8, 145, 178, 0.46),
+                0 18px 34px rgba(var(--accent-theme-rgb), 0.46),
                 inset 0 1px 0 rgba(255,255,255,0.28) !important;
         }
         .btn-theme-premium:hover .theme-premium-icon svg {
@@ -2830,10 +2831,10 @@
         body.lite-mode .btn-theme-premium .theme-premium-icon {
             background:
                 radial-gradient(circle at 32% 18%, rgba(255,255,255,0.92), transparent 30%),
-                linear-gradient(135deg, rgba(255,255,255,0.72), rgba(14,165,233,0.18));
+                linear-gradient(135deg, rgba(255,255,255,0.72), rgba(var(--accent-theme-rgb), 0.18));
             box-shadow:
                 inset 0 1px 0 rgba(255,255,255,0.96),
-                0 10px 18px rgba(14,116,144,0.16);
+                0 10px 18px rgba(var(--accent-theme-rgb), 0.16);
         }
         body.lite-mode .btn-theme-premium .theme-premium-icon svg {
             color: #075985;
@@ -2887,7 +2888,7 @@
             isolation: isolate;
             background:
                 radial-gradient(circle at 30% 18%, rgba(255,255,255,0.24), transparent 32%),
-                linear-gradient(135deg, #0f172a, #1e3a8a 54%, var(--accent-theme)) !important;
+                linear-gradient(135deg, color-mix(in srgb, var(--primary-theme) 72%, #0f172a 28%), var(--primary-theme) 54%, var(--accent-theme)) !important;
             color: white !important;
             animation: fabBreath 4s ease-in-out infinite;
         }
@@ -2922,10 +2923,10 @@
         .ctrl-trigger.active .ctrl-icon-menu  { opacity: 0; transform: rotate(180deg) scale(0.3); }
         .ctrl-trigger.active .ctrl-icon-close { opacity: 1; transform: rotate(0deg)   scale(1); }
         .ctrl-trigger.active {
-            background: linear-gradient(135deg, #1e40af, #3b82f6) !important;
+            background: linear-gradient(135deg, var(--primary-theme), var(--accent-theme)) !important;
             color: white !important;
-            box-shadow: 0 6px 0 #1e3a8a, 0 8px 20px rgba(59,130,246,0.4), inset 0 2px 0 rgba(255,255,255,0.25) !important;
-            border-color: rgba(59,130,246,0.4) !important;
+            box-shadow: 0 6px 0 var(--primary-theme), 0 8px 20px rgba(var(--accent-theme-rgb), 0.4), inset 0 2px 0 rgba(255,255,255,0.25) !important;
+            border-color: rgba(var(--accent-theme-rgb), 0.4) !important;
         }
         .ctrl-trigger.active .ctrl-trigger-glow {
             opacity: 0.95;
@@ -3483,7 +3484,7 @@
 
 /* 3D Special Notification Button */
 .btn-special-3d {
-    background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
+    background: linear-gradient(135deg, var(--accent-theme), var(--primary-theme)) !important;
     color: white !important;
     border: none !important;
     box-shadow: 
@@ -4343,7 +4344,7 @@
                     </div>
                 </header>
 
-                <div id="rnd-title-box" class="report-type-box" style="background: linear-gradient(145deg, #0f766e, #0891b2);">
+                <div id="rnd-title-box" class="report-type-box">
                     <div class="report-title-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" /></svg></div>
                     <div>
                         <div class="report-title-text">Armature RND Report</div>
@@ -4616,6 +4617,7 @@
 
         const PERFORMANCE_STORAGE_KEY = 'mep_performance_mode';
         const THEME_RANDOMIZED_KEY = 'mep_theme_randomized_today';
+        const SELECTED_THEME_KEY = 'mep_selected_theme_index';
         const currentDayKey = new Date().toISOString().split('T')[0];
 
         let _html2canvasPromise = null;
@@ -4645,6 +4647,17 @@
 
         function markThemeRandomized() {
             localStorage.setItem(THEME_RANDOMIZED_KEY, currentDayKey);
+        }
+
+        function saveSelectedTheme(idx) {
+            localStorage.setItem(SELECTED_THEME_KEY, String(idx));
+        }
+
+        function loadSelectedTheme() {
+            const savedIndex = Number(localStorage.getItem(SELECTED_THEME_KEY));
+            if (!Number.isInteger(savedIndex) || !themes[savedIndex]) return false;
+            selectThemeCard(savedIndex, true);
+            return true;
         }
 
         // ============ PAGE SWITCHING ============
@@ -5317,12 +5330,31 @@
             root.style.setProperty('--primary-theme', theme.primary);
             root.style.setProperty('--accent-theme', theme.accent);
             root.style.setProperty('--text-on-primary', theme.text);
+            root.style.setProperty('--text-main', theme.text);
+            root.style.setProperty('--primary-theme-rgb', hexToRgbValues(theme.primary));
+            root.style.setProperty('--accent-theme-rgb', hexToRgbValues(theme.accent));
+            root.style.setProperty('--text-theme-rgb', hexToRgbValues(theme.text));
+            root.style.setProperty('--on-accent-color', getReadableTextColor(theme.accent));
             if (theme.glow) root.style.setProperty('--glow-color', theme.glow);
 
             const orbs = document.querySelectorAll('.bg-orb');
             if (orbs[0]) orbs[0].style.background = `radial-gradient(circle, ${theme.accent}66, transparent 68%)`;
             if (orbs[1]) orbs[1].style.background = `radial-gradient(circle, ${theme.primary}78, transparent 70%)`;
             if (orbs[2]) orbs[2].style.background = `radial-gradient(circle, ${theme.accent}48, transparent 72%)`;
+        }
+
+        function hexToRgbValues(hex) {
+            const value = hex.replace('#', '').trim();
+            const full = value.length === 3 ? value.split('').map(char => char + char).join('') : value;
+            const intValue = parseInt(full, 16);
+            return `${(intValue >> 16) & 255}, ${(intValue >> 8) & 255}, ${intValue & 255}`;
+        }
+
+        function getReadableTextColor(hex) {
+            const [r, g, b] = hexToRgbValues(hex).split(',').map(value => Number(value.trim()) / 255);
+            const srgb = [r, g, b].map(value => value <= 0.03928 ? value / 12.92 : Math.pow((value + 0.055) / 1.055, 2.4));
+            const luminance = 0.2126 * srgb[0] + 0.7152 * srgb[1] + 0.0722 * srgb[2];
+            return luminance > 0.56 ? '#0f172a' : '#ffffff';
         }
 
         let _currentThemeMode = 'dark';
@@ -5339,6 +5371,7 @@
             }
             applyTheme(random);
             _selectedThemeIndex = themes.indexOf(random);
+            saveSelectedTheme(_selectedThemeIndex);
             if (!silent) {
                 showToast(`${random.name} Theme Applied`);
             }
@@ -5501,7 +5534,7 @@
             if (banner) banner.textContent = theme.name;
         }
 
-        function selectThemeCard(idx) {
+        function selectThemeCard(idx, silent = false) {
             const theme = themes[idx];
             if (!theme) return;
             _selectedThemeIndex = idx;
@@ -5512,9 +5545,12 @@
                 document.body.classList.remove('lite-mode');
             }
             applyTheme(theme);
+            saveSelectedTheme(idx);
             updateThemePreview(theme);
             renderThemeGrid();
-            showToast(`${theme.name} Applied`);
+            if (!silent) {
+                showToast(`${theme.name} Applied`);
+            }
         }
 
         function randomThemeFromSelector() {
@@ -6026,7 +6062,10 @@
             if(picker) picker.value = dateStr;
             updateFormattedDate(dateStr);
             initPerformanceHotspot();
-            applyTheme(themes[0]);
+            if (!loadSelectedTheme()) {
+                applyTheme(themes[0]);
+                _selectedThemeIndex = 0;
+            }
             renderTable();
             updateReportBranding('initial');
             updateBadges();
@@ -6381,7 +6420,7 @@ function renderRndArchivePage() {
     if (!report || !report.data) { container.innerHTML = '<div class="archive-empty"><div class="archive-empty-title">Data Error</div></div>'; renderCalendarWidget(type); return; }
     const dropdownOptions = dates.map(d => { const r = archiveMap[d]; return `<option value="${d}" ${d===selectedDate?'selected':''}>${(r&&r.reportDate)?r.reportDate:d} (${d})</option>`; }).join('');
     const hdrs = ['SL','Stator Wt','Start Turn','Start SWG','Start SW Wt','Start Res','Run Turn','Run SWG','Run SW Wt','Run Res','SW Cond Dia','SW Total Dia','Total SW Wt','Total Fiber Wt','Total Res','Total Arm Wt'];
-    let thHtml = hdrs.map((h,i) => `<th style="font-size:9px; padding:8px 3px; ${i===0?'width:30px;':''} background: ${i===0?'#475569':i<=5?'#db2777':i<=9?'#0891b2':'#16a34a'};">${h}</th>`).join('');
+    let thHtml = hdrs.map((h,i) => `<th style="font-size:9px; padding:8px 3px; ${i===0?'width:30px;':''}">${h}</th>`).join('');
     let tbHtml = '';
     report.data.forEach((row, idx) => {
         let tds = `<td style="font-weight:800;background:rgba(255,255,255,0.03);">${idx+1}</td>`;
