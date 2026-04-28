@@ -97,6 +97,22 @@
             color: var(--text-main);
         }
         body.lite-mode .bg-scanlines { opacity: 0.18; mix-blend-mode: multiply; }
+
+        /* ============ GRADIENT THEME MODE (super premium) ============ */
+        body.gradient-theme {
+            background:
+                radial-gradient(circle at 14% 10%, color-mix(in srgb, var(--accent-theme) 22%, transparent), transparent 26rem),
+                radial-gradient(circle at 88% 4%, color-mix(in srgb, var(--primary-theme) 28%, transparent), transparent 28rem),
+                var(--bg-gradient, linear-gradient(135deg, var(--bg-retro), var(--bg-retro))) !important;
+            background-attachment: fixed !important;
+        }
+        body.gradient-theme.lite-mode {
+            background:
+                radial-gradient(circle at 11% 7%, color-mix(in srgb, var(--accent-theme) 18%, transparent), transparent 28rem),
+                radial-gradient(circle at 85% 10%, color-mix(in srgb, var(--primary-theme) 16%, transparent), transparent 30rem),
+                var(--bg-gradient, linear-gradient(135deg, var(--bg-retro), var(--bg-retro))) !important;
+            background-attachment: fixed !important;
+        }
         body.lite-mode .btn-util:not(.btn-save):not(.btn-golden):not(.btn-theme-premium) {
             color: var(--theme-ink-muted);
             background: var(--theme-control);
@@ -1113,6 +1129,17 @@
                 inset 0 1px 0 rgba(255,255,255,0.08),
                 0 18px 34px rgba(0,0,0,0.28);
         }
+        .theme-preview-card.has-gradient {
+            background:
+                radial-gradient(circle at 82% 12%, color-mix(in srgb, var(--preview-accent) 38%, transparent), transparent 26%),
+                radial-gradient(circle at 14% 86%, color-mix(in srgb, var(--preview-primary) 30%, transparent), transparent 30%),
+                var(--preview-gradient, linear-gradient(145deg, var(--preview-bg), var(--preview-bg)));
+            border-color: rgba(255,255,255,0.18);
+        }
+        .theme-preview-card.has-gradient .theme-preview-banner {
+            background: var(--preview-gradient, linear-gradient(135deg, var(--preview-primary), var(--preview-accent)));
+            box-shadow: 0 14px 26px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.18);
+        }
         .theme-preview-badge {
             display: inline-flex;
             align-items: center;
@@ -1418,6 +1445,23 @@
             letter-spacing: 0.12em;
             text-transform: uppercase;
             margin-bottom: 12px;
+        }
+        .theme-card.gradient {
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.02)),
+                var(--theme-gradient, linear-gradient(145deg, var(--theme-bg), var(--theme-bg)));
+            border-color: rgba(255,255,255,0.14);
+        }
+        .theme-card.gradient .theme-card-tag {
+            background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.04));
+            border-color: rgba(255,255,255,0.22);
+            box-shadow: 0 0 14px color-mix(in srgb, var(--theme-accent) 26%, transparent);
+        }
+        .theme-card.gradient .theme-card-banner {
+            background: var(--theme-gradient, linear-gradient(135deg, var(--theme-primary), var(--theme-accent)));
+            box-shadow:
+                0 12px 22px rgba(0, 0, 0, 0.28),
+                inset 0 1px 0 rgba(255,255,255,0.18);
         }
         .theme-card-surface {
             border-radius: 18px;
@@ -5451,6 +5495,14 @@
             root.style.setProperty('--on-primary-color', getReadableTextColor(theme.primary));
             if (theme.glow) root.style.setProperty('--glow-color', theme.glow);
 
+            if (theme.gradient) {
+                root.style.setProperty('--bg-gradient', theme.gradient);
+                document.body.classList.add('gradient-theme');
+            } else {
+                root.style.removeProperty('--bg-gradient');
+                document.body.classList.remove('gradient-theme');
+            }
+
             const orbs = document.querySelectorAll('.bg-orb');
             if (orbs[0]) orbs[0].style.background = `radial-gradient(circle, ${theme.accent}66, transparent 68%)`;
             if (orbs[1]) orbs[1].style.background = `radial-gradient(circle, ${theme.primary}78, transparent 70%)`;
@@ -5606,8 +5658,11 @@
                 const sel = idx === _selectedThemeIndex ? ' selected' : '';
                 const mode = t.mode || 'dark';
                 const displayAccent = String(t.accent).replace('#', '');
-                return `<button class="theme-card${sel}" style="--theme-bg:${t.bg};--theme-primary:${t.primary};--theme-accent:${t.accent};--theme-text:${t.text};animation-delay:${Math.min(i, 12) * 22}ms;" onclick="selectThemeCard(${idx})" type="button" title="${t.name}" aria-label="Apply ${t.name} theme">
-                    <span class="theme-card-tag">${mode}</span>
+                const gradientClass = t.gradient ? ' gradient' : '';
+                const gradientVar = t.gradient ? `--theme-gradient:${t.gradient};` : '';
+                const tagLabel = t.gradient ? `${mode} • gradient` : mode;
+                return `<button class="theme-card${sel}${gradientClass}" style="--theme-bg:${t.bg};--theme-primary:${t.primary};--theme-accent:${t.accent};--theme-text:${t.text};${gradientVar}animation-delay:${Math.min(i, 12) * 22}ms;" onclick="selectThemeCard(${idx})" type="button" title="${t.name}" aria-label="Apply ${t.name} theme">
+                    <span class="theme-card-tag">${tagLabel}</span>
                     <div class="theme-card-surface">
                         <div class="theme-card-topbar">
                             <span class="theme-card-dot primary"></span>
@@ -5642,9 +5697,20 @@
                 card.style.setProperty('--preview-primary', theme.primary);
                 card.style.setProperty('--preview-accent', theme.accent);
                 card.style.setProperty('--preview-text', theme.text);
+                if (theme.gradient) {
+                    card.style.setProperty('--preview-gradient', theme.gradient);
+                    card.classList.add('has-gradient');
+                } else {
+                    card.style.removeProperty('--preview-gradient');
+                    card.classList.remove('has-gradient');
+                }
             }
             if (name) name.textContent = theme.name;
-            if (mode) mode.textContent = theme.mode === 'lite' ? 'Lite' : 'Dark';
+            if (mode) {
+                let label = theme.mode === 'lite' ? 'Lite' : 'Dark';
+                if (theme.gradient) label += ' • Gradient';
+                mode.textContent = label;
+            }
             if (banner) banner.textContent = theme.name;
         }
 
