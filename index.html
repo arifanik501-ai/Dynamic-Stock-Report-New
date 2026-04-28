@@ -3381,6 +3381,40 @@
         .num-output { color: var(--accent-theme); }
         .num-stock-cover { color: #8b5cf6; }
 
+        /* Archive-table dark-mode legibility — the raw theme accent sits too close
+           to the dark surface, so we lighten each number colour with off-white and
+           lift the alternating rows for better separation. Lite-mode has its own
+           overrides further up so this is scoped to dark themes only. */
+        body:not(.lite-mode) .archive-table td {
+            color: #f1f5f9 !important;
+        }
+        body:not(.lite-mode) .archive-table td:first-child {
+            color: #ffffff !important;
+        }
+        body:not(.lite-mode) .archive-table .num-production,
+        body:not(.lite-mode) .archive-table .num-closing {
+            color: color-mix(in srgb, var(--primary-theme) 35%, #f8fafc 65%) !important;
+            text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45) !important;
+        }
+        body:not(.lite-mode) .archive-table .num-output {
+            color: color-mix(in srgb, var(--accent-theme) 35%, #f8fafc 65%) !important;
+            text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45) !important;
+        }
+        body:not(.lite-mode) .archive-table .num-stock-cover {
+            color: #c4b5fd !important;
+            text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45) !important;
+        }
+        body:not(.lite-mode) .archive-table .num-consumption {
+            color: #fda4af !important;
+            text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45) !important;
+        }
+        body:not(.lite-mode) .archive-table tr:nth-child(odd) td {
+            background-color: rgba(255, 255, 255, 0.018);
+        }
+        body:not(.lite-mode) .archive-table tr:nth-child(even) td {
+            background-color: rgba(255, 255, 255, 0.06);
+        }
+
         /* ============ PRINT STYLES ============ */
         @media print {
             @page { size: A4 portrait; margin: 0; }
