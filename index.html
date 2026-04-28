@@ -202,18 +202,25 @@
         body.lite-mode .static-data-box span:not(.num-production):not(.num-consumption):not(.num-output):not(.num-stock-cover) {
             color: var(--theme-ink) !important;
         }
+        /* On lite themes, the raw theme colours are pastel and the numbers wash out
+           against the white sheet, so we blend each value with #0b1220 to give it
+           enough contrast to read clearly while still tracking the active theme. */
         body.lite-mode .num-production,
         body.lite-mode .num-closing {
-            color: var(--primary-theme) !important;
+            color: color-mix(in srgb, var(--primary-theme) 42%, #0b1220 58%) !important;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.55) !important;
         }
         body.lite-mode .num-consumption {
-            color: #e11d48 !important;
+            color: #b91c1c !important;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.55) !important;
         }
         body.lite-mode .num-output {
-            color: var(--accent-theme) !important;
+            color: color-mix(in srgb, var(--accent-theme) 50%, #0b1220 50%) !important;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.55) !important;
         }
         body.lite-mode .num-stock-cover {
-            color: var(--accent-theme) !important;
+            color: color-mix(in srgb, var(--accent-theme) 55%, #0b1220 45%) !important;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.55) !important;
         }
         body.lite-mode .text-signature {
             color: var(--accent-theme) !important;
