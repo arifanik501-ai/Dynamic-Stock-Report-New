@@ -4790,6 +4790,186 @@
             setTimeout(() => link.remove(), 0);
         }
 
+        // html2canvas v1.4.1 cannot parse modern CSS color functions (color-mix, color()).
+        // Resolve them up-front by letting the browser compute each call into rgb()/rgba()
+        // via a hidden probe element, then walk the cloned stylesheets and inline styles
+        // and patch every property that still contains an unsupported function.
+        const _colorResolveCache = new Map();
+        // Chrome normalises any wide-gamut (and even sRGB) colour to the modern
+        // `color(srgb r g b [/ a])` syntax in computed styles. html2canvas v1.4.1
+        // can't parse that, so we manually rewrite it as rgb()/rgba(). We support
+        // a couple of other colour spaces by clipping to sRGB after a naive matrix.
+        function _colorFnToRgb(expr) {
+            const m = expr.trim().match(/^color\(\s*([a-z0-9-]+)\s+([+\-0-9.eE]+)\s+([+\-0-9.eE]+)\s+([+\-0-9.eE]+)(?:\s*\/\s*([+\-0-9.eE]+(?:%)?))?\s*\)$/i);
+            if (!m) return null;
+            const space = m[1].toLowerCase();
+            let r = parseFloat(m[2]);
+            let g = parseFloat(m[3]);
+            let b = parseFloat(m[4]);
+            let a = m[5] != null ? (m[5].endsWith('%') ? parseFloat(m[5]) / 100 : parseFloat(m[5])) : 1;
+            if (space === 'display-p3' || space === 'rec2020' || space === 'a98-rgb' || space === 'prophoto-rgb') {
+                // Treat as sRGB approximation — close enough for an export fallback.
+            } else if (space !== 'srgb' && space !== 'srgb-linear') {
+                return null;
+            }
+            const clamp = x => Math.max(0, Math.min(1, x));
+            const R = Math.round(clamp(r) * 255);
+            const G = Math.round(clamp(g) * 255);
+            const B = Math.round(clamp(b) * 255);
+            return (a < 1) ? `rgba(${R}, ${G}, ${B}, ${a})` : `rgb(${R}, ${G}, ${B})`;
+        }
+        function _resolveCssColor(cssExpr) {
+            const key = cssExpr.trim();
+            if (_colorResolveCache.has(key)) return _colorResolveCache.get(key);
+            // Direct color(srgb ...) → rgb/rgba conversion (Chrome serialisation).
+            const direct = _colorFnToRgb(key);
+            if (direct) { _colorResolveCache.set(key, direct); return direct; }
+            // Otherwise fall back to a probe so the browser resolves color-mix()
+            // and any var() chains under the live theme into a concrete colour.
+            const probe = document.createElement('span');
+            probe.style.color = 'transparent';
+            probe.style.color = key;
+            document.body.appendChild(probe);
+            const resolved = getComputedStyle(probe).color;
+            document.body.removeChild(probe);
+            // Chrome may still hand us back `color(srgb …)` from getComputedStyle —
+            // recurse the rgb/rgba conversion on whatever we received.
+            const cleaned = (resolved && resolved !== 'transparent')
+                ? (_colorFnToRgb(resolved) || resolved)
+                : key;
+            _colorResolveCache.set(key, cleaned);
+            return cleaned;
+        }
+        function _replaceBalancedCalls(input, fnNames) {
+            if (!input || typeof input !== 'string') return input;
+            const lower = input.toLowerCase();
+            let needsWork = false;
+            for (const n of fnNames) { if (lower.includes(n + '(')) { needsWork = true; break; } }
+            if (!needsWork) return input;
+            const out = [];
+            let i = 0;
+            while (i < input.length) {
+                let bestIdx = -1, bestName = null;
+                for (const n of fnNames) {
+                    const idx = input.toLowerCase().indexOf(n + '(', i);
+                    if (idx >= 0 && (bestIdx < 0 || idx < bestIdx)) {
+                        bestIdx = idx; bestName = n;
+                    }
+                }
+                if (bestIdx < 0) { out.push(input.slice(i)); break; }
+                // ensure not part of a longer identifier (e.g. "decolor", "background-color")
+                const before = input[bestIdx - 1];
+                if (before && /[a-zA-Z0-9_-]/.test(before)) {
+                    out.push(input.slice(i, bestIdx + bestName.length + 1));
+                    i = bestIdx + bestName.length + 1;
+                    continue;
+                }
+                out.push(input.slice(i, bestIdx));
+                let depth = 1;
+                let j = bestIdx + bestName.length + 1;
+                while (j < input.length && depth > 0) {
+                    const ch = input[j];
+                    if (ch === '(') depth++;
+                    else if (ch === ')') depth--;
+                    j++;
+                }
+                const expr = input.slice(bestIdx, j);
+                out.push(_resolveCssColor(expr));
+                i = j;
+            }
+            return out.join('');
+        }
+        function sanitizeCssValue(val) {
+            return _replaceBalancedCalls(val, ['color-mix', 'color']);
+        }
+        function _hasUnsupported(s) {
+            return !!s && (s.indexOf('color-mix(') >= 0 || s.indexOf('color(') >= 0);
+        }
+        function _sanitizeRootVars(clonedDoc) {
+            const targets = [clonedDoc.documentElement, clonedDoc.body].filter(Boolean);
+            for (const el of targets) {
+                const cs = getComputedStyle(el);
+                for (let i = 0; i < cs.length; i++) {
+                    const prop = cs[i];
+                    if (prop.indexOf('--') !== 0) continue;
+                    const v = cs.getPropertyValue(prop);
+                    if (_hasUnsupported(v)) {
+                        const fixed = sanitizeCssValue(v);
+                        if (fixed !== v) el.style.setProperty(prop, fixed);
+                    }
+                }
+            }
+        }
+        function _walkRules(rules) {
+            for (let r = 0; r < rules.length; r++) {
+                const rule = rules[r];
+                if (rule.cssRules && rule.cssRules.length) _walkRules(rule.cssRules);
+                if (rule.style) {
+                    const before = rule.style.cssText;
+                    if (_hasUnsupported(before)) {
+                        const after = sanitizeCssValue(before);
+                        if (after !== before) {
+                            try { rule.style.cssText = after; } catch (e) {}
+                        }
+                    }
+                }
+            }
+        }
+        // Properties whose computed values often embed color tokens (and therefore may
+        // contain color-mix() / color()). We override these inline on every element so
+        // html2canvas only ever sees rgb()/rgba() values.
+        const _COLOR_PROPS = [
+            'color', 'background-color', 'background-image', 'background',
+            'border-color', 'border-top-color', 'border-right-color',
+            'border-bottom-color', 'border-left-color', 'outline-color',
+            'box-shadow', 'text-shadow', 'fill', 'stroke', 'caret-color',
+            'text-decoration-color', 'column-rule-color',
+        ];
+        function sanitizeClonedDocColors(clonedDoc) {
+            try {
+                _sanitizeRootVars(clonedDoc);
+                const sheets = clonedDoc.styleSheets;
+                for (let s = 0; s < sheets.length; s++) {
+                    let rules;
+                    try { rules = sheets[s].cssRules; } catch (e) { continue; }
+                    if (!rules) continue;
+                    _walkRules(rules);
+                }
+                // Iterate clone + live element trees in matched order so we can copy
+                // each resolved (rgb()/rgba()) colour over as an inline override on
+                // the clone. This is fast because we only do a single linear pass.
+                const liveAll = document.querySelectorAll('*');
+                const cloneAll = clonedDoc.querySelectorAll('*');
+                const len = Math.min(liveAll.length, cloneAll.length);
+                for (let i = 0; i < len; i++) {
+                    const liveEl = liveAll[i];
+                    const clEl = cloneAll[i];
+                    if (!clEl.style) continue;
+                    if (liveEl.tagName !== clEl.tagName) continue; // structures diverged; skip
+                    const cs = getComputedStyle(liveEl);
+                    for (let p = 0; p < _COLOR_PROPS.length; p++) {
+                        const prop = _COLOR_PROPS[p];
+                        const v = cs.getPropertyValue(prop);
+                        if (v && _hasUnsupported(v)) {
+                            const fixed = sanitizeCssValue(v);
+                            if (fixed !== v) {
+                                try { clEl.style.setProperty(prop, fixed, 'important'); } catch (e) {}
+                            }
+                        }
+                    }
+                    const inlineCss = clEl.style.cssText;
+                    if (_hasUnsupported(inlineCss)) {
+                        const fixedInline = sanitizeCssValue(inlineCss);
+                        if (fixedInline !== inlineCss) {
+                            try { clEl.style.cssText = fixedInline; } catch (e) {}
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn('Color sanitisation skipped:', err);
+            }
+        }
+
         function shouldRandomizeTheme() {
             return localStorage.getItem(THEME_RANDOMIZED_KEY) !== currentDayKey;
         }
@@ -6031,150 +6211,46 @@
                 return;
             }
 
-            // Save originals
-            const originalShadow = sheet.style.boxShadow;
-            const originalBorderRadius = sheet.style.borderRadius;
-            const originalAnimation = sheet.style.animation;
-            const originalOverflow = sheet.style.overflow;
-
-            // Read live theme colors so the JPG export matches the active palette exactly.
-            const docStyle = getComputedStyle(document.documentElement);
-            const themePrimary = docStyle.getPropertyValue('--primary-theme').trim() || '#164e63';
-            const themeAccent = docStyle.getPropertyValue('--accent-theme').trim() || '#0891b2';
-            const themeReportInk = docStyle.getPropertyValue('--report-ink').trim() || '#083344';
-            const themeReportInkMuted = docStyle.getPropertyValue('--report-ink-muted').trim() || 'rgba(8, 51, 68, 0.72)';
-            const themeOnPrimary = (docStyle.getPropertyValue('--on-primary-color').trim() || '#ffffff');
-            const themeOnAccent = (docStyle.getPropertyValue('--on-accent-color').trim() || '#ffffff');
-            const isLiteCapture = document.body.classList.contains('lite-mode');
-
-            // Fix: disable background-clip:text on .text-huge (html2canvas renders it invisible)
-            const hugeTitle = sheet.querySelector('.text-huge');
-            let origTitleStyles = {};
-            if (hugeTitle) {
-                origTitleStyles = {
-                    background: hugeTitle.style.background,
-                    webkitBackgroundClip: hugeTitle.style.webkitBackgroundClip,
-                    webkitTextFillColor: hugeTitle.style.webkitTextFillColor,
-                    backgroundClip: hugeTitle.style.backgroundClip,
-                    color: hugeTitle.style.color
-                };
-                hugeTitle.style.setProperty('background', 'none', 'important');
-                hugeTitle.style.setProperty('-webkit-background-clip', 'unset', 'important');
-                hugeTitle.style.setProperty('-webkit-text-fill-color', 'unset', 'important');
-                hugeTitle.style.setProperty('background-clip', 'unset', 'important');
-                const titleColor = isLiteCapture ? (docStyle.getPropertyValue('--theme-ink').trim() || themePrimary) : themePrimary;
-                hugeTitle.style.setProperty('color', titleColor, 'important');
-            }
-
-            // JPG-only: shift weekday text up inside pill
-            const wdEl = document.getElementById('display-date-weekday');
-            let origWdPadding = '';
-            if (wdEl) {
-                origWdPadding = wdEl.style.padding;
-                wdEl.style.padding = '2px 14px 6px 14px';
-            }
-
-            // Disable mobile overrides temporarily
-            document.body.classList.remove('mobile-active');
-
-            // Prepare sheet for capture
-            sheet.style.boxShadow = 'none';
-            sheet.style.borderRadius = '0';
-            sheet.style.animation = 'none';
-            sheet.style.overflow = 'visible';
-
-            // Add a class to hide pseudo-elements during capture
-            sheet.classList.add('capturing');
-
-            // Inject a temporary style to neutralize pseudo-elements & animations inside the sheet
-            const captureStyle = document.createElement('style');
-            captureStyle.id = 'capture-fix-style';
-            // Theme-aware capture colors. We rebuild this style every export so it tracks
-            // whichever palette is currently active and the JPG matches the on-screen theme.
-            captureStyle.textContent = `
-                .capturing, .capturing * {
-                    color-scheme: light !important;
+            // We now do ALL capture-time tweaks inside html2canvas's cloned document via
+            // onclone, so the live dashboard never visually changes when the user clicks
+            // the export button. No classes/styles are mutated on the on-screen sheet.
+            const buildOnClone = (clonedDoc) => {
+                const clonedSheet = clonedDoc.getElementById('report-page');
+                if (clonedSheet) {
+                    clonedSheet.classList.add('capturing');
+                    clonedSheet.style.boxShadow = 'none';
+                    clonedSheet.style.borderRadius = '0';
+                    clonedSheet.style.animation = 'none';
+                    clonedSheet.style.overflow = 'visible';
                 }
-                .capturing .corner::before, .capturing .corner::after { display: block !important; }
-                .capturing .pivot-table th::after { display: none !important; }
-                .capturing .report-type-box::before { display: none !important; }
-                .capturing .pivot-table tbody tr { animation: none !important; }
-                .capturing .text-huge,
-                body.lite-mode .capturing .text-huge {
-                    background: none !important;
-                    -webkit-background-clip: unset !important;
-                    -webkit-text-fill-color: unset !important;
-                    background-clip: unset !important;
-                    color: ${themePrimary} !important;
+                if (clonedDoc.body) {
+                    clonedDoc.body.classList.remove('mobile-active');
                 }
-                .capturing .text-label,
-                body.lite-mode .capturing .text-label {
-                    color: ${themeAccent} !important;
+                const wd = clonedDoc.getElementById('display-date-weekday');
+                if (wd) wd.style.padding = '2px 14px 6px 14px';
+                // The only mandatory html2canvas workaround: background-clip:text doesn't
+                // render, so swap .text-huge to a solid theme-coloured fill. Everything
+                // else (table headers, pills, signature) renders straight from the live
+                // theme variables already on :root, so the JPG matches the dashboard.
+                const huge = clonedSheet ? clonedSheet.querySelector('.text-huge') : null;
+                if (huge) {
+                    huge.style.setProperty('background', 'none', 'important');
+                    huge.style.setProperty('-webkit-background-clip', 'unset', 'important');
+                    huge.style.setProperty('-webkit-text-fill-color', 'unset', 'important');
+                    huge.style.setProperty('background-clip', 'unset', 'important');
                 }
-                .capturing .num-production,
-                .capturing .num-closing,
-                body.lite-mode .capturing .num-production,
-                body.lite-mode .capturing .num-closing {
-                    color: ${themePrimary} !important;
-                }
-                .capturing .num-output,
-                body.lite-mode .capturing .num-output {
-                    color: ${themeAccent} !important;
-                }
-                .capturing .num-stock-cover,
-                body.lite-mode .capturing .num-stock-cover {
-                    color: ${themeAccent} !important;
-                }
-                .capturing .text-signature,
-                body.lite-mode .capturing .text-signature {
-                    color: ${themeAccent} !important;
-                    text-shadow: 0 1px 2px rgba(255,255,255,0.72) !important;
-                }
-                .capturing .report-type-box,
-                body.lite-mode .capturing .report-type-box {
-                    background: linear-gradient(145deg, ${themePrimary} 0%, ${themeAccent} 100%) !important;
-                }
-                .capturing .report-title-text,
-                body.lite-mode .capturing .report-title-text {
-                    color: ${themeOnAccent} !important;
-                }
-                .capturing .report-title-sub,
-                body.lite-mode .capturing .report-title-sub {
-                    color: ${themeOnAccent} !important;
-                    opacity: 0.78 !important;
-                }
-                .capturing .signature-name,
-                body.lite-mode .capturing .signature-name {
-                    color: ${themeReportInk} !important;
-                }
-                .capturing .signature-desc,
-                body.lite-mode .capturing .signature-desc {
-                    color: ${themeReportInkMuted} !important;
-                }
-                .capturing .pivot-table th,
-                body.lite-mode .capturing .pivot-table th {
-                    background: linear-gradient(160deg, ${themePrimary} 0%, ${themeAccent} 100%) !important;
-                    color: ${themeOnPrimary} !important;
-                }
-                .capturing.a4-sheet,
-                body.lite-mode .capturing.a4-sheet {
-                    background-color: #ffffff !important;
-                    background-image: none !important;
-                }
-            `;
-            document.head.appendChild(captureStyle);
-
-            // Small delay to let styles apply
-            await new Promise(r => setTimeout(r, 100));
+                sanitizeClonedDocColors(clonedDoc);
+            };
 
             try {
                 const canvasImg = await capture(sheet, {
                     scale: 4,
                     useCORS: true,
-                    backgroundColor: '#ffffff',
+                    backgroundColor: null,
                     logging: false,
                     allowTaint: true,
                     removeContainer: true,
+                    onclone: buildOnClone,
                 });
                 const dataUrl = canvasImg.toDataURL('image/jpeg', 1.0);
                 const filename = `MEP-Ledger-${new Date().toISOString().split('T')[0]}.jpg`;
@@ -6203,34 +6279,6 @@
             } catch (err) {
                 console.error('Screenshot error:', err);
                 showToast("Capture Failed: " + (err.message || "Unknown error"));
-            } finally {
-                // Restore everything
-                sheet.style.boxShadow = originalShadow;
-                sheet.style.borderRadius = originalBorderRadius;
-                sheet.style.animation = originalAnimation;
-                sheet.style.overflow = originalOverflow;
-                sheet.classList.remove('capturing');
-
-                // Remove temp style
-                const tempStyle = document.getElementById('capture-fix-style');
-                if (tempStyle) tempStyle.remove();
-
-                // Restore title gradient
-                if (hugeTitle) {
-                    hugeTitle.style.background = origTitleStyles.background;
-                    hugeTitle.style.webkitBackgroundClip = origTitleStyles.webkitBackgroundClip;
-                    hugeTitle.style.webkitTextFillColor = origTitleStyles.webkitTextFillColor;
-                    hugeTitle.style.backgroundClip = origTitleStyles.backgroundClip;
-                    hugeTitle.style.color = origTitleStyles.color;
-                }
-
-
-
-                // Restore weekday pill padding
-                if (wdEl) { wdEl.style.padding = origWdPadding; }
-
-                // Restore mobile overrides
-                document.body.classList.add('mobile-active');
             }
         }
 
@@ -6746,71 +6794,29 @@ async function takeRndScreenshot(silentDownload = false) {
         showToast(err.message || 'Screenshot Engine Failed');
         return;
     }
-    const origShadow = sheet.style.boxShadow;
-    const origRadius = sheet.style.borderRadius;
-    const origAnim = sheet.style.animation;
-    const origOverflow = sheet.style.overflow;
-    const rndDocStyle = getComputedStyle(document.documentElement);
-    const rndPrimary = rndDocStyle.getPropertyValue('--primary-theme').trim() || '#164e63';
-    const rndAccent = rndDocStyle.getPropertyValue('--accent-theme').trim() || '#0891b2';
-    const rndReportInk = rndDocStyle.getPropertyValue('--report-ink').trim() || '#083344';
-    const rndReportInkMuted = rndDocStyle.getPropertyValue('--report-ink-muted').trim() || 'rgba(8, 51, 68, 0.72)';
-    const rndOnPrimary = rndDocStyle.getPropertyValue('--on-primary-color').trim() || '#ffffff';
-    const rndOnAccent = rndDocStyle.getPropertyValue('--on-accent-color').trim() || '#ffffff';
-
-    const hugeTitle = sheet.querySelector('.text-huge');
-    let origT = {};
-    if (hugeTitle) {
-        origT = { background: hugeTitle.style.background, webkitBackgroundClip: hugeTitle.style.webkitBackgroundClip, webkitTextFillColor: hugeTitle.style.webkitTextFillColor, backgroundClip: hugeTitle.style.backgroundClip, color: hugeTitle.style.color };
-        hugeTitle.style.background = 'none'; hugeTitle.style.webkitBackgroundClip = 'unset'; hugeTitle.style.webkitTextFillColor = 'unset'; hugeTitle.style.backgroundClip = 'unset';
-        hugeTitle.style.color = rndPrimary;
-    }
-    document.body.classList.remove('mobile-active');
-    sheet.style.boxShadow = 'none'; sheet.style.borderRadius = '0'; sheet.style.animation = 'none'; sheet.style.overflow = 'visible';
-    sheet.classList.add('capturing');
-    await new Promise(r => setTimeout(r, 100));
+    // All capture-time tweaks happen on the cloned document so the live RND report
+    // stays untouched while the user clicks the export button.
+    const buildOnClone = (clonedDoc) => {
+        const clonedSheet = clonedDoc.getElementById('rnd-report-page');
+        if (clonedSheet) {
+            clonedSheet.classList.add('capturing');
+            clonedSheet.style.boxShadow = 'none';
+            clonedSheet.style.borderRadius = '0';
+            clonedSheet.style.animation = 'none';
+            clonedSheet.style.overflow = 'visible';
+            const huge = clonedSheet.querySelector('.text-huge');
+            if (huge) {
+                huge.style.setProperty('background', 'none', 'important');
+                huge.style.setProperty('-webkit-background-clip', 'unset', 'important');
+                huge.style.setProperty('-webkit-text-fill-color', 'unset', 'important');
+                huge.style.setProperty('background-clip', 'unset', 'important');
+            }
+        }
+        if (clonedDoc.body) clonedDoc.body.classList.remove('mobile-active');
+        sanitizeClonedDocColors(clonedDoc);
+    };
     try {
-        const captureStyle = document.createElement('style');
-        captureStyle.id = 'rnd-capture-fix-style';
-        captureStyle.textContent = `
-            .capturing, .capturing * { color-scheme: light !important; }
-            .capturing .text-huge,
-            body.lite-mode .capturing .text-huge {
-                background: none !important;
-                -webkit-background-clip: unset !important;
-                -webkit-text-fill-color: unset !important;
-                background-clip: unset !important;
-                color: ${rndPrimary} !important;
-            }
-            .capturing .text-label,
-            body.lite-mode .capturing .text-label { color: ${rndAccent} !important; }
-            .capturing .text-signature,
-            body.lite-mode .capturing .text-signature {
-                color: ${rndAccent} !important;
-                text-shadow: 0 1px 2px rgba(255,255,255,0.72) !important;
-            }
-            .capturing .report-type-box,
-            body.lite-mode .capturing .report-type-box {
-                background: linear-gradient(145deg, ${rndPrimary} 0%, ${rndAccent} 100%) !important;
-            }
-            .capturing .report-title-text,
-            body.lite-mode .capturing .report-title-text { color: ${rndOnAccent} !important; }
-            .capturing .report-title-sub,
-            body.lite-mode .capturing .report-title-sub { color: ${rndOnAccent} !important; opacity: 0.78 !important; }
-            .capturing .signature-name,
-            body.lite-mode .capturing .signature-name { color: ${rndReportInk} !important; }
-            .capturing .signature-desc,
-            body.lite-mode .capturing .signature-desc { color: ${rndReportInkMuted} !important; }
-            .capturing .rnd-table th,
-            body.lite-mode .capturing .rnd-table th {
-                background: linear-gradient(160deg, ${rndPrimary} 0%, ${rndAccent} 100%) !important;
-                color: ${rndOnPrimary} !important;
-            }
-            .capturing.a4-sheet,
-            body.lite-mode .capturing.a4-sheet { background-color: #ffffff !important; background-image: none !important; }
-        `;
-        document.head.appendChild(captureStyle);
-        const canvasImg = await capture(sheet, { scale: 4, useCORS: true, backgroundColor: '#ffffff', logging: false, allowTaint: true, removeContainer: true });
+        const canvasImg = await capture(sheet, { scale: 4, useCORS: true, backgroundColor: null, logging: false, allowTaint: true, removeContainer: true, onclone: buildOnClone });
         const dataUrl = canvasImg.toDataURL('image/jpeg', 1.0);
         const filename = `Armature-RND-Report-${new Date().toISOString().split('T')[0]}.jpg`;
         if (!silentDownload) triggerJpgDownload(dataUrl, filename);
@@ -6824,13 +6830,6 @@ async function takeRndScreenshot(silentDownload = false) {
     } catch(err) {
         console.error('RND Screenshot error:', err);
         showToast('Capture Failed: ' + (err.message || 'Unknown'));
-    } finally {
-        sheet.style.boxShadow = origShadow; sheet.style.borderRadius = origRadius; sheet.style.animation = origAnim; sheet.style.overflow = origOverflow;
-        sheet.classList.remove('capturing');
-        const tempStyle = document.getElementById('rnd-capture-fix-style');
-        if (tempStyle) tempStyle.remove();
-        if (hugeTitle) { hugeTitle.style.background = origT.background; hugeTitle.style.webkitBackgroundClip = origT.webkitBackgroundClip; hugeTitle.style.webkitTextFillColor = origT.webkitTextFillColor; hugeTitle.style.backgroundClip = origT.backgroundClip; hugeTitle.style.color = origT.color; }
-        document.body.classList.add('mobile-active');
     }
 }
 
