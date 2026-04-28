@@ -204,19 +204,19 @@
         }
         body.lite-mode .num-production,
         body.lite-mode .num-closing {
-            color: #164e63 !important;
+            color: var(--primary-theme) !important;
         }
         body.lite-mode .num-consumption {
             color: #e11d48 !important;
         }
         body.lite-mode .num-output {
-            color: #075985 !important;
+            color: var(--accent-theme) !important;
         }
         body.lite-mode .num-stock-cover {
-            color: #7c3aed !important;
+            color: var(--accent-theme) !important;
         }
         body.lite-mode .text-signature {
-            color: #0e7490 !important;
+            color: var(--accent-theme) !important;
             opacity: 1 !important;
             text-shadow: 0 1px 2px rgba(255,255,255,0.72), 0 0 1px rgba(var(--accent-theme-rgb), 0.26) !important;
         }
@@ -1758,7 +1758,7 @@
         .text-signature {
             font-family: 'Sacramento', cursive;
             font-size: 32px;
-            color: #0e7490 !important;
+            color: var(--accent-theme);
             opacity: 1;
             text-transform: none;
             font-weight: 400;
@@ -5482,8 +5482,14 @@
             root.style.setProperty('--accent-theme', theme.accent);
             root.style.setProperty('--text-on-primary', theme.text);
             root.style.setProperty('--text-main', theme.text);
-            root.style.setProperty('--report-ink', '#083344');
-            root.style.setProperty('--report-ink-muted', 'rgba(8, 51, 68, 0.72)');
+            // Derive report ink from the theme so the printed/exported sheet matches the active palette.
+            // For dark themes: primary is the darker, more readable color on the white report sheet.
+            // For lite themes: theme.text is the legible dark color used throughout.
+            const isLiteTheme = (theme.mode || 'dark') === 'lite';
+            const reportInk = isLiteTheme ? theme.text : theme.primary;
+            const reportInkRgb = hexToRgbValues(reportInk);
+            root.style.setProperty('--report-ink', reportInk);
+            root.style.setProperty('--report-ink-muted', `rgba(${reportInkRgb}, 0.72)`);
             if (document.body.classList.contains('lite-mode')) {
                 root.style.setProperty('--theme-ink', '#0f172a');
                 root.style.setProperty('--theme-ink-muted', '#475569');
@@ -6031,6 +6037,16 @@
             const originalAnimation = sheet.style.animation;
             const originalOverflow = sheet.style.overflow;
 
+            // Read live theme colors so the JPG export matches the active palette exactly.
+            const docStyle = getComputedStyle(document.documentElement);
+            const themePrimary = docStyle.getPropertyValue('--primary-theme').trim() || '#164e63';
+            const themeAccent = docStyle.getPropertyValue('--accent-theme').trim() || '#0891b2';
+            const themeReportInk = docStyle.getPropertyValue('--report-ink').trim() || '#083344';
+            const themeReportInkMuted = docStyle.getPropertyValue('--report-ink-muted').trim() || 'rgba(8, 51, 68, 0.72)';
+            const themeOnPrimary = (docStyle.getPropertyValue('--on-primary-color').trim() || '#ffffff');
+            const themeOnAccent = (docStyle.getPropertyValue('--on-accent-color').trim() || '#ffffff');
+            const isLiteCapture = document.body.classList.contains('lite-mode');
+
             // Fix: disable background-clip:text on .text-huge (html2canvas renders it invisible)
             const hugeTitle = sheet.querySelector('.text-huge');
             let origTitleStyles = {};
@@ -6046,8 +6062,7 @@
                 hugeTitle.style.setProperty('-webkit-background-clip', 'unset', 'important');
                 hugeTitle.style.setProperty('-webkit-text-fill-color', 'unset', 'important');
                 hugeTitle.style.setProperty('background-clip', 'unset', 'important');
-                const isLiteCapture = document.body.classList.contains('lite-mode');
-                const titleColor = isLiteCapture ? getComputedStyle(document.documentElement).getPropertyValue('--theme-ink') : getComputedStyle(document.documentElement).getPropertyValue('--primary-theme');
+                const titleColor = isLiteCapture ? (docStyle.getPropertyValue('--theme-ink').trim() || themePrimary) : themePrimary;
                 hugeTitle.style.setProperty('color', titleColor, 'important');
             }
 
@@ -6074,6 +6089,8 @@
             // Inject a temporary style to neutralize pseudo-elements & animations inside the sheet
             const captureStyle = document.createElement('style');
             captureStyle.id = 'capture-fix-style';
+            // Theme-aware capture colors. We rebuild this style every export so it tracks
+            // whichever palette is currently active and the JPG matches the on-screen theme.
             captureStyle.textContent = `
                 .capturing, .capturing * {
                     color-scheme: light !important;
@@ -6088,51 +6105,56 @@
                     -webkit-background-clip: unset !important;
                     -webkit-text-fill-color: unset !important;
                     background-clip: unset !important;
-                    color: #0f172a !important;
+                    color: ${themePrimary} !important;
                 }
                 .capturing .text-label,
                 body.lite-mode .capturing .text-label {
-                    color: #164e63 !important;
+                    color: ${themeAccent} !important;
                 }
                 .capturing .num-production,
                 .capturing .num-closing,
                 body.lite-mode .capturing .num-production,
                 body.lite-mode .capturing .num-closing {
-                    color: #164e63 !important;
+                    color: ${themePrimary} !important;
                 }
                 .capturing .num-output,
                 body.lite-mode .capturing .num-output {
-                    color: #075985 !important;
+                    color: ${themeAccent} !important;
                 }
                 .capturing .num-stock-cover,
                 body.lite-mode .capturing .num-stock-cover {
-                    color: #7c3aed !important;
+                    color: ${themeAccent} !important;
                 }
                 .capturing .text-signature,
                 body.lite-mode .capturing .text-signature {
-                    color: #0e7490 !important;
+                    color: ${themeAccent} !important;
                     text-shadow: 0 1px 2px rgba(255,255,255,0.72) !important;
                 }
                 .capturing .report-type-box,
                 body.lite-mode .capturing .report-type-box {
-                    background: #ffffff !important;
+                    background: linear-gradient(145deg, ${themePrimary} 0%, ${themeAccent} 100%) !important;
                 }
                 .capturing .report-title-text,
-                .capturing .signature-name,
-                body.lite-mode .capturing .report-title-text,
-                body.lite-mode .capturing .signature-name {
-                    color: #0f172a !important;
+                body.lite-mode .capturing .report-title-text {
+                    color: ${themeOnAccent} !important;
                 }
                 .capturing .report-title-sub,
+                body.lite-mode .capturing .report-title-sub {
+                    color: ${themeOnAccent} !important;
+                    opacity: 0.78 !important;
+                }
+                .capturing .signature-name,
+                body.lite-mode .capturing .signature-name {
+                    color: ${themeReportInk} !important;
+                }
                 .capturing .signature-desc,
-                body.lite-mode .capturing .report-title-sub,
                 body.lite-mode .capturing .signature-desc {
-                    color: #475569 !important;
+                    color: ${themeReportInkMuted} !important;
                 }
                 .capturing .pivot-table th,
                 body.lite-mode .capturing .pivot-table th {
-                    background: #164e63 !important;
-                    color: #ffffff !important;
+                    background: linear-gradient(160deg, ${themePrimary} 0%, ${themeAccent} 100%) !important;
+                    color: ${themeOnPrimary} !important;
                 }
                 .capturing.a4-sheet,
                 body.lite-mode .capturing.a4-sheet {
@@ -6728,12 +6750,20 @@ async function takeRndScreenshot(silentDownload = false) {
     const origRadius = sheet.style.borderRadius;
     const origAnim = sheet.style.animation;
     const origOverflow = sheet.style.overflow;
+    const rndDocStyle = getComputedStyle(document.documentElement);
+    const rndPrimary = rndDocStyle.getPropertyValue('--primary-theme').trim() || '#164e63';
+    const rndAccent = rndDocStyle.getPropertyValue('--accent-theme').trim() || '#0891b2';
+    const rndReportInk = rndDocStyle.getPropertyValue('--report-ink').trim() || '#083344';
+    const rndReportInkMuted = rndDocStyle.getPropertyValue('--report-ink-muted').trim() || 'rgba(8, 51, 68, 0.72)';
+    const rndOnPrimary = rndDocStyle.getPropertyValue('--on-primary-color').trim() || '#ffffff';
+    const rndOnAccent = rndDocStyle.getPropertyValue('--on-accent-color').trim() || '#ffffff';
+
     const hugeTitle = sheet.querySelector('.text-huge');
     let origT = {};
     if (hugeTitle) {
         origT = { background: hugeTitle.style.background, webkitBackgroundClip: hugeTitle.style.webkitBackgroundClip, webkitTextFillColor: hugeTitle.style.webkitTextFillColor, backgroundClip: hugeTitle.style.backgroundClip, color: hugeTitle.style.color };
         hugeTitle.style.background = 'none'; hugeTitle.style.webkitBackgroundClip = 'unset'; hugeTitle.style.webkitTextFillColor = 'unset'; hugeTitle.style.backgroundClip = 'unset';
-        hugeTitle.style.color = getComputedStyle(document.documentElement).getPropertyValue('--primary-theme');
+        hugeTitle.style.color = rndPrimary;
     }
     document.body.classList.remove('mobile-active');
     sheet.style.boxShadow = 'none'; sheet.style.borderRadius = '0'; sheet.style.animation = 'none'; sheet.style.overflow = 'visible';
@@ -6750,23 +6780,32 @@ async function takeRndScreenshot(silentDownload = false) {
                 -webkit-background-clip: unset !important;
                 -webkit-text-fill-color: unset !important;
                 background-clip: unset !important;
-                color: #0f172a !important;
+                color: ${rndPrimary} !important;
             }
             .capturing .text-label,
-            body.lite-mode .capturing .text-label { color: #164e63 !important; }
+            body.lite-mode .capturing .text-label { color: ${rndAccent} !important; }
             .capturing .text-signature,
             body.lite-mode .capturing .text-signature {
-                color: #0e7490 !important;
+                color: ${rndAccent} !important;
                 text-shadow: 0 1px 2px rgba(255,255,255,0.72) !important;
             }
             .capturing .report-type-box,
-            body.lite-mode .capturing .report-type-box { background: #ffffff !important; }
-            .capturing .report-title-text, .capturing .signature-name,
-            body.lite-mode .capturing .report-title-text, body.lite-mode .capturing .signature-name { color: #0f172a !important; }
-            .capturing .report-title-sub, .capturing .signature-desc,
-            body.lite-mode .capturing .report-title-sub, body.lite-mode .capturing .signature-desc { color: #475569 !important; }
+            body.lite-mode .capturing .report-type-box {
+                background: linear-gradient(145deg, ${rndPrimary} 0%, ${rndAccent} 100%) !important;
+            }
+            .capturing .report-title-text,
+            body.lite-mode .capturing .report-title-text { color: ${rndOnAccent} !important; }
+            .capturing .report-title-sub,
+            body.lite-mode .capturing .report-title-sub { color: ${rndOnAccent} !important; opacity: 0.78 !important; }
+            .capturing .signature-name,
+            body.lite-mode .capturing .signature-name { color: ${rndReportInk} !important; }
+            .capturing .signature-desc,
+            body.lite-mode .capturing .signature-desc { color: ${rndReportInkMuted} !important; }
             .capturing .rnd-table th,
-            body.lite-mode .capturing .rnd-table th { background: #164e63 !important; color: #ffffff !important; }
+            body.lite-mode .capturing .rnd-table th {
+                background: linear-gradient(160deg, ${rndPrimary} 0%, ${rndAccent} 100%) !important;
+                color: ${rndOnPrimary} !important;
+            }
             .capturing.a4-sheet,
             body.lite-mode .capturing.a4-sheet { background-color: #ffffff !important; background-image: none !important; }
         `;
