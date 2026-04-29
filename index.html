@@ -336,7 +336,10 @@
             border-color: var(--theme-border) !important;
         }
         body.lite-mode .rnd-table input {
-            color: var(--theme-ink) !important;
+            color: #0b1220 !important;
+        }
+        body.lite-mode .rnd-table input[readonly] {
+            color: #047857 !important;
         }
         body.lite-mode .rnd-table td:first-child {
             color: var(--theme-ink) !important;
@@ -3584,6 +3587,7 @@
     text-align: center;
     vertical-align: middle;
     height: 32px;
+    color: var(--report-ink);
 }
 .rnd-table td:first-child {
     font-weight: 800;
@@ -3600,7 +3604,7 @@
     font-weight: 700;
     background: transparent;
     outline: none;
-    color: var(--theme-ink);
+    color: var(--report-ink);
     padding: 0 2px;
     box-sizing: border-box;
 }
@@ -6562,6 +6566,7 @@
 // ============ ARMATURE RND FUNCTIONS ============
 const RND_COLS = ['statorWeight','startingWindingTurn','startingWireSWG','startingSuperWireWeight','startingResistance','runningWindingTurn','runningWireSWG','runningSuperWireWeight','runningResistance','superWireConductiveDia','superWireTotalDia','totalSuperWireWeight','totalFiberWeight','totalResistance','totalArmatureWeight'];
 let rndData = [];
+const RND_AUTO_COLS = ['totalResistance', 'totalArmatureWeight'];
 
 function initRndTable() {
     const body = document.getElementById('rnd-body');
@@ -6574,8 +6579,6 @@ function initRndTable() {
             return row;
         });
     }
-    const AUTO_COLS = ['totalResistance', 'totalArmatureWeight'];
-    const EDITABLE_COLS = RND_COLS.filter(c => !AUTO_COLS.includes(c));
     rndData.forEach((row, idx) => {
         recalcRndRow(idx);
         const tr = document.createElement('tr');
@@ -6583,8 +6586,8 @@ function initRndTable() {
         let cells = `<td>${idx + 1}</td>`;
         RND_COLS.forEach((col, colIdx) => {
             const val = row[col] !== undefined && row[col] !== '' ? row[col] : '';
-            if (AUTO_COLS.includes(col)) {
-                cells += `<td><input type="text" inputmode="decimal" value="${val}" data-row="${idx}" data-col="${col}" data-colidx="${colIdx}" readonly tabindex="-1" style="background:rgba(16,185,129,0.10);color:#10b981;font-weight:900;cursor:default;"></td>`;
+            if (RND_AUTO_COLS.includes(col)) {
+                cells += `<td><input type="text" inputmode="decimal" value="${val}" data-row="${idx}" data-col="${col}" data-colidx="${colIdx}" readonly tabindex="-1" style="background:rgba(16,185,129,0.10);color:#047857;font-weight:900;cursor:default;"></td>`;
             } else {
                 cells += `<td><input type="text" inputmode="decimal" value="${val}" data-row="${idx}" data-col="${col}" data-colidx="${colIdx}" onchange="updateRndCell(this)" oninput="updateRndCell(this)"></td>`;
             }
@@ -6639,8 +6642,7 @@ function updateRndCell(input) {
     rndData[r][c] = input.value !== '' ? parseFloat(input.value) : '';
     recalcRndRow(r);
     // Update the read-only auto fields in the DOM for this row
-    const autoFields = ['totalResistance', 'totalArmatureWeight'];
-    autoFields.forEach(col => {
+    RND_AUTO_COLS.forEach(col => {
         const el = document.querySelector(`input[data-row="${r}"][data-col="${col}"]`);
         if (el) el.value = rndData[r][col] !== '' ? rndData[r][col] : '';
     });
@@ -6657,6 +6659,24 @@ function updateRndAverages() {
         const avg = count > 0 ? (sum / count) : 0;
         const el = document.getElementById('rnd-avg-' + col);
         if (el) el.textContent = avg === 0 ? '0' : parseFloat(avg.toFixed(2)).toLocaleString();
+    });
+}
+
+function strengthenRndTableContrast(root) {
+    if (!root) return;
+    root.querySelectorAll('.rnd-table td').forEach(td => {
+        td.style.setProperty('color', '#0b1220', 'important');
+    });
+    root.querySelectorAll('.rnd-table input').forEach(input => {
+        const color = RND_AUTO_COLS.includes(input.dataset.col) ? '#047857' : '#0b1220';
+        input.style.setProperty('color', color, 'important');
+        input.style.setProperty('-webkit-text-fill-color', color, 'important');
+        input.style.setProperty('opacity', '1', 'important');
+        input.style.setProperty('font-weight', '900', 'important');
+        input.style.setProperty('text-shadow', 'none', 'important');
+    });
+    root.querySelectorAll('.rnd-avg-row td').forEach(td => {
+        td.style.setProperty('color', '#ffffff', 'important');
     });
 }
 
@@ -6852,6 +6872,7 @@ async function takeRndScreenshot(silentDownload = false) {
                 huge.style.setProperty('-webkit-text-fill-color', 'unset', 'important');
                 huge.style.setProperty('background-clip', 'unset', 'important');
             }
+            strengthenRndTableContrast(clonedSheet);
         }
         if (clonedDoc.body) clonedDoc.body.classList.remove('mobile-active');
         sanitizeClonedDocColors(clonedDoc);
