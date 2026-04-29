@@ -6680,6 +6680,19 @@ function strengthenRndTableContrast(root) {
     });
 }
 
+function stabilizeRndModelExport(root) {
+    if (!root) return;
+    const modelSelect = root.querySelector('#rnd-model-select');
+    if (!modelSelect) return;
+    const liveSelect = document.getElementById('rnd-model-select');
+    const selectedText = (liveSelect && liveSelect.value) || modelSelect.value || '5.5 Circle';
+    const modelDisplay = root.ownerDocument.createElement('span');
+    modelDisplay.id = 'rnd-model-select';
+    modelDisplay.textContent = selectedText;
+    modelDisplay.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;min-width:128px;min-height:42px;padding:8px 22px;border-radius:10px;border:2px solid var(--accent-theme);background:#ffffff;color:var(--primary-theme);font-family:Plus Jakarta Sans,sans-serif;font-size:13px;font-weight:900;letter-spacing:0.05em;line-height:1.2;box-shadow:0 4px 12px rgba(0,0,0,0.06);box-sizing:border-box;overflow:visible;white-space:nowrap;';
+    modelSelect.replaceWith(modelDisplay);
+}
+
 function updateRndDate(val) {
     if (!val) return;
     const date = new Date(val);
@@ -6873,6 +6886,7 @@ async function takeRndScreenshot(silentDownload = false) {
                 huge.style.setProperty('background-clip', 'unset', 'important');
             }
             strengthenRndTableContrast(clonedSheet);
+            stabilizeRndModelExport(clonedSheet);
         }
         if (clonedDoc.body) clonedDoc.body.classList.remove('mobile-active');
         sanitizeClonedDocColors(clonedDoc);
