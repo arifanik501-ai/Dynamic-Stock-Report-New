@@ -4302,7 +4302,7 @@
                     <div style="display: table-cell; vertical-align: top; text-align: left;">
                         <h1 class="text-huge uppercase tracking-tighter">MEP FAN LTD.</h1>
                         <div style="margin-top: 8px;">
-                            <span id="header-line" style="display: inline-block; width: 80px; height: 6px; border-radius: 99px; background: linear-gradient(90deg, var(--primary-theme), var(--accent-theme)); vertical-align: middle; margin-right: 20px;"></span>
+                            <span id="header-line" class="report-header-bar" style="display: inline-block; width: 80px; height: 6px; border-radius: 99px; background: linear-gradient(90deg, var(--primary-theme), var(--accent-theme)); vertical-align: middle; margin-right: 20px;"></span>
                             <span class="text-label font-black uppercase" style="vertical-align: middle;">Inventory Report</span>
                         </div>
                     </div>
@@ -4314,7 +4314,7 @@
                                 <div class="premium-date-glass"></div>
 
                                 <!-- Date Card — Simple table-based layout for html2canvas compatibility -->
-                                <table id="date-card-box" cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border: 2px solid var(--accent-theme); border-radius: 16px; min-width: 170px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.08);">
+                                <table id="date-card-box" class="report-date-card" cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border: 2px solid var(--accent-theme); border-radius: 16px; min-width: 170px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.08);">
                                 <tr>
                                     <td style="padding: 0; height: 5px; background: var(--accent-theme);"></td>
                                 </tr>
@@ -4512,7 +4512,7 @@
                     <div style="display: table-cell; vertical-align: top; text-align: left;">
                         <h1 class="text-huge uppercase tracking-tighter">MEP FAN LTD.</h1>
                         <div style="margin-top: 8px;">
-                            <span style="display: inline-block; width: 80px; height: 6px; border-radius: 99px; background: linear-gradient(90deg, var(--primary-theme), var(--accent-theme)); vertical-align: middle; margin-right: 20px;"></span>
+                            <span class="report-header-bar" style="display: inline-block; width: 80px; height: 6px; border-radius: 99px; background: linear-gradient(90deg, var(--primary-theme), var(--accent-theme)); vertical-align: middle; margin-right: 20px;"></span>
                             <span class="text-label font-black uppercase" style="vertical-align: middle;">Armature RND Report</span>
                         </div>
                     </div>
@@ -4520,7 +4520,7 @@
                         <div class="no-print" style="display: inline-block; position: relative; cursor: pointer;">
                             <div class="premium-date-wrapper">
                                 <div class="premium-date-glass"></div>
-                                <table cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border: 2px solid var(--accent-theme); border-radius: 16px; min-width: 170px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.08);">
+                                <table class="report-date-card" cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border: 2px solid var(--accent-theme); border-radius: 16px; min-width: 170px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.08);">
                                 <tr><td style="padding: 0; height: 5px; background: var(--accent-theme);"></td></tr>
                                 <tr><td style="padding: 10px 16px 6px 16px; text-align: center;"><span style="font-size: 10px; font-weight: 900; letter-spacing: 0.18em; color: var(--primary-theme); text-transform: uppercase;">📅 RND Date</span></td></tr>
                                 <tr><td style="text-align: center; padding: 4px 16px 2px 16px;"><span id="rnd-date-day" style="font-size: 46px; font-weight: 900; color: var(--primary-theme); letter-spacing: -0.04em; line-height: 1.15;">--</span></td></tr>
@@ -6518,6 +6518,7 @@
                     huge.style.setProperty('-webkit-text-fill-color', 'unset', 'important');
                     huge.style.setProperty('background-clip', 'unset', 'important');
                 }
+                stabilizeDateCardsAndBars(clonedSheet);
                 sanitizeClonedDocColors(clonedDoc);
             };
 
@@ -6925,6 +6926,38 @@ function strengthenRndTableContrast(root) {
     });
 }
 
+function stabilizeDateCardsAndBars(root) {
+    if (!root) return;
+    root.querySelectorAll('.premium-date-wrapper').forEach(wrapper => {
+        wrapper.style.setProperty('padding', '0', 'important');
+        wrapper.style.setProperty('background', 'transparent', 'important');
+        wrapper.style.setProperty('border', 'none', 'important');
+        wrapper.style.setProperty('box-shadow', 'none', 'important');
+        wrapper.style.setProperty('transform', 'none', 'important');
+        wrapper.style.setProperty('overflow', 'visible', 'important');
+    });
+    root.querySelectorAll('.premium-date-glass').forEach(glass => {
+        glass.style.setProperty('display', 'none', 'important');
+    });
+    root.querySelectorAll('.report-date-card').forEach(card => {
+        card.style.setProperty('display', 'table', 'important');
+        card.style.setProperty('background', '#ffffff', 'important');
+        card.style.setProperty('border', '2px solid #0891b2', 'important');
+        card.style.setProperty('border-radius', '16px', 'important');
+        card.style.setProperty('box-shadow', '8px 8px 0 rgba(8, 145, 178, 0.12)', 'important');
+        card.style.setProperty('overflow', 'hidden', 'important');
+    });
+    root.querySelectorAll('.report-header-bar').forEach(bar => {
+        bar.style.setProperty('display', 'inline-block', 'important');
+        bar.style.setProperty('width', '80px', 'important');
+        bar.style.setProperty('height', '6px', 'important');
+        bar.style.setProperty('border-radius', '99px', 'important');
+        bar.style.setProperty('background', '#14b8a6', 'important');
+        bar.style.setProperty('box-shadow', 'none', 'important');
+        bar.style.setProperty('vertical-align', 'middle', 'important');
+    });
+}
+
 function stabilizeRndSignatureExport(root) {
     if (!root) return;
     root.querySelectorAll('.text-signature').forEach(sig => {
@@ -7155,6 +7188,7 @@ async function takeRndScreenshot(silentDownload = false) {
                 huge.style.setProperty('-webkit-text-fill-color', 'unset', 'important');
                 huge.style.setProperty('background-clip', 'unset', 'important');
             }
+            stabilizeDateCardsAndBars(clonedSheet);
             strengthenRndTableContrast(clonedSheet);
             stabilizeRndSignatureExport(clonedSheet);
             stabilizeRndModelExport(clonedSheet);
