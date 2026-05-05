@@ -4833,6 +4833,10 @@
         const PERFORMANCE_STORAGE_KEY = 'mep_performance_mode';
         const THEME_RANDOMIZED_KEY = 'mep_theme_randomized_today';
         const SELECTED_THEME_KEY = 'mep_selected_theme_index';
+        const DAY_TARGET_LOCAL_KEY = 'mep_day_target_value';
+        const DAY_TARGET_UPDATED_AT_KEY = 'mep_day_target_updated_at';
+        const DAY_TARGET_CLOUD_PATH = 'inventory_reports/_settings/dayTarget';
+        const DEFAULT_DAY_TARGET = 1600;
         const currentDayKey = new Date().toISOString().split('T')[0];
 
         let _html2canvasPromise = null;
@@ -4854,6 +4858,54 @@
             });
 
             return _html2canvasPromise;
+        }
+
+        function normalizeDayTarget(value, fallback = DEFAULT_DAY_TARGET) {
+            const parsed = Number(value);
+            return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+        }
+
+        function getCurrentDayTarget() {
+            const input = document.getElementById('day-target-input');
+            if (input && input.value) return normalizeDayTarget(input.value);
+            return normalizeDayTarget(localStorage.getItem(DAY_TARGET_LOCAL_KEY));
+        }
+
+        function applyDayTargetValue(value, options = {}) {
+            const { persist = true, rerender = true, updatedAt = Date.now(), markUpdated = persist } = options;
+            const target = normalizeDayTarget(value);
+            const targetText = String(target);
+            const input = document.getElementById('day-target-input');
+            if (input) input.value = targetText;
+            const display = document.getElementById('day-target-display');
+            if (display) display.textContent = targetText;
+            if (persist) {
+                localStorage.setItem(DAY_TARGET_LOCAL_KEY, targetText);
+                if (markUpdated) localStorage.setItem(DAY_TARGET_UPDATED_AT_KEY, String(updatedAt));
+            }
+            if (rerender) {
+                renderTable();
+                const pageGen = document.getElementById('page-generator');
+                if (pageGen && !pageGen.classList.contains('active')) {
+                    if (document.getElementById('page-archive-accessories').classList.contains('active')) renderArchivePage('accessories');
+                    if (document.getElementById('page-archive-armature').classList.contains('active')) renderArchivePage('armature');
+                }
+            }
+            return target;
+        }
+
+        function syncDayTargetToCloud(target, updatedAt = Date.now()) {
+            if (window.firebaseSet && window.firebaseRef && window.firebaseDB) {
+                window.firebaseSet(window.firebaseRef(window.firebaseDB, DAY_TARGET_CLOUD_PATH), {
+                    value: normalizeDayTarget(target),
+                    updatedAt: updatedAt
+                }).catch(e => console.error('Target Firebase sync failed:', e));
+            } else {
+                window._pendingDayTargetSync = {
+                    value: normalizeDayTarget(target),
+                    updatedAt: updatedAt
+                };
+            }
         }
 
         function triggerJpgDownload(dataUrl, filename) {
@@ -5137,8 +5189,7 @@
             const reportDateText = document.getElementById('display-date-text').innerText;
             const targetDateInput = document.getElementById('statement-date-picker');
             const dateKey = targetDateInput && targetDateInput.value ? targetDateInput.value : new Date().toISOString().split('T')[0];
-            const dayTargetInput = document.getElementById('day-target-input');
-            const targetPerDay = dayTargetInput && dayTargetInput.value ? Number(dayTargetInput.value) : 1;
+            const targetPerDay = getCurrentDayTarget();
 
             const now = new Date();
             const savedAt = now.toLocaleString('en-US', {
@@ -5392,9 +5443,7 @@
 
             let tableRows = '';
 
-            // Allow live recalculation in archive if needed by fetching input, fallback to report saved target or 1.
-            const liveInput = document.getElementById('day-target-input');
-            const targetPerDay = liveInput && liveInput.value ? Number(liveInput.value) : (Number(report.targetPerDay) > 0 ? Number(report.targetPerDay) : 1);
+            const targetPerDay = getCurrentDayTarget();
 
             report.data.forEach((item, idx) => {
                 const opening = Number(item.opening) || 0;
@@ -5673,12 +5722,6 @@
             const report = archiveMap[dateKey] || archiveMap; // fallback logic
 
             inventoryData = report.data;
-            if (report.targetPerDay) {
-                const dayTargetInput = document.getElementById('day-target-input');
-                if (dayTargetInput) dayTargetInput.value = report.targetPerDay;
-                const dayTargetDisp = document.getElementById('day-target-display');
-                if (dayTargetDisp) dayTargetDisp.textContent = report.targetPerDay;
-            }
 
             currentReportType = type;
             renderTable();
@@ -5717,20 +5760,9 @@
         }
 
         window.dayTargetChanged = function() {
-            const liveInput = document.getElementById('day-target-input');
-            if (liveInput) {
-                localStorage.setItem('mep_day_target_value', liveInput.value);
-                const display = document.getElementById('day-target-display');
-                if (display) display.textContent = liveInput.value;
-            }
-            renderTable();
-            // Re-render archive if we are in it and modified the value (if it's accessible).
-            const pageGen = document.getElementById('page-generator');
-            if (pageGen && !pageGen.classList.contains('active')) {
-                // Determine active archive
-                if (document.getElementById('page-archive-accessories').classList.contains('active')) renderArchivePage('accessories');
-                if (document.getElementById('page-archive-armature').classList.contains('active')) renderArchivePage('armature');
-            }
+            const updatedAt = Date.now();
+            const target = applyDayTargetValue(getCurrentDayTarget(), { updatedAt: updatedAt });
+            syncDayTargetToCloud(target, updatedAt);
         };
 
         // ============ PREMIUM PASSWORD MODAL SYSTEM ============
@@ -5802,8 +5834,10 @@
                     showToast('Please enter a valid number');
                     return;
                 }
-                document.getElementById('day-target-input').value = num;
-                window.dayTargetChanged();
+                const updatedAt = Date.now();
+                applyDayTargetValue(num, { updatedAt: updatedAt });
+                syncDayTargetToCloud(num, updatedAt);
+                showToast('Target Saved to Cloud');
             });
         };
 
@@ -6322,8 +6356,7 @@
                 return;
             }
 
-            const dayTargetInput = document.getElementById('day-target-input');
-            const targetPerDay = dayTargetInput && dayTargetInput.value ? Number(dayTargetInput.value) : 1;
+            const targetPerDay = getCurrentDayTarget();
 
             inventoryData.forEach((item, index) => {
                 const row = document.createElement('tr');
@@ -6563,6 +6596,7 @@
                 applyTheme(themes[0]);
                 _selectedThemeIndex = 0;
             }
+            applyDayTargetValue(localStorage.getItem(DAY_TARGET_LOCAL_KEY), { rerender: false, markUpdated: false });
             renderTable();
             updateReportBranding('initial');
             updateBadges();
@@ -6622,6 +6656,11 @@
         window.firebaseStorageRef = storageRef;
         window.firebaseStorageSet = uploadString;
 
+        if (window._pendingDayTargetSync) {
+            syncDayTargetToCloud(window._pendingDayTargetSync.value, window._pendingDayTargetSync.updatedAt);
+            window._pendingDayTargetSync = null;
+        }
+
         // Start Realtime Sync (Firebase -> Local Storage) — MERGE strategy
         const reportsRef = ref(database, 'inventory_reports');
         const datePattern = /^\d{4}-\d{2}-\d{2}$/;
@@ -6631,6 +6670,16 @@
 
             const data = snapshot.val() || {};
             let localChanged = false;
+
+            if (data._settings && data._settings.dayTarget) {
+                const cloudRecord = data._settings.dayTarget;
+                const cloudTarget = normalizeDayTarget(typeof cloudRecord === 'object' ? cloudRecord.value : cloudRecord);
+                const cloudUpdatedAt = Number(typeof cloudRecord === 'object' ? cloudRecord.updatedAt : 0) || 0;
+                const localUpdatedAt = Number(localStorage.getItem(DAY_TARGET_UPDATED_AT_KEY)) || 0;
+                if (cloudUpdatedAt >= localUpdatedAt && String(cloudTarget) !== String(getCurrentDayTarget())) {
+                    applyDayTargetValue(cloudTarget, { updatedAt: cloudUpdatedAt });
+                }
+            }
 
             // Wait until the main script defines STORAGE_KEYS
             if (!window.STORAGE_KEYS) return;
@@ -7133,19 +7182,6 @@ if (shouldRandomizeTheme()) {
     // Backup: Also run theme randomization from outside the module
     // This ensures it fires even if Firebase CDN is slow/blocked
     window.addEventListener('DOMContentLoaded', function() {
-        // Load persistent day target value
-        const savedDayTarget = localStorage.getItem('mep_day_target_value');
-        if (savedDayTarget) {
-            const dayTargetInput = document.getElementById('day-target-input');
-            if (dayTargetInput) {
-                dayTargetInput.value = savedDayTarget;
-            }
-            const dayTargetDisplay = document.getElementById('day-target-display');
-            if (dayTargetDisplay) {
-                dayTargetDisplay.textContent = savedDayTarget;
-            }
-        }
-
         setTimeout(function() {
             if (typeof window.randomizeTheme === 'function') {
                 window.randomizeTheme(true);
