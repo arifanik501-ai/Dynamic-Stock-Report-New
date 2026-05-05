@@ -274,8 +274,8 @@
         }
 
         function randomizeTheme() {
-            if (document.body.classList.contains('lite-mode')) {
-                toggleLiteMode(); // Turn off lite mode when randomizing dark themes
+            if (!document.body.classList.contains('lite-mode')) {
+                document.body.classList.add('lite-mode');
             }
             const random = themes[Math.floor(Math.random() * themes.length)];
             applyTheme(random);
