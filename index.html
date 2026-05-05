@@ -4197,11 +4197,11 @@
                         </button>
                     </div>
 
-                    <!-- TARGET -->
+                    <!-- TARGET (password-protected edit) -->
                     <div class="ctrl-item" style="--i:2">
-                        <div style="background:rgba(15,23,42,0.45);padding:8px 6px 7px;border-radius:14px;border:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;align-items:center;justify-content:center;width:52px;box-sizing:border-box;">
+                        <div onclick="promptTargetPassword()" style="background:rgba(15,23,42,0.45);padding:8px 6px 7px;border-radius:14px;border:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;align-items:center;justify-content:center;width:52px;box-sizing:border-box;cursor:pointer;" title="Click to edit target (password required)">
                             <span style="font-size:6.5px;font-weight:900;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent-theme);margin-bottom:3px;font-family:'Plus Jakarta Sans',sans-serif;">TARGET</span>
-                            <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:900;color:white;letter-spacing:-0.02em;line-height:1;">1600</span>
+                            <span id="day-target-display" style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:900;color:white;letter-spacing:-0.02em;line-height:1;">1600</span>
                             <input type="hidden" id="day-target-input" value="1600">
                         </div>
                     </div>
@@ -5644,6 +5644,8 @@
             if (report.targetPerDay) {
                 const dayTargetInput = document.getElementById('day-target-input');
                 if (dayTargetInput) dayTargetInput.value = report.targetPerDay;
+                const dayTargetDisp = document.getElementById('day-target-display');
+                if (dayTargetDisp) dayTargetDisp.textContent = report.targetPerDay;
             }
 
             currentReportType = type;
@@ -5686,6 +5688,8 @@
             const liveInput = document.getElementById('day-target-input');
             if (liveInput) {
                 localStorage.setItem('mep_day_target_value', liveInput.value);
+                const display = document.getElementById('day-target-display');
+                if (display) display.textContent = liveInput.value;
             }
             renderTable();
             // Re-render archive if we are in it and modified the value (if it's accessible).
@@ -5695,6 +5699,25 @@
                 if (document.getElementById('page-archive-accessories').classList.contains('active')) renderArchivePage('accessories');
                 if (document.getElementById('page-archive-armature').classList.contains('active')) renderArchivePage('armature');
             }
+        };
+
+        window.promptTargetPassword = function() {
+            var pwd = prompt('Enter password to edit target:');
+            if (pwd === null) return;
+            if (pwd !== '12') {
+                alert('Incorrect password!');
+                return;
+            }
+            var current = document.getElementById('day-target-input').value;
+            var newVal = prompt('Enter new production target:', current);
+            if (newVal === null || newVal.trim() === '') return;
+            var num = Number(newVal);
+            if (isNaN(num) || num <= 0) {
+                alert('Please enter a valid number.');
+                return;
+            }
+            document.getElementById('day-target-input').value = num;
+            window.dayTargetChanged();
         };
 
         // ============ CORE FUNCTIONS ============
@@ -6988,6 +7011,10 @@ if (shouldRandomizeTheme()) {
             const dayTargetInput = document.getElementById('day-target-input');
             if (dayTargetInput) {
                 dayTargetInput.value = savedDayTarget;
+            }
+            const dayTargetDisplay = document.getElementById('day-target-display');
+            if (dayTargetDisplay) {
+                dayTargetDisplay.textContent = savedDayTarget;
             }
         }
 
