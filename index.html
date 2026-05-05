@@ -5016,7 +5016,7 @@
         }
 
         function shouldRandomizeTheme() {
-            return localStorage.getItem(THEME_RANDOMIZED_KEY) !== currentDayKey;
+            return true; // Randomize on every refresh
         }
 
         function markThemeRandomized() {
@@ -5783,11 +5783,8 @@
 
         function randomizeTheme(silent = false) {
             const random = themes[Math.floor(Math.random() * themes.length)];
-            const isLite = random.mode === 'lite';
-            if (isLite && !document.body.classList.contains('lite-mode')) {
+            if (!document.body.classList.contains('lite-mode')) {
                 document.body.classList.add('lite-mode');
-            } else if (!isLite && document.body.classList.contains('lite-mode')) {
-                document.body.classList.remove('lite-mode');
             }
             applyTheme(random);
             _selectedThemeIndex = themes.indexOf(random);
@@ -7019,9 +7016,8 @@ if (shouldRandomizeTheme()) {
         }
 
         setTimeout(function() {
-            if (typeof window.randomizeTheme === 'function' && localStorage.getItem('mep_theme_randomized_today') !== new Date().toISOString().split('T')[0]) {
+            if (typeof window.randomizeTheme === 'function') {
                 window.randomizeTheme(true);
-                localStorage.setItem('mep_theme_randomized_today', new Date().toISOString().split('T')[0]);
             }
         }, 300);
     });
