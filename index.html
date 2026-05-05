@@ -5727,6 +5727,39 @@
             window.dayTargetChanged();
         };
 
+        // ============ DATE EDIT PASSWORD PROTECTION ============
+        var _dateEditUnlocked = false;
+
+        function guardDatePicker(picker) {
+            if (!picker) return;
+            function interceptDate(e) {
+                if (_dateEditUnlocked) return;
+                e.preventDefault();
+                e.stopPropagation();
+                var pwd = prompt('Enter password to edit date:');
+                if (pwd === null) return;
+                if (pwd !== '12') {
+                    alert('Incorrect password!');
+                    return;
+                }
+                _dateEditUnlocked = true;
+                picker.showPicker();
+            }
+            picker.addEventListener('mousedown', interceptDate);
+            picker.addEventListener('touchstart', interceptDate, { passive: false });
+            picker.addEventListener('click', function(e) {
+                if (!_dateEditUnlocked) { e.preventDefault(); e.stopPropagation(); }
+            });
+            picker.addEventListener('change', function() {
+                _dateEditUnlocked = false;
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            guardDatePicker(document.getElementById('statement-date-picker'));
+            guardDatePicker(document.getElementById('rnd-date-picker'));
+        });
+
         // ============ CORE FUNCTIONS ============
 
         function applyTheme(theme) {
