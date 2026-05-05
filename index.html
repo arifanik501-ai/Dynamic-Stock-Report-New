@@ -541,19 +541,23 @@
         body.performance-mode *::before,
         body.performance-mode *::after {
             animation: none !important;
-            transition-duration: 0.01ms !important;
+            transition-duration: 150ms !important;
+            transition-timing-function: ease-out !important;
             scroll-behavior: auto !important;
         }
 
         body.performance-mode .bg-canvas {
             background: var(--bg-retro) !important;
+            transition: background 300ms ease-out !important;
         }
 
         body.performance-mode .bg-canvas::before,
         body.performance-mode .bg-orb,
         body.performance-mode .bg-grid,
         body.performance-mode .bg-scanlines {
-            display: none !important;
+            opacity: 0 !important;
+            transition: opacity 300ms ease-out !important;
+            pointer-events: none !important;
         }
 
         body.performance-mode .tab-navigation,
@@ -575,12 +579,15 @@
             -webkit-backdrop-filter: none !important;
             filter: none !important;
             box-shadow: 0 6px 18px rgba(0,0,0,0.14) !important;
+            transition: box-shadow 250ms ease-out, filter 250ms ease-out !important;
         }
 
         body.performance-mode .premium-date-glass,
         body.performance-mode .theme-premium-spark,
         body.performance-mode .ctrl-trigger-glow {
-            display: none !important;
+            opacity: 0 !important;
+            transition: opacity 200ms ease-out !important;
+            pointer-events: none !important;
         }
 
         body.performance-mode .a4-sheet,
