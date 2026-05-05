@@ -4544,8 +4544,8 @@
 
                 <!-- Model Number Selector -->
                 <div id="rnd-model-selector" style="display: flex; align-items: center; justify-content: center; gap: 12px; margin: 16px 0; padding: 14px 24px; background: linear-gradient(135deg, rgba(var(--primary-theme-rgb), 0.08), rgba(var(--accent-theme-rgb), 0.08)); border: 2px solid rgba(var(--primary-theme-rgb), 0.2); border-radius: 14px;">
-                    <span style="font-size: 11px; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; color: var(--primary-theme);">🔧 Model No:</span>
-                    <select id="rnd-model-select" onchange="window.saveRndModel(this.value)" style="padding: 8px 16px; border-radius: 10px; border: 2px solid var(--accent-theme); background: #ffffff; color: var(--primary-theme); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 900; letter-spacing: 0.05em; cursor: pointer; outline: none; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
+                    <span style="font-size: 11px; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; color: #0f172a;">🔧 Model No:</span>
+                    <select id="rnd-model-select" onchange="window.saveRndModel(this.value)" style="padding: 8px 16px; border-radius: 10px; border: 2px solid var(--accent-theme); background: #ffffff; color: #0f172a; -webkit-text-fill-color: #0f172a; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 900; letter-spacing: 0.05em; cursor: pointer; outline: none; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
                         <option value="5.5 Circle">5.5 Circle</option>
                         <option value="6 Circle">6 Circle</option>
                         <option value="7 Circle">7 Circle</option>
@@ -4579,19 +4579,19 @@
                 </table>
                 </div>
 
-                <div style="display: block; width: 100%; position: relative; z-index: 20; height: 140px; margin-top: 30px; padding-top: 20px;">
+                <div style="display: block; width: 100%; position: relative; z-index: 20; height: 170px; margin-top: 34px; padding-top: 20px;">
                     <div style="position: absolute; left: 0; bottom: 0; width: 280px; text-align: left; font-size: 13px; font-weight: 900; text-transform: uppercase;">
-                        <span class="text-label" style="font-size: 11px; display: block; position: absolute; bottom: 110px; left: 0; letter-spacing: 0.1em;">Tested by</span>
-                        <div class="text-signature" style="position: absolute; bottom: 35px; left: 10px; transform: rotate(-1deg); z-index: 2; line-height: 1;">Takbir Hossain</div>
-                        <div style="border-top: 2px solid var(--accent-theme); padding-top: 12px; margin-top: 70px;">
+                        <span class="text-label" style="font-size: 11px; display: block; position: absolute; bottom: 132px; left: 0; letter-spacing: 0.1em;">Tested by</span>
+                        <div class="text-signature" style="position: absolute; bottom: 56px; left: 0; width: 100%; text-align: center; transform: rotate(-1deg); z-index: 2; line-height: 1;">Takbir Hossain</div>
+                        <div style="border-top: 2px solid var(--accent-theme); padding-top: 12px; margin-top: 98px;">
                             <span class="signature-name" style="font-size: 20px; display: block; letter-spacing: -0.05em; line-height: 1;">Takbir Hossain</span>
                             <span class="signature-desc" style="font-size: 11px; display: block; margin-top: 4px; line-height: 1;">Asst. Engineer</span>
                         </div>
                     </div>
                     <div style="position: absolute; right: 0; bottom: 0; width: 280px; text-align: right; font-size: 13px; font-weight: 900; text-transform: uppercase;">
-                        <span class="text-label" style="font-size: 11px; display: block; position: absolute; bottom: 110px; right: 0; letter-spacing: 0.1em;">Authorized By</span>
-                        <div class="text-signature" style="position: absolute; bottom: 35px; right: 10px; transform: rotate(-1deg); z-index: 2; line-height: 1;">Arif Ahmed</div>
-                        <div style="border-top: 2px solid var(--accent-theme); padding-top: 12px; margin-top: 70px;">
+                        <span class="text-label" style="font-size: 11px; display: block; position: absolute; bottom: 132px; right: 0; letter-spacing: 0.1em;">Authorized By</span>
+                        <div class="text-signature" style="position: absolute; bottom: 56px; right: 0; width: 100%; text-align: center; transform: rotate(-1deg); z-index: 2; line-height: 1;">Arif Ahmed</div>
+                        <div style="border-top: 2px solid var(--accent-theme); padding-top: 12px; margin-top: 98px;">
                             <span class="signature-name" style="font-size: 20px; display: block; letter-spacing: -0.05em; line-height: 1;">Arif Ahmed Anik</span>
                             <span class="signature-desc" style="font-size: 11px; display: block; margin-top: 4px; line-height: 1;">Incharge</span>
                         </div>
@@ -6925,16 +6925,41 @@ function strengthenRndTableContrast(root) {
     });
 }
 
+function stabilizeRndSignatureExport(root) {
+    if (!root) return;
+    root.querySelectorAll('.text-signature').forEach(sig => {
+        sig.style.setProperty('bottom', '56px', 'important');
+        sig.style.setProperty('left', '0', 'important');
+        sig.style.setProperty('right', '0', 'important');
+        sig.style.setProperty('width', '100%', 'important');
+        sig.style.setProperty('text-align', 'center', 'important');
+        sig.style.setProperty('color', '#334155', 'important');
+        sig.style.setProperty('-webkit-text-fill-color', '#334155', 'important');
+        sig.style.setProperty('opacity', '1', 'important');
+        sig.style.setProperty('text-shadow', 'none', 'important');
+        sig.style.setProperty('line-height', '1', 'important');
+    });
+}
+
 function stabilizeRndModelExport(root) {
     if (!root) return;
     const modelSelect = root.querySelector('#rnd-model-select');
     if (!modelSelect) return;
     const liveSelect = document.getElementById('rnd-model-select');
     const selectedText = (liveSelect && liveSelect.value) || modelSelect.value || '5.5 Circle';
+    const selector = root.querySelector('#rnd-model-selector');
+    if (selector) {
+        selector.querySelectorAll('span').forEach(label => {
+            label.style.setProperty('color', '#0f172a', 'important');
+            label.style.setProperty('-webkit-text-fill-color', '#0f172a', 'important');
+            label.style.setProperty('opacity', '1', 'important');
+            label.style.setProperty('text-shadow', 'none', 'important');
+        });
+    }
     const modelDisplay = root.ownerDocument.createElement('span');
     modelDisplay.id = 'rnd-model-select';
     modelDisplay.textContent = selectedText;
-    modelDisplay.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;min-width:128px;min-height:42px;padding:8px 22px;border-radius:10px;border:2px solid var(--accent-theme);background:#ffffff;color:var(--primary-theme);font-family:Plus Jakarta Sans,sans-serif;font-size:13px;font-weight:900;letter-spacing:0.05em;line-height:1.2;box-shadow:0 4px 12px rgba(0,0,0,0.06);box-sizing:border-box;overflow:visible;white-space:nowrap;';
+    modelDisplay.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;min-width:128px;min-height:42px;padding:8px 22px;border-radius:10px;border:2px solid var(--accent-theme);background:#ffffff;color:#0f172a;-webkit-text-fill-color:#0f172a;font-family:Plus Jakarta Sans,sans-serif;font-size:13px;font-weight:900;letter-spacing:0.05em;line-height:1.2;box-shadow:0 4px 12px rgba(0,0,0,0.06);box-sizing:border-box;overflow:visible;white-space:nowrap;opacity:1;text-shadow:none;';
     modelSelect.replaceWith(modelDisplay);
 }
 
@@ -7131,6 +7156,7 @@ async function takeRndScreenshot(silentDownload = false) {
                 huge.style.setProperty('background-clip', 'unset', 'important');
             }
             strengthenRndTableContrast(clonedSheet);
+            stabilizeRndSignatureExport(clonedSheet);
             stabilizeRndModelExport(clonedSheet);
         }
         if (clonedDoc.body) clonedDoc.body.classList.remove('mobile-active');
