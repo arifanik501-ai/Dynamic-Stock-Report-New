@@ -4678,6 +4678,31 @@
         </div>
     </div>
 
+    <!-- ============ PREMIUM PASSWORD MODAL ============ -->
+    <div id="pwd-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-6 no-print" style="display:none;">
+        <div class="modal-backdrop" onclick="closePwdModal()"></div>
+        <div class="modal-content" style="position: relative; z-index: 101; max-width: 380px;">
+            <div style="background: linear-gradient(135deg, var(--primary-theme), var(--accent-theme)); padding: 28px 32px 22px; color: var(--on-accent-color); position: relative; overflow: hidden; text-align: center;">
+                <div style="position: absolute; inset: 0; background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 50%);"></div>
+                <div style="position: relative;">
+                    <div style="width: 48px; height: 48px; margin: 0 auto 12px; background: rgba(255,255,255,0.15); border-radius: 14px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                    </div>
+                    <h2 id="pwd-modal-title" style="font-size: 18px; font-weight: 900; letter-spacing: 0.05em; text-transform: uppercase; margin: 0;">Enter Password</h2>
+                    <p id="pwd-modal-desc" style="font-size: 11px; font-weight: 600; opacity: 0.7; margin-top: 6px; letter-spacing: 0.08em; text-transform: uppercase;">Authentication required</p>
+                </div>
+            </div>
+            <div style="padding: 24px 32px 28px; text-align: center;">
+                <input type="password" id="pwd-modal-input" placeholder="••••••" autocomplete="off" style="width: 100%; padding: 14px 18px; border-radius: 14px; border: 2px solid var(--theme-border); background: var(--theme-surface-soft); color: var(--theme-ink); font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; text-align: center; letter-spacing: 0.3em; outline: none; transition: all 0.3s ease; box-sizing: border-box;" onfocus="this.style.borderColor='var(--accent-theme)';this.style.boxShadow='0 0 0 4px rgba(var(--accent-theme-rgb),0.15)'" onblur="this.style.borderColor='var(--theme-border)';this.style.boxShadow='none'">
+                <div id="pwd-modal-error" style="color: #ef4444; font-size: 11px; font-weight: 700; margin-top: 10px; letter-spacing: 0.05em; text-transform: uppercase; min-height: 16px; transition: opacity 0.2s;"></div>
+                <div style="display: flex; gap: 10px; margin-top: 16px;">
+                    <button onclick="closePwdModal()" style="flex: 1; padding: 12px 20px; font-weight: 800; color: var(--theme-ink-muted); text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; border: 1px solid var(--theme-border); background: var(--theme-surface-soft); cursor: pointer; border-radius: 12px; transition: all 0.2s;">Cancel</button>
+                    <button id="pwd-modal-submit" onclick="submitPwdModal()" style="flex: 1; padding: 12px 24px; background: linear-gradient(135deg, var(--primary-theme), var(--accent-theme)); color: var(--on-accent-color); border: none; border-radius: 12px; font-weight: 800; text-transform: uppercase; font-size: 11px; letter-spacing: 0.08em; cursor: pointer; box-shadow: 0 6px 20px rgba(var(--accent-theme-rgb), 0.3); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">Unlock</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ============ THEME SELECTOR MODAL ============ -->
     <div class="theme-selector-overlay" id="theme-selector-overlay" onclick="if(event.target===this)closeThemeSelector()" aria-hidden="true">
         <div class="theme-selector-panel" role="dialog" aria-modal="true" aria-labelledby="theme-selector-title">
@@ -5708,51 +5733,104 @@
             }
         };
 
+        // ============ PREMIUM PASSWORD MODAL SYSTEM ============
+        var _pwdModalCallback = null;
+        var _pwdModalPicker = null;
+
+        function openPwdModal(title, desc, callback, picker) {
+            var modal = document.getElementById('pwd-modal');
+            var input = document.getElementById('pwd-modal-input');
+            var error = document.getElementById('pwd-modal-error');
+            document.getElementById('pwd-modal-title').textContent = title || 'Enter Password';
+            document.getElementById('pwd-modal-desc').textContent = desc || 'Authentication required';
+            input.value = '';
+            error.textContent = '';
+            _pwdModalCallback = callback;
+            _pwdModalPicker = picker || null;
+            modal.style.display = 'flex';
+            modal.classList.remove('hidden');
+            setTimeout(function() { input.focus(); }, 100);
+        }
+
+        function closePwdModal() {
+            var modal = document.getElementById('pwd-modal');
+            modal.style.display = 'none';
+            modal.classList.add('hidden');
+            _pwdModalCallback = null;
+            _pwdModalPicker = null;
+        }
+
+        function submitPwdModal() {
+            var input = document.getElementById('pwd-modal-input');
+            var error = document.getElementById('pwd-modal-error');
+            if (input.value !== '12') {
+                error.textContent = '✗ Incorrect password';
+                input.value = '';
+                input.focus();
+                input.style.borderColor = '#ef4444';
+                input.style.boxShadow = '0 0 0 4px rgba(239,68,68,0.15)';
+                setTimeout(function() {
+                    input.style.borderColor = 'var(--theme-border)';
+                    input.style.boxShadow = 'none';
+                }, 1200);
+                return;
+            }
+            var cb = _pwdModalCallback;
+            var picker = _pwdModalPicker;
+            closePwdModal();
+            if (picker) {
+                try { picker.showPicker(); } catch(e) { picker.click(); }
+            }
+            if (cb) cb();
+        }
+
+        // Enter key support
+        document.addEventListener('keydown', function(e) {
+            var modal = document.getElementById('pwd-modal');
+            if (modal && modal.style.display === 'flex') {
+                if (e.key === 'Enter') { e.preventDefault(); submitPwdModal(); }
+                if (e.key === 'Escape') { closePwdModal(); }
+            }
+        });
+
+        window.openPwdModal = openPwdModal;
+        window.closePwdModal = closePwdModal;
+        window.submitPwdModal = submitPwdModal;
+
+        // ============ TARGET PASSWORD (PREMIUM) ============
         window.promptTargetPassword = function() {
-            var pwd = prompt('Enter password to edit target:');
-            if (pwd === null) return;
-            if (pwd !== '12') {
-                alert('Incorrect password!');
-                return;
-            }
-            var current = document.getElementById('day-target-input').value;
-            var newVal = prompt('Enter new production target:', current);
-            if (newVal === null || newVal.trim() === '') return;
-            var num = Number(newVal);
-            if (isNaN(num) || num <= 0) {
-                alert('Please enter a valid number.');
-                return;
-            }
-            document.getElementById('day-target-input').value = num;
-            window.dayTargetChanged();
+            openPwdModal('Edit Target', 'Enter password to modify production target', function() {
+                var current = document.getElementById('day-target-input').value;
+                var newVal = prompt('Enter new production target:', current);
+                if (newVal === null || newVal.trim() === '') return;
+                var num = Number(newVal);
+                if (isNaN(num) || num <= 0) {
+                    showToast('Please enter a valid number');
+                    return;
+                }
+                document.getElementById('day-target-input').value = num;
+                window.dayTargetChanged();
+            });
         };
 
         // ============ DATE EDIT PASSWORD PROTECTION ============
-        var _dateEditUnlocked = false;
-
         function guardDatePicker(picker) {
             if (!picker) return;
+            var unlocked = false;
             function interceptDate(e) {
-                if (_dateEditUnlocked) return;
+                if (unlocked) return;
                 e.preventDefault();
                 e.stopPropagation();
-                var pwd = prompt('Enter password to edit date:');
-                if (pwd === null) return;
-                if (pwd !== '12') {
-                    alert('Incorrect password!');
-                    return;
-                }
-                _dateEditUnlocked = true;
-                picker.showPicker();
+                openPwdModal('Edit Date', 'Enter password to change report date', null, picker);
             }
             picker.addEventListener('mousedown', interceptDate);
             picker.addEventListener('touchstart', interceptDate, { passive: false });
             picker.addEventListener('click', function(e) {
-                if (!_dateEditUnlocked) { e.preventDefault(); e.stopPropagation(); }
+                if (!unlocked) { e.preventDefault(); e.stopPropagation(); }
             });
-            picker.addEventListener('change', function() {
-                _dateEditUnlocked = false;
-            });
+            picker.addEventListener('focus', function() { unlocked = true; });
+            picker.addEventListener('change', function() { unlocked = false; });
+            picker.addEventListener('blur', function() { unlocked = false; });
         }
 
         document.addEventListener('DOMContentLoaded', function() {
