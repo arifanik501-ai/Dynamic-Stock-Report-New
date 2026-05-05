@@ -4679,9 +4679,9 @@
     </div>
 
     <!-- ============ PREMIUM PASSWORD MODAL ============ -->
-    <div id="pwd-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-6 no-print" style="display:none;">
-        <div class="modal-backdrop" onclick="closePwdModal()"></div>
-        <div class="modal-content" style="position: relative; z-index: 101; max-width: 380px;">
+    <div id="pwd-modal" style="display:none; position:fixed; inset:0; z-index:9999; align-items:center; justify-content:center; padding:24px;" class="no-print">
+        <div class="modal-backdrop" onclick="closePwdModal()" style="position:fixed; inset:0; z-index:9999;"></div>
+        <div class="modal-content" style="position:relative; z-index:10000; max-width:380px; width:100%; margin:auto;">
             <div style="background: linear-gradient(135deg, var(--primary-theme), var(--accent-theme)); padding: 28px 32px 22px; color: var(--on-accent-color); position: relative; overflow: hidden; text-align: center;">
                 <div style="position: absolute; inset: 0; background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 50%);"></div>
                 <div style="position: relative;">
@@ -4692,12 +4692,12 @@
                     <p id="pwd-modal-desc" style="font-size: 11px; font-weight: 600; opacity: 0.7; margin-top: 6px; letter-spacing: 0.08em; text-transform: uppercase;">Authentication required</p>
                 </div>
             </div>
-            <div style="padding: 24px 32px 28px; text-align: center;">
-                <input type="password" id="pwd-modal-input" placeholder="••••••" autocomplete="off" style="width: 100%; padding: 14px 18px; border-radius: 14px; border: 2px solid var(--theme-border); background: var(--theme-surface-soft); color: var(--theme-ink); font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; text-align: center; letter-spacing: 0.3em; outline: none; transition: all 0.3s ease; box-sizing: border-box;" onfocus="this.style.borderColor='var(--accent-theme)';this.style.boxShadow='0 0 0 4px rgba(var(--accent-theme-rgb),0.15)'" onblur="this.style.borderColor='var(--theme-border)';this.style.boxShadow='none'">
+            <div style="padding: 24px 32px 28px; text-align: center; position: relative; z-index: 10001;">
+                <input type="tel" id="pwd-modal-input" placeholder="Enter code" inputmode="numeric" autocomplete="one-time-code" style="width: 100%; padding: 14px 18px; border-radius: 14px; border: 2px solid var(--theme-border); background: var(--theme-surface-soft); color: var(--theme-ink); font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; text-align: center; letter-spacing: 0.4em; outline: none; transition: border-color 0.3s ease, box-shadow 0.3s ease; box-sizing: border-box; -webkit-text-security: disc; touch-action: manipulation; -webkit-appearance: none; position: relative; z-index: 10002;" onfocus="this.style.borderColor='var(--accent-theme)';this.style.boxShadow='0 0 0 4px rgba(var(--accent-theme-rgb),0.15)'" onblur="this.style.borderColor='var(--theme-border)';this.style.boxShadow='none'" ontouchend="this.focus();">
                 <div id="pwd-modal-error" style="color: #ef4444; font-size: 11px; font-weight: 700; margin-top: 10px; letter-spacing: 0.05em; text-transform: uppercase; min-height: 16px; transition: opacity 0.2s;"></div>
                 <div style="display: flex; gap: 10px; margin-top: 16px;">
-                    <button onclick="closePwdModal()" style="flex: 1; padding: 12px 20px; font-weight: 800; color: var(--theme-ink-muted); text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; border: 1px solid var(--theme-border); background: var(--theme-surface-soft); cursor: pointer; border-radius: 12px; transition: all 0.2s;">Cancel</button>
-                    <button id="pwd-modal-submit" onclick="submitPwdModal()" style="flex: 1; padding: 12px 24px; background: linear-gradient(135deg, var(--primary-theme), var(--accent-theme)); color: var(--on-accent-color); border: none; border-radius: 12px; font-weight: 800; text-transform: uppercase; font-size: 11px; letter-spacing: 0.08em; cursor: pointer; box-shadow: 0 6px 20px rgba(var(--accent-theme-rgb), 0.3); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">Unlock</button>
+                    <button onclick="closePwdModal()" type="button" style="flex: 1; padding: 12px 20px; font-weight: 800; color: var(--theme-ink-muted); text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; border: 1px solid var(--theme-border); background: var(--theme-surface-soft); cursor: pointer; border-radius: 12px; transition: all 0.2s;">Cancel</button>
+                    <button id="pwd-modal-submit" onclick="submitPwdModal()" type="button" style="flex: 1; padding: 12px 24px; background: linear-gradient(135deg, var(--primary-theme), var(--accent-theme)); color: var(--on-accent-color); border: none; border-radius: 12px; font-weight: 800; text-transform: uppercase; font-size: 11px; letter-spacing: 0.08em; cursor: pointer; box-shadow: 0 6px 20px rgba(var(--accent-theme-rgb), 0.3); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">Unlock</button>
                 </div>
             </div>
         </div>
@@ -5735,9 +5735,8 @@
 
         // ============ PREMIUM PASSWORD MODAL SYSTEM ============
         var _pwdModalCallback = null;
-        var _pwdModalPicker = null;
 
-        function openPwdModal(title, desc, callback, picker) {
+        function openPwdModal(title, desc, callback) {
             var modal = document.getElementById('pwd-modal');
             var input = document.getElementById('pwd-modal-input');
             var error = document.getElementById('pwd-modal-error');
@@ -5746,18 +5745,17 @@
             input.value = '';
             error.textContent = '';
             _pwdModalCallback = callback;
-            _pwdModalPicker = picker || null;
             modal.style.display = 'flex';
-            modal.classList.remove('hidden');
-            setTimeout(function() { input.focus(); }, 100);
+            setTimeout(function() {
+                input.focus();
+                input.click();
+            }, 200);
         }
 
         function closePwdModal() {
             var modal = document.getElementById('pwd-modal');
             modal.style.display = 'none';
-            modal.classList.add('hidden');
             _pwdModalCallback = null;
-            _pwdModalPicker = null;
         }
 
         function submitPwdModal() {
@@ -5776,11 +5774,7 @@
                 return;
             }
             var cb = _pwdModalCallback;
-            var picker = _pwdModalPicker;
             closePwdModal();
-            if (picker) {
-                try { picker.showPicker(); } catch(e) { picker.click(); }
-            }
             if (cb) cb();
         }
 
@@ -5816,21 +5810,40 @@
         // ============ DATE EDIT PASSWORD PROTECTION ============
         function guardDatePicker(picker) {
             if (!picker) return;
-            var unlocked = false;
-            function interceptDate(e) {
-                if (unlocked) return;
+            // Disable the date picker by default
+            picker.style.pointerEvents = 'none';
+
+            // Create an invisible overlay that catches taps and shows the password modal
+            var overlay = document.createElement('div');
+            overlay.style.cssText = 'position:absolute; inset:0; z-index:11; cursor:pointer; touch-action:manipulation;';
+            picker.parentElement.style.position = 'relative';
+            picker.parentElement.appendChild(overlay);
+
+            function onOverlayTap(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                openPwdModal('Edit Date', 'Enter password to change report date', null, picker);
+                openPwdModal('Edit Date', 'Enter password to change report date', function() {
+                    // Password correct — unlock the date picker
+                    picker.style.pointerEvents = 'auto';
+                    overlay.style.display = 'none';
+                    showToast('Date unlocked — tap the date to change it');
+                    // Re-lock after date changes or after 15 seconds
+                    var lockTimer = setTimeout(function() { lockPicker(); }, 15000);
+                    picker.addEventListener('change', function onDateChange() {
+                        picker.removeEventListener('change', onDateChange);
+                        clearTimeout(lockTimer);
+                        setTimeout(function() { lockPicker(); }, 500);
+                    });
+                });
             }
-            picker.addEventListener('mousedown', interceptDate);
-            picker.addEventListener('touchstart', interceptDate, { passive: false });
-            picker.addEventListener('click', function(e) {
-                if (!unlocked) { e.preventDefault(); e.stopPropagation(); }
-            });
-            picker.addEventListener('focus', function() { unlocked = true; });
-            picker.addEventListener('change', function() { unlocked = false; });
-            picker.addEventListener('blur', function() { unlocked = false; });
+
+            function lockPicker() {
+                picker.style.pointerEvents = 'none';
+                overlay.style.display = '';
+            }
+
+            overlay.addEventListener('click', onOverlayTap);
+            overlay.addEventListener('touchend', onOverlayTap);
         }
 
         document.addEventListener('DOMContentLoaded', function() {
