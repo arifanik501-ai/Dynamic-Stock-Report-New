@@ -5790,10 +5790,17 @@
             _pwdModalCallback = null;
         }
 
+        function normalizePasswordCode(value) {
+            return String(value || '')
+                .replace(/[০-৯]/g, function(ch) { return String('০১২৩৪৫৬৭৮৯'.indexOf(ch)); })
+                .replace(/[٠-٩]/g, function(ch) { return String('٠١٢٣٤٥٦٧٨٩'.indexOf(ch)); })
+                .replace(/\D/g, '');
+        }
+
         function submitPwdModal() {
             var input = document.getElementById('pwd-modal-input');
             var error = document.getElementById('pwd-modal-error');
-            if (input.value !== '12') {
+            if (normalizePasswordCode(input.value) !== '12') {
                 error.textContent = '✗ Incorrect password';
                 input.value = '';
                 input.focus();
