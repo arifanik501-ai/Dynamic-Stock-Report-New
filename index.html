@@ -4835,11 +4835,13 @@
         const SELECTED_THEME_KEY = 'mep_selected_theme_index';
         const DAY_TARGET_LOCAL_KEY = 'mep_day_target_value';
         const DAY_TARGET_UPDATED_AT_KEY = 'mep_day_target_updated_at';
+        const DAY_TARGET_BROADCAST_KEY = 'mep_day_target_broadcast';
         const DAY_TARGET_CLOUD_PATH = 'inventory_reports/_settings/dayTarget';
         const DEFAULT_DAY_TARGET = 1600;
         const currentDayKey = new Date().toISOString().split('T')[0];
 
         let _html2canvasPromise = null;
+        let _dayTargetChannel = null;
 
         function loadHtml2Canvas() {
             if (window.html2canvas) return Promise.resolve(window.html2canvas);
@@ -4896,16 +4898,53 @@
 
         function syncDayTargetToCloud(target, updatedAt = Date.now()) {
             if (window.firebaseSet && window.firebaseRef && window.firebaseDB) {
-                window.firebaseSet(window.firebaseRef(window.firebaseDB, DAY_TARGET_CLOUD_PATH), {
+                return window.firebaseSet(window.firebaseRef(window.firebaseDB, DAY_TARGET_CLOUD_PATH), {
                     value: normalizeDayTarget(target),
                     updatedAt: updatedAt
                 }).catch(e => console.error('Target Firebase sync failed:', e));
-            } else {
-                window._pendingDayTargetSync = {
-                    value: normalizeDayTarget(target),
-                    updatedAt: updatedAt
-                };
             }
+            window._pendingDayTargetSync = {
+                value: normalizeDayTarget(target),
+                updatedAt: updatedAt
+            };
+            return Promise.resolve();
+        }
+
+        function applyCloudDayTargetRecord(record) {
+            if (!record) return;
+            const cloudTarget = normalizeDayTarget(typeof record === 'object' ? record.value : record);
+            const cloudUpdatedAt = Number(typeof record === 'object' ? record.updatedAt : 0) || 0;
+            const localUpdatedAt = Number(localStorage.getItem(DAY_TARGET_UPDATED_AT_KEY)) || 0;
+            if (cloudUpdatedAt >= localUpdatedAt && String(cloudTarget) !== String(getCurrentDayTarget())) {
+                applyDayTargetValue(cloudTarget, { updatedAt: cloudUpdatedAt });
+            }
+        }
+
+        function broadcastDayTarget(target, updatedAt) {
+            const payload = { value: normalizeDayTarget(target), updatedAt: updatedAt };
+            if (window.BroadcastChannel) {
+                if (!_dayTargetChannel) {
+                    _dayTargetChannel = new BroadcastChannel('mep_day_target');
+                    _dayTargetChannel.onmessage = function(event) {
+                        applyCloudDayTargetRecord(event.data);
+                    };
+                }
+                _dayTargetChannel.postMessage(payload);
+            }
+            localStorage.setItem(DAY_TARGET_BROADCAST_KEY, JSON.stringify(payload));
+        }
+
+        window.addEventListener('storage', function(e) {
+            if (e.key === DAY_TARGET_BROADCAST_KEY && e.newValue) {
+                try { applyCloudDayTargetRecord(JSON.parse(e.newValue)); } catch(err) {}
+            }
+        });
+
+        if (window.BroadcastChannel) {
+            _dayTargetChannel = new BroadcastChannel('mep_day_target');
+            _dayTargetChannel.onmessage = function(event) {
+                applyCloudDayTargetRecord(event.data);
+            };
         }
 
         function triggerJpgDownload(dataUrl, filename) {
@@ -5762,6 +5801,8 @@
         window.dayTargetChanged = function() {
             const updatedAt = Date.now();
             const target = applyDayTargetValue(getCurrentDayTarget(), { updatedAt: updatedAt });
+            broadcastDayTarget(target, updatedAt);
+            if (currentReportType !== 'initial' && inventoryData.length > 0) saveCurrentReport(true);
             syncDayTargetToCloud(target, updatedAt);
         };
 
@@ -5843,6 +5884,8 @@
                 }
                 const updatedAt = Date.now();
                 applyDayTargetValue(num, { updatedAt: updatedAt });
+                broadcastDayTarget(num, updatedAt);
+                if (currentReportType !== 'initial' && inventoryData.length > 0) saveCurrentReport(true);
                 syncDayTargetToCloud(num, updatedAt);
                 showToast('Target Saved to Cloud');
             });
@@ -6668,6 +6711,11 @@
             window._pendingDayTargetSync = null;
         }
 
+        const dayTargetRef = ref(database, DAY_TARGET_CLOUD_PATH);
+        onValue(dayTargetRef, (snapshot) => {
+            applyCloudDayTargetRecord(snapshot.val());
+        });
+
         // Start Realtime Sync (Firebase -> Local Storage) — MERGE strategy
         const reportsRef = ref(database, 'inventory_reports');
         const datePattern = /^\d{4}-\d{2}-\d{2}$/;
@@ -6677,16 +6725,6 @@
 
             const data = snapshot.val() || {};
             let localChanged = false;
-
-            if (data._settings && data._settings.dayTarget) {
-                const cloudRecord = data._settings.dayTarget;
-                const cloudTarget = normalizeDayTarget(typeof cloudRecord === 'object' ? cloudRecord.value : cloudRecord);
-                const cloudUpdatedAt = Number(typeof cloudRecord === 'object' ? cloudRecord.updatedAt : 0) || 0;
-                const localUpdatedAt = Number(localStorage.getItem(DAY_TARGET_UPDATED_AT_KEY)) || 0;
-                if (cloudUpdatedAt >= localUpdatedAt && String(cloudTarget) !== String(getCurrentDayTarget())) {
-                    applyDayTargetValue(cloudTarget, { updatedAt: cloudUpdatedAt });
-                }
-            }
 
             // Wait until the main script defines STORAGE_KEYS
             if (!window.STORAGE_KEYS) return;
