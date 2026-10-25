@@ -1,0 +1,7 @@
+﻿4294
+        body.performance-mode *::after,
+        body.performance-mode.lite-mode *,
+        body.performance-mode.lite-mode *::before,
+        body.performance-mode.lite-mode *::after {
+            animation: none !important;
+        }

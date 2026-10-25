@@ -1,0 +1,20 @@
+=== node v24.22.1 ===
+OK   script.js — syntax clean (7 lines, cjs)
+OK   themes.js — syntax clean (11 lines, cjs)
+OK   sw.js — syntax clean (67 lines, esm)
+OK   index.html <script#1> — external (themes.js)
+OK   index.html <script#2> — syntax clean (79 lines, cjs)
+OK   index.html <script#3> — syntax clean (19 lines, cjs)
+OK   index.html <script#4> — syntax clean (2698 lines, esm)
+OK   index.html <script#5> — syntax clean (110 lines, cjs)
+OK   app.css — .bg-canvas/.bg-grid promoted to own layer
+OK   app.css — bg transition limited to opacity
+OK   app.css — FAB panels drop live backdrop blur
+OK   index.html — theme grid built on double rAF
+OK   sw.js — cache bumped to v17
+OK   app.css — global animation budget (single pass, no loops)
+OK   app.css — global transition clamp 120ms
+OK   index.html — deferred theme build aborts if closed
+INFO app.css braces 775/775; lines 4633
+INFO index.html script tags 5/5
+INFO .bg-orb elements in index.html: 5
