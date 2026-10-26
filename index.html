@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="sfg-standalone">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,12 +10,17 @@
          utility classes it provided are hand-written and now live in app.css,
          which is loaded with a cacheable <link> instead of a 4,000-line inline
          style block. -->
+    <!-- Standalone build (GitHub Pages): no ERP login gate; runs directly from this folder. -->
+
     <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Sacramento&family=JetBrains+Mono:wght@500;800&display=swap">
     <meta name="theme-color" content="#0891b2">
     <link rel="stylesheet" href="app.css">
+    <link rel="stylesheet" href="premium_clock.css">
+    <link rel="stylesheet" href="erp-topbar.css?v=20261026i">
+    <script defer src="premium_clock.js"></script>
     <!-- themes.js moved up into <head>: the pre-paint bootstrap at the top of
          <body> needs the palette list while the document is still being parsed,
          long before the module at the end of <body> runs. -->
@@ -118,15 +123,6 @@
     })();
     </script>
 
-    <div class="performance-corner-hotspot no-print" aria-hidden="false">
-        <button id="performance-toggle" class="performance-toggle" type="button" aria-pressed="false" title="Toggle performance mode">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13 3L4 14h7l-1 7 10-12h-7l0-6Z"></path>
-            </svg>
-            <span>FAST</span>
-        </button>
-    </div>
-
     <!-- ============ ANIMATED BACKGROUND ============ -->
     <div class="bg-canvas" id="bg-canvas">
         <div class="bg-orb"></div>
@@ -137,6 +133,27 @@
     </div>
     <div class="bg-grid"></div>
     <div class="bg-scanlines"></div>
+
+    <!-- ============ ERP TOP BAR (same layout as the other modules) ============
+         Holds the original #tab-nav and FAST toggle unchanged; styles in erp-topbar.css. -->
+    <header class="erp-topbar no-print" id="erp-topbar">
+        <div class="erp-topbar__left">
+            <div class="erp-crumbs">
+                <a href="../portal.html" title="Return to Module Portal">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.4" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>
+                    <span>Modules</span>
+                </a>
+                <svg class="erp-crumb-sep erp-crumb-sep--mid" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                <span class="erp-crumb-mid">SFG Stock</span>
+                <svg class="erp-crumb-sep" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                <span class="erp-crumb-current" id="erp-crumb-current">Generator</span>
+            </div>
+            <a href="../portal.html" id="erp-portal-return" class="erp-capsule" title="Back to Select Operating Module">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.6" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5m6-6l-6 6 6 6"/></svg>
+                <span class="erp-capsule__label">Select Module</span>
+            </a>
+            <div id="mep-premium-clock" class="mep-glass-clock-capsule"></div>
+        </div>
 
     <nav class="tab-navigation no-print" id="tab-nav">
         <!-- iOS 26 Glass Slider -->
@@ -179,6 +196,127 @@
             <span class="tab-badge empty" id="badge-fan">EMPTY</span>
         </button>
     </nav>
+
+        <div class="erp-topbar__right">
+            <div class="performance-corner-hotspot no-print" aria-hidden="false">
+                <button id="performance-toggle" class="performance-toggle" type="button" aria-pressed="false" title="Toggle performance mode">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 3L4 14h7l-1 7 10-12h-7l0-6Z"></path>
+                    </svg>
+                    <span>FAST</span>
+                </button>
+            </div>
+            <div class="erp-user" title="Signed in">
+                <img id="erp-user-avatar" src="assets/avatar-male.svg" alt="" width="32" height="32" onerror="this.onerror=null;this.src='assets/avatar-male.svg'">
+                <span class="erp-user__text">
+                    <span class="erp-user__name" id="erp-user-name">MEP User</span>
+                    <span class="erp-user__role" id="erp-user-role">SFG Stock</span>
+                </span>
+            </div>
+            <button type="button" class="erp-orb erp-orb--rose" id="erp-logout" title="Sign Out" aria-label="Sign Out">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.4" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17l5-5-5-5M20 12H9M12 20H6a2 2 0 01-2-2V6a2 2 0 012-2h6"/></svg>
+            </button>
+        </div>
+    </header>
+    <script>
+    // ERP top bar: user badge, sign-out, breadcrumb that follows the active tab,
+    // and --erp-topbar-h so the page content always clears the header.
+    (function () {
+        var bar = document.getElementById('erp-topbar');
+        var nav = document.getElementById('tab-nav');
+        try {
+            var profile = JSON.parse(localStorage.getItem('mep_user_profile') || sessionStorage.getItem('mep_user_profile') || 'null') || {};
+            var email = localStorage.getItem('mep_auth_user') || sessionStorage.getItem('mep_auth_user') || '';
+            var name = profile.name || (email ? email.split('@')[0] : 'MEP User');
+            document.getElementById('erp-user-name').textContent = name;
+            document.getElementById('erp-user-role').textContent = profile.designation || profile.role || 'SFG Stock';
+            var avatar = profile.avatar || (email.toLowerCase() === 'arif.anik501@gmail.com' ? 'assets/avatar-anik.webp' : '');
+            if (avatar) {
+                // Profile avatars are stored relative to the ERP root
+                document.getElementById('erp-user-avatar').src = /^(data:|https?:|\/)/.test(avatar) ? avatar : '../' + avatar;
+            }
+        } catch (e) { /* keep defaults */ }
+
+        document.getElementById('erp-logout').addEventListener('click', function () {
+            if (!confirm('Sign out from the MEP ERP?')) return;
+            try { fetch('/api/auth/logout', { method: 'POST' }).catch(function () {}); } catch (e) {}
+            ['mep_auth_token', 'mep_auth_user', 'mep_user_profile', 'mep_user_logged_in'].forEach(function (k) {
+                try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch (e) {}
+            });
+            document.cookie = 'mep_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=Lax';
+            window.location.replace('../index.html?logged_out=1');
+        });
+
+        var crumb = document.getElementById('erp-crumb-current');
+        function syncCrumb() {
+            var active = nav.querySelector('.tab-btn.active');
+            if (!active) return;
+            var label = '';
+            active.childNodes.forEach(function (n) { if (n.nodeType === 3) label += n.textContent; });
+            label = label.trim();
+            if (label && crumb.textContent !== label) crumb.textContent = label;
+        }
+        new MutationObserver(syncCrumb).observe(nav, { subtree: true, attributes: true, attributeFilter: ['class'] });
+        syncCrumb();
+
+        // Theme gallery (✨ button): its first open after a page load stalled 0.2-0.6s while the
+        // browser built the panel for the first time. Warm it once, invisibly, while the page is idle.
+        window.addEventListener('load', function () {
+            var warm = function () {
+                var ov = document.getElementById('theme-selector-overlay');
+                if (!ov || typeof openThemeSelector !== 'function' || ov.classList.contains('active')) return;
+                ov.style.setProperty('opacity', '0', 'important');
+                ov.style.setProperty('pointer-events', 'none', 'important');
+                openThemeSelector();
+                requestAnimationFrame(function () { requestAnimationFrame(function () { requestAnimationFrame(function () {
+                    closeThemeSelector();
+                    ov.style.removeProperty('opacity');
+                    ov.style.removeProperty('pointer-events');
+                }); }); });
+            };
+            if (window.requestIdleCallback) requestIdleCallback(warm, { timeout: 2500 });
+            else setTimeout(warm, 1500);
+        });
+
+        // Stay on the same tab after a refresh: remember the active tab and reopen it on load.
+        // Armature RND / Fan Assemble are hidden, so those fall back to Generator.
+        var TAB_KEY = 'mep_sfg_active_tab';
+        var restoring = true;
+        new MutationObserver(function () {
+            var active = nav.querySelector('.tab-btn.active');
+            if (active && !restoring) { try { localStorage.setItem(TAB_KEY, active.id); } catch (e) {} }
+        }).observe(nav, { subtree: true, attributes: true, attributeFilter: ['class'] });
+        window.addEventListener('load', function () {
+            var saved = null;
+            try { saved = localStorage.getItem(TAB_KEY); } catch (e) {}
+            if (saved === 'tab-rnd' || saved === 'tab-fan') saved = 'tab-generator';
+            var active = nav.querySelector('.tab-btn.active');
+            var target = document.getElementById(saved || '') ||
+                ((active && (active.id === 'tab-rnd' || active.id === 'tab-fan')) ? document.getElementById('tab-generator') : null);
+            // Let the app finish its own first render before switching
+            setTimeout(function () {
+                if (target && target !== nav.querySelector('.tab-btn.active')) target.click();
+                restoring = false;
+                // The app's own boot animation can park the slider on Generator afterwards; snap it back
+                [300, 900, 1600].forEach(function (ms) {
+                    setTimeout(function () { nav.dispatchEvent(new Event('scroll')); }, ms);
+                });
+            }, 50);
+        });
+
+        // Keep content clear of the header and re-sync the glass slider when the header reflows
+        function syncHeight() {
+            document.documentElement.style.setProperty('--erp-topbar-h', Math.ceil(bar.getBoundingClientRect().height) + 'px');
+        }
+        if (window.ResizeObserver) {
+            new ResizeObserver(function () {
+                syncHeight();
+                nav.dispatchEvent(new Event('scroll'));
+            }).observe(bar);
+        }
+        syncHeight();
+    })();
+    </script>
 
     <!-- Theme and Global Controls (Available on all pages) -->
     <div class="controls-panel left-panel no-print" id="theme-controls">
@@ -237,8 +375,8 @@
 
                     <!-- TARGET (password-protected edit) -->
                     <div class="ctrl-item" style="--i:2">
-                        <div onclick="promptTargetPassword()" style="background:rgba(15,23,42,0.45);padding:8px 6px 7px;border-radius:14px;border:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;align-items:center;justify-content:center;width:52px;box-sizing:border-box;cursor:pointer;" title="Click to edit target (password required)">
-                            <span style="font-size:6.5px;font-weight:900;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent-theme);margin-bottom:3px;font-family:'Plus Jakarta Sans',sans-serif;">TARGET</span>
+                        <div onclick="promptTargetPassword()" class="target-tile-premium" style="padding:8px 6px 7px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;width:52px;box-sizing:border-box;cursor:pointer;" title="Click to edit target (password required)">
+                            <span style="font-size:6.5px;font-weight:900;letter-spacing:0.14em;text-transform:uppercase;color:#fde68a;margin-bottom:3px;font-family:'Plus Jakarta Sans',sans-serif;">TARGET</span>
                             <span id="day-target-display" style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:900;color:white;letter-spacing:-0.02em;line-height:1;">1600</span>
                             <input type="hidden" id="day-target-input" value="1600">
                         </div>
@@ -1193,6 +1331,36 @@
                 }
             } catch (err) {
                 console.warn('Color sanitisation skipped:', err);
+            }
+        }
+
+        // Second, rule-independent pass over the captured subtree. When the page is opened
+        // straight from disk (file://) Chrome blocks cssRules access, so the stylesheet walk
+        // above patches nothing and html2canvas died on "unsupported color function color".
+        // Here every element of the clone (including html2canvas's own ::before/::after
+        // stand-in nodes) gets any remaining color()/color-mix() value inlined as rgb().
+        function sanitizeCaptureSubtree(root) {
+            if (!root) return;
+            try {
+                const view = root.ownerDocument.defaultView;
+                const nodes = [root, ...root.querySelectorAll('*')];
+                for (const el of nodes) {
+                    if (!el.style) continue;
+                    const cs = view.getComputedStyle(el);
+                    for (let i = 0; i < cs.length; i++) {
+                        const prop = cs[i];
+                        if (prop.startsWith('--')) continue;
+                        const v = cs.getPropertyValue(prop);
+                        if (v && _hasUnsupported(v)) {
+                            const fixed = sanitizeCssValue(v);
+                            if (fixed !== v) {
+                                try { el.style.setProperty(prop, fixed, 'important'); } catch (e) {}
+                            }
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn('Capture colour pass skipped:', err);
             }
         }
 
@@ -2716,7 +2884,23 @@
                 }
                 stabilizeDateCardsAndBars(clonedSheet);
                 sanitizeClonedDocColors(clonedDoc);
+                sanitizeCaptureSubtree(clonedSheet);
             };
+
+            // JPEG has no alpha: with backgroundColor:null every semi-transparent surface of the
+            // sheet was flattened onto black, so the exported/pasted image came out grey and dim.
+            // Capture onto a solid light paper colour (the theme background when it is light).
+            const paperColor = (() => {
+                const probe = document.createElement('div');
+                probe.style.cssText = 'position:absolute;visibility:hidden;background:var(--bg-retro, #ffffff)';
+                document.body.appendChild(probe);
+                const rgb = getComputedStyle(probe).backgroundColor;
+                probe.remove();
+                const m = rgb.match(/\d+(\.\d+)?/g);
+                if (!m || m.length < 3 || (m[3] !== undefined && Number(m[3]) < 1)) return '#ffffff';
+                const [r, g, b] = m.map(Number);
+                return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 > 0.85 ? `rgb(${r}, ${g}, ${b})` : '#ffffff';
+            })();
 
             try {
                 const canvasImg = await capture(sheet, {
@@ -2724,7 +2908,7 @@
                     // while using ~75% less canvas memory and time than 4x.
                     scale: 2,
                     useCORS: true,
-                    backgroundColor: null,
+                    backgroundColor: paperColor,
                     logging: false,
                     allowTaint: true,
                     removeContainer: true,
@@ -3543,13 +3727,10 @@ if (shouldRandomizeTheme() && !Number.isInteger(window.__bootThemeIndex)) {
 
 <!-- ============ PWA & NOTIFICATION ENGINE ============ -->
 <script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('PWA Ready'))
-                .catch(err => console.error('PWA SW Failed', err));
-        });
-    }
+    // Service worker intentionally NOT registered inside the ERP.
+    // A PWA cache on the ERP origin used to keep serving stale module shells
+    // (and the ledger itself) after updates, so sw.js is only kept in the
+    // folder for the standalone/GitHub-Pages build.
 
     function initNotificationEngine() {
         if (!('Notification' in window)) return;

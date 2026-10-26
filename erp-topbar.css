@@ -1,0 +1,298 @@
+/* ==========================================================================
+   ERP top bar for the SFG ledger: the same header layout as the other modules
+   (breadcrumb capsule, Select Module, live clock, actions, user, sign-out)
+   painted with this module's own palette tokens, so it follows every random
+   theme the ledger rolls. The existing #tab-nav, #tab-slider and
+   #performance-toggle live inside it unchanged; only their positioning moves.
+   ========================================================================== */
+
+:root { --erp-topbar-h: 72px; }
+
+.erp-topbar {
+  position: fixed;
+  top: 10px;
+  left: 14px;
+  right: 14px;
+  z-index: 500;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 8px 10px;
+  border-radius: 20px;
+  background: var(--theme-surface-strong);
+  border: 1px solid var(--theme-border);
+  box-shadow:
+    0 10px 30px var(--theme-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10);
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  color: var(--theme-ink);
+}
+
+.erp-topbar svg { width: 15px; height: 15px; flex: none; }
+
+.erp-topbar__left,
+.erp-topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.erp-topbar__left { order: 1; }
+.erp-topbar__right { order: 3; margin-left: auto; }
+
+/* Breadcrumb capsule: Modules › Operations › <current tab> */
+.erp-crumbs {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 13px;
+  border-radius: 999px;
+  background: var(--theme-surface-soft);
+  border: 1px solid var(--theme-border);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--theme-ink-muted);
+}
+.erp-crumbs a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: inherit;
+  text-decoration: none;
+}
+.erp-crumbs a svg { color: var(--accent-theme); }
+.erp-crumbs a:hover { color: var(--theme-ink); }
+.erp-crumbs .erp-crumb-sep { width: 10px; height: 10px; opacity: 0.6; }
+.erp-crumbs .erp-crumb-current { color: var(--theme-ink); font-weight: 800; }
+
+/* Capsule buttons (Select Module, FAST) */
+.erp-capsule {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(var(--accent-theme-rgb), 0.45);
+  background: linear-gradient(135deg, var(--primary-theme), color-mix(in srgb, var(--primary-theme) 70%, var(--accent-theme) 30%));
+  color: var(--on-primary-color);
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(var(--primary-theme-rgb), 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.erp-capsule:hover { transform: translateY(-1px); box-shadow: 0 9px 20px rgba(var(--primary-theme-rgb), 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.26); }
+.erp-capsule:hover svg { transform: translateX(-2px); }
+.erp-capsule svg { transition: transform 0.15s ease; }
+
+/* Round icon buttons (sign-out) */
+.erp-orb {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid var(--theme-border);
+  background: var(--theme-surface-soft);
+  color: var(--theme-ink);
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.erp-orb:hover { transform: translateY(-1px); }
+.erp-orb--rose { color: #e11d48; border-color: rgba(225, 29, 72, 0.35); background: rgba(225, 29, 72, 0.08); }
+.erp-orb--rose:hover { background: rgba(225, 29, 72, 0.16); }
+.erp-orb svg { width: 17px; height: 17px; }
+
+/* User badge */
+.erp-user {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 40px;
+  padding: 0 12px 0 4px;
+  border-radius: 14px;
+  background: var(--theme-surface-soft);
+  border: 1px solid var(--theme-border);
+  min-width: 0;
+}
+.erp-user img {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid rgba(var(--accent-theme-rgb), 0.4);
+  flex: none;
+}
+.erp-user__text { display: flex; flex-direction: column; min-width: 0; line-height: 1.15; }
+.erp-user__name { font-size: 12px; font-weight: 800; color: var(--theme-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+.erp-user__role { font-size: 10px; font-weight: 600; color: var(--theme-ink-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+
+/* The clock ticks every second. Without its own layer each tick repainted a large
+   area of the page together with the blurred background behind the header. */
+.erp-topbar { transform: translateZ(0); }
+.erp-topbar .mep-glass-clock-capsule {
+  will-change: transform;
+  contain: layout paint;
+  isolation: isolate;
+  /* premium_clock.css adds a 20px backdrop blur; on the solid header it is invisible
+     but was recomputed on every tick */
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.erp-topbar .mep-glass-clock-capsule * { animation: none !important; }
+
+/* Live clock (js/premium_clock.js) recoloured with the ledger palette */
+.erp-topbar .mep-glass-clock-capsule {
+  background: var(--theme-surface-soft) !important;
+  border: 1px solid var(--theme-border) !important;
+  color: var(--theme-ink) !important;
+  box-shadow: none !important;
+  height: 36px;
+}
+.erp-topbar .mep-glass-clock-capsule * { color: inherit; }
+.erp-topbar .mep-clock-digits { color: var(--theme-ink) !important; }
+.erp-topbar .mep-clock-day-date,
+.erp-topbar .mep-clock-seconds,
+.erp-topbar .mep-clock-ampm { color: var(--theme-ink-muted) !important; }
+.erp-topbar .mep-clock-divider { background: var(--theme-border) !important; }
+
+/* Existing tab bar, now a static row inside the header */
+.erp-topbar .tab-navigation {
+  order: 2;
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  transform: none !important;
+  animation: none !important;
+  margin: 0 auto;
+  z-index: 1;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.erp-topbar .tab-navigation::-webkit-scrollbar { display: none; }
+
+/* Existing FAST toggle: no longer a hidden top-right hotspot, always a visible capsule */
+.erp-topbar .performance-corner-hotspot {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  z-index: auto !important;
+}
+.erp-topbar .performance-toggle {
+  opacity: 1 !important;
+  transform: none !important;
+  width: auto !important;
+  height: 36px !important;
+  flex-direction: row !important;
+  gap: 6px;
+  padding: 0 13px;
+  border-radius: 999px !important;
+}
+.erp-topbar .performance-toggle svg { width: 16px; height: 16px; margin: 0; }
+.erp-topbar .performance-toggle span { font-size: 11px !important; letter-spacing: 0.08em; }
+
+/* Armature RND and Fan Assemble tabs removed from the bar (pages/JS kept intact) */
+#tab-rnd, #tab-fan { display: none !important; }
+
+/* Archive "Select History" dropdown removed (dates are picked from the calendar) */
+.archive-meta-item:has(.archive-date-selector) { display: none !important; }
+
+/* Generator tools: SAVE, RND and ALERT buttons removed (functions kept intact) */
+.fab-action-save, .fab-action-rnd, .fab-action-alert { display: none !important; }
+
+/* TARGET tile: premium violet-magenta jewel with gold label */
+.target-tile-premium {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, #7c3aed 0%, #a21caf 55%, #db2777 100%);
+  border: 1px solid rgba(253, 230, 138, 0.55);
+  box-shadow:
+    0 8px 20px -6px rgba(162, 28, 175, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.18);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.target-tile-premium::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 6%; right: 6%; height: 45%;
+  border-radius: 12px 12px 50% 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+.target-tile-premium:hover { transform: translateY(-2px); box-shadow: 0 12px 24px -6px rgba(162, 28, 175, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.5); }
+.target-tile-premium #day-target-display { color: #ffffff !important; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25); position: relative; }
+
+/* Theme gallery (✨) lag: app.css gives every element a 0.12s `transition` (all props), and
+   everything inside the overlay inherits `visibility` from it. Opening the gallery therefore
+   started one visibility transition per descendant and re-rasterised the 1120x860 panel for
+   every frame of them. Open/close instantly with no transitions inside the overlay. */
+.theme-selector-overlay,
+.theme-selector-overlay *,
+.theme-selector-overlay *::before,
+.theme-selector-overlay *::after {
+  transition: none !important;
+}
+.theme-selector-overlay,
+.theme-selector-overlay .theme-selector-panel { will-change: auto !important; }
+.theme-selector-overlay .theme-selector-panel { transform: none !important; }
+
+/* Content clears the header (height measured by the inline script) */
+.page-content { padding-top: calc(var(--erp-topbar-h) + 24px) !important; }
+
+/* One row needs ~1960px (controls + five tabs + user). Below that the tabs get their
+   own centred row under the header controls instead of the user badge wrapping alone. */
+@media (max-width: 2047px) {
+  .erp-topbar .tab-navigation { order: 4; flex-basis: auto; }
+  .erp-topbar::after { content: ''; order: 3; flex-basis: 100%; height: 0; }
+  .erp-topbar__right { order: 2; }
+}
+
+@media (max-width: 1100px) {
+  .erp-topbar .erp-crumb-mid,
+  .erp-topbar .erp-crumb-sep--mid { display: none; }
+  .erp-user__text { display: none; }
+  .erp-user { padding: 0 4px; }
+}
+
+@media (max-width: 768px) {
+  .erp-topbar { top: 6px; left: 8px; right: 8px; padding: 6px; border-radius: 16px; }
+  .erp-topbar .mep-glass-clock-capsule,
+  .erp-crumbs { display: none !important; }
+  .erp-capsule__label { display: none; }
+  .erp-capsule { padding: 0 11px; }
+  .erp-topbar .tab-navigation {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 4px !important;
+    justify-content: flex-start;
+  }
+  .erp-topbar .performance-toggle span { display: none; }
+  .erp-topbar .performance-toggle { padding: 0 11px; }
+}
+
+@media print {
+  .erp-topbar { display: none !important; }
+  .page-content { padding-top: 0 !important; }
+}
+
+/* ===== Standalone build (GitHub Pages) =====
+   No ERP portal, login or user profile here: hide the controls that only make
+   sense inside the ERP (portal links, Select Module, user badge, Sign Out). */
+.sfg-standalone .erp-crumbs a,
+.sfg-standalone .erp-crumbs .erp-crumb-sep--mid,
+.sfg-standalone #erp-portal-return,
+.sfg-standalone .erp-user,
+.sfg-standalone #erp-logout { display: none !important; }
+.sfg-standalone .erp-crumbs .erp-crumb-mid { display: inline !important; color: var(--theme-ink); font-weight: 800; }

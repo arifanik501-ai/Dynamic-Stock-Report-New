@@ -1,0 +1,256 @@
+/* ==========================================================================
+   MEP ENTERPRISE • HIGH-QUALITY PREMIUM GLASS UI DIGITAL CLOCK
+   Designed for Executive Dashboards & Operational Cockpits
+   ========================================================================== */
+
+.mep-glass-clock-capsule {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: var(--liquid-nav-h, 36px);
+  max-height: var(--liquid-nav-h, 36px);
+  padding: 0.2rem 0.75rem;
+  border-radius: 9999px;
+  user-select: none;
+  cursor: pointer;
+  z-index: 30;
+  box-sizing: border-box;
+  
+  /* High-Class Frosted Glass (Light Mode Default) */
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 8px 24px -4px rgba(15, 23, 42, 0.07),
+    0 2px 6px -1px rgba(15, 23, 42, 0.04),
+    inset 0 1px 0 #ffffff;
+  
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Dark Mode Frosted Luxury Surface */
+.dark .mep-glass-clock-capsule {
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(22px) saturate(190%);
+  -webkit-backdrop-filter: blur(22px) saturate(190%);
+  border: 1.5px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 
+    0 10px 30px -5px rgba(0, 0, 0, 0.55),
+    0 2px 8px -2px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+/* Hover Subtle Ambient Holographic Lift & Glow */
+.mep-glass-clock-capsule:hover {
+  transform: translateY(-1.5px) scale(1.015);
+  border-color: rgba(16, 185, 129, 0.45);
+  box-shadow: 
+    0 14px 34px -6px rgba(16, 185, 129, 0.16),
+    0 0 20px -2px rgba(56, 189, 248, 0.15),
+    inset 0 1px 0 #ffffff;
+}
+
+.dark .mep-glass-clock-capsule:hover {
+  border-color: rgba(52, 211, 153, 0.45);
+  box-shadow: 
+    0 16px 38px -6px rgba(0, 0, 0, 0.65),
+    0 0 24px -2px rgba(16, 185, 129, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+/* Active Click Spring Haptic */
+.mep-glass-clock-capsule:active {
+  transform: translateY(1px) scale(0.97) !important;
+  transition-duration: 0.08s;
+}
+
+/* Left Date Section */
+.mep-clock-date-sec {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+/* Live Synchronized Beacon */
+.mep-clock-beacon {
+  position: relative;
+  display: flex;
+  height: 0.5rem;
+  width: 0.5rem;
+  flex-shrink: 0;
+}
+
+.mep-clock-beacon-ping {
+  position: absolute;
+  display: inline-flex;
+  height: 100%;
+  width: 100%;
+  border-radius: 9999px;
+  background-color: #34d399;
+  opacity: 0.75;
+  animation: mepPing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.mep-clock-beacon-dot {
+  position: relative;
+  display: inline-flex;
+  border-radius: 9999px;
+  height: 0.5rem;
+  width: 0.5rem;
+  background-color: #10b981;
+  box-shadow: 0 0 6px #10b981;
+}
+
+@keyframes mepPing {
+  75%, 100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+/* Day and Date Typography */
+.mep-clock-day-date {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #475569;
+  white-space: nowrap;
+}
+
+.dark .mep-clock-day-date {
+  color: #94a3b8;
+}
+
+/* Frosted Elegant Divider */
+.mep-clock-divider {
+  width: 1px;
+  height: 1.1rem;
+  background: linear-gradient(180deg, transparent 0%, rgba(148, 163, 184, 0.5) 50%, transparent 100%);
+}
+
+.dark .mep-clock-divider {
+  background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.18) 50%, transparent 100%);
+}
+
+/* Right Chronometer Time Section */
+.mep-clock-time-sec {
+  display: flex;
+  align-items: baseline;
+  gap: 0.2rem;
+}
+
+/* Main Digits (Hours & Minutes) */
+.mep-clock-digits {
+  font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  font-size: 0.9375rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: #0f172a;
+  line-height: 1;
+}
+
+.dark .mep-clock-digits {
+  color: #f8fafc;
+}
+
+/* Smooth Breathing Separator Colon */
+.mep-clock-colon {
+  display: inline-block;
+  color: #10b981;
+  margin: 0 0.05rem;
+  animation: mepColonPulse 1s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.dark .mep-clock-colon {
+  color: #34d399;
+}
+
+@keyframes mepColonPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.25;
+    transform: scale(0.92);
+  }
+}
+
+/* Precision Seconds Counter */
+.mep-clock-seconds {
+  font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: -0.02em;
+  min-width: 1.35rem;
+  display: inline-block;
+  line-height: 1;
+}
+
+.dark .mep-clock-seconds {
+  color: #64748b;
+}
+
+/* Period AM / PM Micro-Pill */
+.mep-clock-ampm {
+  font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.12rem 0.32rem;
+  border-radius: 0.375rem;
+  line-height: 1;
+  margin-left: 0.2rem;
+  align-self: center;
+  
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  box-shadow: 0 1px 2px rgba(16, 185, 129, 0.06);
+}
+
+.dark .mep-clock-ampm {
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+/* 24-Hour Military Mode Badge Style */
+.mep-clock-ampm.mep-clock-24h {
+  background: rgba(99, 102, 241, 0.12);
+  color: #4f46e5;
+  border-color: rgba(99, 102, 241, 0.25);
+}
+
+.dark .mep-clock-ampm.mep-clock-24h {
+  background: rgba(99, 102, 241, 0.2);
+  color: #818cf8;
+  border-color: rgba(129, 140, 248, 0.35);
+}
+
+/* Responsive Scaling & Media Query Adaptations */
+@media (max-width: 768px) {
+  .mep-clock-day-date {
+    display: none;
+  }
+  .mep-clock-divider {
+    display: none;
+  }
+  .mep-glass-clock-capsule {
+    padding: 0.3rem 0.65rem;
+    gap: 0.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .mep-clock-seconds {
+    display: none;
+  }
+}

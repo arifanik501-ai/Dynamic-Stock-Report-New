@@ -1,15 +1,17 @@
-const CACHE_NAME = 'mep-ledger-v17';
-// Optimization: only real, referenced files are precached.
-// A single 404 used to make cache.addAll() reject and break the install step.
-// `app.css` is the extracted stylesheet — without it the page renders unstyled
-// while offline, so it must be precached together with the HTML.
+const CACHE_NAME = 'mep-ledger-standalone-v1';
+// Only real, referenced files are precached: a single 404 makes cache.addAll()
+// reject and breaks the install step.
 const urlsToCache = [
   './index.html',
   './app.css',
+  './erp-topbar.css',
+  './premium_clock.css',
+  './premium_clock.js',
   './themes.js',
   './manifest.json',
   './icon-192x192.png',
-  './icon-512x512.png'
+  './icon-512x512.png',
+  './assets/avatar-male.svg'
 ];
 
 self.addEventListener('install', event => {
@@ -37,10 +39,8 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Network-first strategy with a filtered cache.
-// Optimization: cross-origin API traffic (Firebase/Google/Fonts) is never
-// written to the cache — that used to grow IndexedDB on every request and
-// slow down every subsequent fetch.
+// Network-first strategy with a filtered cache. Cross-origin traffic
+// (Firebase/Google/Fonts) is never written to the cache.
 self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET') return;
@@ -63,4 +63,3 @@ self.addEventListener('fetch', event => {
       .catch(() => caches.match(request))
   );
 });
-
