@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MEP FAN LTD | Rejection Module</title>
+<title>MEP FAN LTD | Defect Module</title>
 <meta name="theme-color" content="#e11d48">
 <link rel="icon" href="icon-192x192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -94,6 +94,12 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .c-slate { background: rgba(100,116,139,.12); color: #475569; } .c-solid { background: linear-gradient(135deg, #f43f5e, #be123c); color: #fff; box-shadow: 0 6px 14px -6px rgba(225,29,72,.7); }
 .sb-item.sb-entry { color: #9f1239; background: linear-gradient(135deg, rgba(244,63,94,.16), rgba(251,113,133,.10)); border-color: rgba(225,29,72,.42); }
 .sb-item.sb-entry .sb-label { font-weight: 900; letter-spacing: .02em; }
+/* one-line nav items: label never wraps, pill stays a compact single-line chip */
+.sb-item .sb-left { flex: 1; min-width: 0; }
+.sb-item .sb-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.sb-item .sb-pill { flex: none; white-space: nowrap; line-height: 1.5; padding: 2px 7px; font-size: 9.5px; letter-spacing: 0; }
+.sb-item:has(.sb-pill) { gap: 6px; }
+.sb-item:has(.sb-pill) .sb-left { gap: 8px; }
 /* Yellow SFG Stock link */
 .sb-item.sb-sfg { text-decoration: none; color: #92400e; background: linear-gradient(135deg, rgba(254,243,199,.95), rgba(253,230,138,.55)); border-color: rgba(245,158,11,.5);
     box-shadow: inset 0 1px 1px #fff, 0 8px 20px -14px rgba(217,119,6,.7); }
@@ -410,6 +416,88 @@ select.rj-native { position: absolute !important; opacity: 0 !important; pointer
 .ctl:not(:has(>.dd:only-child)) .dd-btn:hover { transform: none; background: rgba(225,29,72,.07); }
 .ctl:not(:has(>.dd:only-child)) .dd.open .dd-btn { box-shadow: none; background: rgba(225,29,72,.10); }
 
+/* ---- Paste from Excel ---- */
+.form-act { align-items: center; }
+.paste-btn { color: #047857; background: linear-gradient(135deg, #ecfdf5, rgba(209,250,229,.8)); border-color: rgba(16,185,129,.45); }
+.paste-btn:hover { border-color: rgba(5,150,105,.7); }
+.px-ov { position: fixed; inset: 0; z-index: 120; display: none; align-items: center; justify-content: center; padding: 18px;
+    background: radial-gradient(900px 500px at 30% 10%, rgba(244,63,94,.16), transparent 60%), rgba(15,23,42,.34); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.px-ov.open { display: flex; }
+.px-panel { width: min(1180px, 100%); max-height: calc(100vh - 36px); display: flex; flex-direction: column; overflow: hidden; border-radius: 22px;
+    background: linear-gradient(160deg, rgba(255,255,255,.98), rgba(255,247,248,.95)); border: 1px solid rgba(255,255,255,.9);
+    box-shadow: 0 40px 90px -30px rgba(136,19,55,.55); animation: pgIn .25s cubic-bezier(.16,1,.3,1); }
+.px-head { display: flex; align-items: center; gap: 14px; padding: 16px 20px; color: #fff; background: linear-gradient(120deg, #9f1239, #e11d48 55%, #fb7185); }
+.px-head b { display: block; font-size: 17px; font-weight: 800; }
+.px-head span { font-size: 11.5px; font-weight: 600; opacity: .88; }
+.px-hico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; flex: none; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.35); }
+.px-hico svg { width: 20px; height: 20px; }
+.px-x { margin-left: auto; width: 34px; height: 34px; border-radius: 10px; border: 1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.18); color: #fff; font-size: 22px; line-height: 1; cursor: pointer; flex: none; }
+.px-x:hover { background: rgba(255,255,255,.3); }
+.px-body { padding: 16px 20px; overflow: auto; flex: 1; }
+.px-drop { border-radius: 16px; border: 2px dashed rgba(244,63,94,.4); background: rgba(255,241,243,.5); transition: border-color .15s, background .15s; }
+.px-drop:focus-within { border-color: #e11d48; background: #fff; }
+.px-drop.has { border-style: solid; border-color: rgba(16,185,129,.45); background: #fff; }
+.px-drop textarea { width: 100%; min-height: 108px; max-height: 190px; resize: vertical; border: 0; outline: 0; background: transparent; padding: 14px 16px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11.5px; line-height: 1.6; color: var(--ink-2); white-space: pre; }
+.px-bar { display: flex; align-items: center; gap: 10px; margin: 12px 0; flex-wrap: wrap; }
+.px-stat { font-size: 12px; font-weight: 800; color: var(--mute); }
+.px-stat.ok { color: #047857; } .px-stat.err { color: #be123c; }
+.px-lbl { font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--mute); }
+.px-prev:empty { display: none; }
+.px-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; }
+.pxc { border-radius: 18px; padding: 14px; background: #fff; border: 1px solid rgba(254,205,211,.9); box-shadow: 0 14px 30px -24px rgba(136,19,55,.6); }
+.pxc.warn { border-color: rgba(245,158,11,.55); }
+.pxc.bad { border-color: rgba(225,29,72,.6); background: #fff7f8; }
+.pxc-h { display: flex; align-items: center; gap: 10px; }
+.pxc-model { font-family: var(--num); font-size: 20px; font-weight: 800; padding: 4px 12px; border-radius: 12px; color: #fff; background: linear-gradient(135deg, #f43f5e, #be123c); }
+.pxc-date b { display: block; font-size: 13px; font-weight: 800; }
+.pxc-date span { font-size: 11px; font-weight: 600; color: var(--mute); }
+.pxc-tag { margin-left: auto; font-size: 9.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; }
+.pxc-tag.new { color: #047857; background: #d1fae5; } .pxc-tag.rep { color: #92400e; background: #fef3c7; } .pxc-tag.err { color: #be123c; background: #ffe4e6; }
+.pxc-kpi { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 12px 0 10px; }
+.pxc-kpi div { border-radius: 11px; padding: 8px 10px; background: #fff7f8; border: 1px solid rgba(254,205,211,.7); }
+.pxc-kpi small { display: block; font-size: 8.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--mute); }
+.pxc-kpi b { display: block; margin-top: 2px; font-family: var(--num); font-size: 16px; font-weight: 800; }
+.pxc-def { display: flex; flex-wrap: wrap; gap: 6px; }
+.pxc-def span { font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 999px; color: #9f1239; background: rgba(255,228,230,.8); border: 1px solid rgba(244,63,94,.25); }
+.pxc-def span b { font-family: var(--num); margin-left: 4px; }
+.pxc-def .none { color: var(--mute); background: #f1f5f9; border-color: #e2e8f0; }
+.pxc-msg { margin-top: 10px; font-size: 11.5px; font-weight: 700; padding: 7px 10px; border-radius: 10px; }
+.pxc-msg.warn { color: #92400e; background: #fef3c7; } .pxc-msg.bad { color: #be123c; background: #ffe4e6; } .pxc-msg.ok { color: #047857; background: #ecfdf5; }
+.px-foot { display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-top: 1px solid rgba(254,205,211,.8); background: rgba(255,247,248,.9); }
+
+/* ---- Title tags: which metric a card shows ---- */
+.ttl { display: inline-flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+/* .card-h span (grey 10.5px) also matched these tags and greyed the text — beat it */
+.card-h .ttl .ttag { color: #fff; font-size: 9.5px; line-height: 1.2; text-shadow: 0 1px 0 rgba(0,0,0,.18); }
+.ttag { font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; color: #fff; }
+.ttag.def { background: linear-gradient(135deg, #f43f5e, #be123c); box-shadow: 0 4px 10px -5px rgba(225,29,72,.7); }
+.ttag.dis { background: linear-gradient(135deg, #fbbf24, #d97706); box-shadow: 0 4px 10px -5px rgba(217,119,6,.7); }
+.tb tfoot tr.ft-def td { color: #9f1239; }
+.tb tfoot tr.ft-dis td { background: #fffbeb; color: #92400e; border-top: 1px solid rgba(245,158,11,.4); }
+
+/* ---- 3D donut (Highcharts 3D, lazy) ---- */
+.d3-wrap { position: relative; }
+.d3-host { position: absolute; inset: 0; display: none; }
+.d3-wrap.is3d .d3-host { display: block; }
+.d3-wrap.is3d #c-y-donut { display: none !important; }
+.donut3d-card { background: radial-gradient(120% 90% at 30% 0%, rgba(255,255,255,.98), rgba(255,241,243,.85) 60%, rgba(254,226,231,.75)); }
+.d3-center { position: absolute; left: 0; top: 0; pointer-events: none; display: none; text-align: center; transform: translate(-50%, -50%); }
+.d3-wrap.is3d .d3-center { display: block; }
+.d3-center b { display: block; font-family: var(--num); font-size: 26px; font-weight: 800; color: #881337; letter-spacing: -.02em; line-height: 1; text-shadow: 0 2px 0 #fff; }
+.d3-center span { display: block; margin-top: 3px; font-size: 9px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #9f1239; opacity: .75; }
+.highcharts-tooltip-container { z-index: 60 !important; }
+
+/* ---- Green Recovery card ---- */
+.kpi.kpi-green { background: linear-gradient(160deg, #ffffff 0%, #ecfdf5 45%, #d1fae5 100%); border-color: rgba(16,185,129,.42); box-shadow: inset 0 1px 0 #fff, 0 18px 40px -28px rgba(5,150,105,.55); }
+.kpi.kpi-green .kpi-lbl { color: #047857; }
+.kpi.kpi-green .kpi-v { color: #047857; }
+.kpi.kpi-green .kpi-s { color: #065f46; }
+.kpi.kpi-green .ring::before { background: #ecfdf5; }
+.g-kpi.six { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+@media (max-width: 1500px) { .g-kpi.six { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 860px) { .g-kpi.six { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
 /* ---- Report download buttons ---- */
 .rep-btn { width: 100%; display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 18px; cursor: pointer; font: inherit; text-align: left; color: #fff; margin-top: 10px; position: relative; overflow: hidden;
     background: linear-gradient(130deg, #f43f5e 0%, #e11d48 45%, #9f1239 100%); border: 1px solid rgba(255,255,255,.35);
@@ -465,7 +553,7 @@ select.rj-native { position: absolute !important; opacity: 0 !important; pointer
     <div class="sb-top">
         <div class="sb-brand">
             <div class="sb-logo"><img src="/assets/logo-128.png" alt="MEP" onerror="this.onerror=null;this.src='icon-192x192.png'"></div>
-            <div><h1>MEP FAN LTD</h1><p>Rejection Control</p></div>
+            <div><h1>MEP FAN LTD</h1><p>Defect Module</p></div>
         </div>
         <nav class="sb-nav">
             <button type="button" class="sb-item sb-entry" data-page="entry">
@@ -496,7 +584,7 @@ select.rj-native { position: absolute !important; opacity: 0 !important; pointer
     </div>
     <div class="sb-foot">
         <div class="sb-card">
-            <b>Assembly Rejection</b>
+            <b>Defect Module</b>
             <span>16 defect categories • per model</span>
             <div class="sb-sync off" id="sb-sync"><i></i><span>Connecting…</span></div>
         </div>
@@ -506,7 +594,7 @@ select.rj-native { position: absolute !important; opacity: 0 !important; pointer
 <!-- ================= TOP BAR ================= -->
 <header class="rj-top">
     <a class="btn-portal" href="../portal.html" onclick="return goPortal(event)"><span class="ar"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 18l-6-6 6-6"/></svg></span>PORTAL</a>
-    <div class="rj-title"><b id="page-title">Daily Dashboard</b><span>Assembly Rejection Module</span></div>
+    <div class="rj-title"><b id="page-title">Daily Dashboard</b><span>Defect Module</span></div>
     <div class="rj-top-right">
         <span class="chip off" id="cloud-chip"><span class="dot"></span><span>Connecting…</span></span>
         <span class="chip"><span class="clock" id="clock">--:--</span></span>
@@ -568,6 +656,11 @@ select.rj-native { position: absolute !important; opacity: 0 !important; pointer
                 <div class="fld" style="grid-column: span 2"><label>Remarks</label><input type="text" id="f-rem" placeholder="Optional note"></div>
             </div>
             <div class="form-act">
+                <button type="button" class="btn paste-btn" id="f-paste" title="Paste rows copied from the Excel entry sheet (or press Ctrl+V on this page)">
+                    <svg fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="4" rx="1.5"/><path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 13h6M9 17h4"/></svg>
+                    Paste from Excel
+                </button>
+                <span style="flex:1"></span>
                 <button type="button" class="btn ghost" id="f-reset">Reset</button>
                 <button type="button" class="btn pri" id="f-save"><svg fill="none" stroke="currentColor" stroke-width="2.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Save entry</button>
             </div>
@@ -632,8 +725,8 @@ select.rj-native { position: absolute !important; opacity: 0 !important; pointer
     </div>
     <div class="grid g-kpi" id="m-kpis"></div>
     <div class="grid g-2 mt">
-        <div class="card"><div class="card-h"><b>Pareto — defect categories</b><span id="m-pareto-sub"></span></div><div class="chart-box lg"><canvas id="c-m-pareto"></canvas></div></div>
-        <div class="card"><div class="card-h"><b>Category table</b><span id="m-tbl-sub"></span></div><div class="tbl-wrap" style="max-height:320px"><table class="tb" id="m-table"></table></div></div>
+        <div class="card"><div class="card-h"><b class="ttl"><span class="ttag def">Defect</span>Defect Pareto — by category</b><span id="m-pareto-sub"></span></div><div class="chart-box lg"><canvas id="c-m-pareto"></canvas></div></div>
+        <div class="card"><div class="card-h"><b class="ttl"><span class="ttag def">Defect</span><span class="ttag dis">Disassembled</span>Category table</b><span id="m-tbl-sub"></span></div><div class="tbl-wrap" style="max-height:320px"><table class="tb" id="m-table"></table></div></div>
     </div>
     <div class="grid g-2e mt">
         <div class="card"><div class="card-h"><b>Daily Trend</b><span class="chart-avg-badge" id="m-trend-avg">Month Avg: --%</span></div><div class="chart-box"><canvas id="c-m-daily"></canvas></div></div>
@@ -649,10 +742,11 @@ select.rj-native { position: absolute !important; opacity: 0 !important; pointer
         <div class="ctl"><select id="y-year"></select></div>
         <div class="seg" id="y-view"><button type="button" class="on" data-v="qty">Qty</button><button type="button" data-v="pct">% of prod</button></div>
     </div>
-    <div class="grid g-kpi" id="y-kpis"></div>
+    <div class="grid g-kpi six" id="y-kpis"></div>
     <div class="grid g-2 mt">
         <div class="card"><div class="card-h"><b>Monthly performance</b><span>production • defect • disassembled • rate</span></div><div class="chart-box lg"><canvas id="c-y-month"></canvas></div></div>
-        <div class="card"><div class="card-h"><b>Top defects YTD</b><span id="y-top-sub"></span></div><div class="chart-box lg"><canvas id="c-y-donut"></canvas></div></div>
+        <div class="card donut3d-card"><div class="card-h"><b class="ttl"><span class="ttag def">Defect</span>Top defects YTD</b><span id="y-top-sub"></span></div>
+            <div class="chart-box lg d3-wrap"><div id="y-donut3d" class="d3-host"></div><div class="d3-center" id="y-d3-center"></div><canvas id="c-y-donut"></canvas></div></div>
     </div>
     <div class="card mt"><div class="card-h"><b>Root-cause master matrix</b><span>heat = share of the month's defects</span></div><div class="tbl-wrap"><table class="tb" id="y-matrix"></table></div></div>
 </section>
@@ -670,6 +764,36 @@ select.rj-native { position: absolute !important; opacity: 0 !important; pointer
 </section>
 
 </main>
+
+<!-- ================= PASTE FROM EXCEL ================= -->
+<div class="px-ov" id="px-ov" aria-hidden="true">
+    <div class="px-panel" role="dialog" aria-modal="true" aria-labelledby="px-title">
+        <div class="px-head">
+            <span class="px-hico"><svg fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="4" rx="1.5"/><path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 13h6M9 17h4"/></svg></span>
+            <div><b id="px-title">Paste from Excel</b><span>Copy rows from “Rejection Entry” and paste — date, model and every defect are detected automatically</span></div>
+            <button type="button" class="px-x" id="px-close" title="Close (Esc)">&times;</button>
+        </div>
+        <div class="px-body">
+            <div class="px-drop" id="px-drop">
+                <textarea id="px-text" spellcheck="false" placeholder="Click here and press Ctrl+V&#10;&#10;Date   Model   Production Quantity   Humming Noise   …   Disassembled Fan   Remarks&#10;11/7/2026   2401   423   2   3   5 …&#10;&#10;Header row is optional • one or many models • many days at once"></textarea>
+            </div>
+            <div class="px-bar" id="px-bar">
+                <span class="px-stat" id="px-stat">Waiting for data…</span>
+                <span style="flex:1"></span>
+                <span class="px-lbl">Date order</span>
+                <div class="seg" id="px-dfmt"><button type="button" class="on" data-f="auto">Auto</button><button type="button" data-f="mdy">M/D/Y</button><button type="button" data-f="dmy">D/M/Y</button></div>
+            </div>
+            <div class="px-prev" id="px-prev"></div>
+        </div>
+        <div class="px-foot">
+            <span class="hint" id="px-hint">Existing entries for the same date + model are replaced.</span>
+            <span style="flex:1"></span>
+            <button type="button" class="btn ghost" id="px-clear">Clear</button>
+            <button type="button" class="btn pri" id="px-save" disabled><svg fill="none" stroke="currentColor" stroke-width="2.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span id="px-save-tx">Save entries</span></button>
+        </div>
+    </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -688,7 +812,7 @@ function goPortal(e) {
     return false;
 }
 </script>
-<script type="module" src="rejection.js?v=20261109a"></script>
+<script type="module" src="rejection.js?v=20261109i"></script>
 
 </body>
 </html>

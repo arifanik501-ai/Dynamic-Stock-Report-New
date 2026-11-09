@@ -423,7 +423,8 @@ function bars(a, base) {
 // DAILY DASHBOARD
 // =====================================================================
 function renderDaily() {
-    if (!S.daily.date || !S.byDate.has(S.daily.date) && S.daily.date > (S.dates[S.dates.length - 1] || '')) S.daily.date = S.dates[S.dates.length - 1] || todayKey();
+    // follow the newest entry (e.g. one that just arrived from Firebase) unless the user picked a day
+    if (!S.daily.picked || !S.daily.date || !S.byDate.has(S.daily.date) && S.daily.date > (S.dates[S.dates.length - 1] || '')) S.daily.date = S.dates[S.dates.length - 1] || todayKey();
     const k = S.daily.date;
     $('d-date').value = k;
     const a = aggDay(k);
@@ -504,6 +505,7 @@ function buildEntryForm() {
         try { await fn(); } catch (err) { console.error('Report export failed:', err); toast('Report failed — see console'); }
         finally { btn.disabled = false; }
     });
+    wirePaste();
     repRun($('rep-daily'), exportDailyReport);
     repRun($('rep-monthly'), exportMonthlyReport);
     document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's' && S.page === 'entry') { e.preventDefault(); saveEntry(); } });
@@ -665,9 +667,9 @@ function renderMonthly() {
     $('m-sub').textContent = '• ' + MONTHS[M.m] + ' ' + M.y + (M.model ? ' • model ' + M.model : '');
     $('m-kpis').innerHTML = [
         kpi({ lbl: 'Production', val: fmt(a.prod), ico: 'box', cls: 'k-blue', sub: `${a.days.size} working day${a.days.size === 1 ? '' : 's'} • avg <b class="num">${fmt(Math.round(a.prod / (a.days.size || 1)))}</b>/day` }),
-        kpi({ lbl: 'Total Rejection', val: fmt(a.def), ico: 'alert', sub: `Rate <b class="num">${rate.toFixed(2)}%</b> ${delta(rate, pRate)} vs ${MONTHS[pm[1]].slice(0, 3)}` }),
+        kpi({ lbl: 'Total Defect', val: fmt(a.def), ico: 'alert', sub: `Rate <b class="num">${rate.toFixed(2)}%</b> ${delta(rate, pRate)} vs ${MONTHS[pm[1]].slice(0, 3)}` }),
         kpi({ lbl: 'Disassembled', val: fmt(a.dis), ico: 'tool', cls: 'k-amber', sub: `<b class="num">${pct(a.dis, a.prod)}</b> of production` }),
-        kpi({ lbl: 'Recovery', val: a.def ? a.rec.toFixed(2) + '%' : '—', ring: a.def ? a.rec : 0, cls: 'k-green', sub: `${fmt(Math.max(0, a.def - a.dis))} fixed in line` }),
+        kpi({ lbl: 'Recovery', val: a.def ? a.rec.toFixed(2) + '%' : '—', ring: a.def ? a.rec : 0, cls: 'k-green kpi-green', sub: `${fmt(Math.max(0, a.def - a.dis))} fixed in line` }),
         kpi({ lbl: 'Top Defect', val: a.top ? esc(DLABEL[a.top[0]]) : '—', ico: 'target', cls: 'k-violet', sub: a.top ? `<b class="num">${fmt(a.top[1])}</b> • ${pct(a.top[1], a.prod)} of prod` : '—' })
     ].join('');
     const topV = $('m-kpis').querySelectorAll('.kpi-v')[4]; if (topV) { topV.style.fontSize = '19px'; topV.style.lineHeight = '1.15'; }
@@ -725,7 +727,7 @@ function renderMonthly() {
     $('m-tbl-sub').textContent = rows.length + ' active categories';
     $('m-table').innerHTML = `<thead><tr><th class="l">Defect Category</th><th>Qty</th><th>Rejection %</th><th>Share</th></tr></thead><tbody>${a.sorted.map(([k, q]) =>
         `<tr><td class="l">${DLABEL[k]}</td><td class="${q ? 'hot' : 'z'}">${fmt(q)}</td><td class="${q ? '' : 'z'}">${pct(q, a.prod)}</td><td class="${q ? '' : 'z'}">${pct(q, a.def, 1)}</td></tr>`).join('')}</tbody>
-        <tfoot><tr><td class="l">TOTAL REJECTION</td><td>${fmt(a.def)}</td><td>${pct(a.def, a.prod)}</td><td>100%</td></tr><tr><td class="l">DISASSEMBLED FAN</td><td>${fmt(a.dis)}</td><td>${pct(a.dis, a.prod)}</td><td></td></tr></tfoot>`;
+        <tfoot><tr class="ft-def"><td class="l">TOTAL DEFECT</td><td>${fmt(a.def)}</td><td>${pct(a.def, a.prod)}</td><td>100%</td></tr><tr class="ft-dis"><td class="l">DISASSEMBLED FAN</td><td>${fmt(a.dis)}</td><td>${pct(a.dis, a.prod)}</td><td>${pct(a.dis, a.def, 1)} of defect</td></tr></tfoot>`;
     // daily trend
     const pre = M.y + '-' + pad(M.m + 1);
     const days = S.dates.filter(x => x.startsWith(pre));
@@ -756,10 +758,12 @@ function renderYearly() {
     $('y-sub').textContent = '• ' + Y.y;
     $('y-kpis').innerHTML = [
         kpi({ lbl: 'Total Production (YTD)', val: fmt(ytd.prod), ico: 'box', cls: 'k-blue', sub: 'Manufactured assemblies' }),
-        kpi({ lbl: 'Total Rejections (YTD)', val: fmt(ytd.def), ico: 'alert', sub: 'Defective units identified' }),
+        kpi({ lbl: 'Total Defect (YTD)', val: fmt(ytd.def), ico: 'alert', sub: 'Defective units identified' }),
         kpi({ lbl: 'YTD Rejection Rate', val: pct(ytd.def, ytd.prod), ico: 'shield', cls: 'k-violet', sub: 'Annual quality loss rate' }),
         kpi({ lbl: 'Disassembled for Rework', val: fmt(ytd.dis), ico: 'tool', cls: 'k-amber', sub: 'Recoverable fan units' }),
-        kpi({ lbl: 'Disassembled %', val: pct(ytd.dis, ytd.prod), ring: pnum(ytd.dis, ytd.prod) * 5, cls: 'k-green', sub: '% of total production' })
+        kpi({ lbl: 'Disassembled %', val: pct(ytd.dis, ytd.prod), ring: pnum(ytd.dis, ytd.prod) * 5, cls: 'k-amber', sub: '% of total production' }),
+        // Recovery = defective fans fixed in line without disassembly
+        kpi({ lbl: 'Recovery (YTD)', val: ytd.def ? ytd.rec.toFixed(2) + '%' : '—', ring: ytd.def ? ytd.rec : 0, cls: 'k-green kpi-green', sub: `${fmt(Math.max(0, ytd.def - ytd.dis))} of ${fmt(ytd.def)} fixed in line` })
     ].join('');
     // ring shows x5 for visibility; label it with the real value
     const r = $('y-kpis').querySelector('.ring span'); if (r) r.textContent = pnum(ytd.dis, ytd.prod).toFixed(1) + '%';
@@ -780,12 +784,99 @@ function renderYearly() {
     const act = ytd.sorted.filter(x => x[1] > 0);
     const top = act.slice(0, 8), other = act.slice(8).reduce((s, x) => s + x[1], 0);
     $('y-top-sub').textContent = act.length ? 'share of ' + fmt(ytd.def) + ' rejections' : '';
+    renderYearlyMatrix(ms, ytd, Y);
+    const donutData = top.map(x => ({ name: DLABEL[x[0]], y: x[1] })).concat(other ? [{ name: 'Others', y: other }] : []);
+    donut3D(donutData, ytd.def).then(ok => { if (!ok) donutFlat(top, other, ytd); });
+}
+
+// ---------- 3D donut: local Highcharts + 3D module, loaded only when the Yearly page needs it ----------
+let _hcP = null;
+function loadHighcharts3D() {
+    if (window.Highcharts && window.Highcharts._rj3d) return Promise.resolve(window.Highcharts);
+    if (_hcP) return _hcP;
+    const add = src => new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
+    const viaLocal = () => (window.Highcharts ? Promise.resolve() : add('../js/highcharts.js')).then(() => add('../js/highcharts-3d.js'));
+    const viaCdn = () => (window.Highcharts ? Promise.resolve() : add('https://cdn.jsdelivr.net/npm/highcharts@11.4.0/highcharts.js')).then(() => add('https://cdn.jsdelivr.net/npm/highcharts@11.4.0/highcharts-3d.js'));
+    _hcP = viaLocal().catch(viaCdn).then(() => { window.Highcharts._rj3d = true; return window.Highcharts; }).catch(e => { _hcP = null; throw e; });
+    return _hcP;
+}
+// premium radial gradient per slice: light top-left → deep base colour
+function hcGrad(H, c) {
+    return { radialGradient: { cx: 0.35, cy: 0.3, r: 0.85 }, stops: [[0, H.color(c).brighten(0.28).get('rgb')], [0.7, c], [1, H.color(c).brighten(-0.22).get('rgb')]] };
+}
+let _donut3d = null;
+async function donut3D(data, total) {
+    let H;
+    try { H = await loadHighcharts3D(); } catch (e) { console.warn('3D chart unavailable, using flat donut', e); return false; }
+    const wrap = document.querySelector('.d3-wrap'), host = $('y-donut3d');
+    if (!wrap || !host) return false;
+    wrap.classList.add('is3d');
+    const colors = PALETTE.map(c => hcGrad(H, c));
+    const placeCenter = ch => {
+        // centre label follows the donut hole (3D shifts the visual centre)
+        const s = ch.series[0]; if (!s || !s.center) return;
+        const el = $('y-d3-center');
+        el.style.left = (ch.plotLeft + s.center[0]) + 'px';
+        // the tilted (alpha 55°) donut's visible hole sits a little below the geometric centre
+        el.style.top = (ch.plotTop + s.center[1] + Math.round(s.center[2] * 0.07)) + 'px';
+        el.innerHTML = `<b>${fmt(total)}</b><span>defects YTD</span>`;
+    };
+    const opts = {
+        chart: {
+            type: 'pie', backgroundColor: 'transparent', animation: { duration: 650 },
+            options3d: { enabled: true, alpha: 55, beta: 0 },
+            style: { fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" },
+            spacing: [6, 6, 6, 6],
+            events: { render() { placeCenter(this); } }
+        },
+        title: { text: null }, credits: { enabled: false }, exporting: { enabled: false },
+        colors,
+        tooltip: {
+            useHTML: true, backgroundColor: 'rgba(15,23,42,.94)', borderWidth: 0, borderRadius: 12, shadow: false, padding: 10,
+            style: { color: '#f8fafc', fontSize: '12px' },
+            pointFormatter() { return `<b style="font-size:13px">${fmt(this.y)}</b> pcs<br><span style="opacity:.75">${this.percentage.toFixed(1)}% of all defects</span>`; },
+            headerFormat: '<span style="font-weight:800">{point.key}</span><br>'
+        },
+        legend: {
+            enabled: true, layout: 'vertical', align: 'right', verticalAlign: 'middle', itemMarginBottom: 6, symbolRadius: 6,
+            itemStyle: { fontSize: '11.5px', fontWeight: '700', color: '#334155' },
+            labelFormatter() { return `${this.name} <span style="color:#94a3b8;font-weight:600">${this.percentage.toFixed(0)}%</span>`; }
+        },
+        plotOptions: {
+            pie: {
+                innerSize: '56%', depth: 48, size: '80%', center: ['44%', '50%'],
+                allowPointSelect: true, cursor: 'pointer', slicedOffset: 14, borderWidth: 1, borderColor: 'rgba(255,255,255,.65)',
+                showInLegend: true,
+                dataLabels: {
+                    enabled: true, distance: 16, connectorWidth: 1, connectorColor: '#cbd5e1', crop: false, overflow: 'allow',
+                    // small slices get no label AND no dangling connector line
+                    filter: { property: 'percentage', operator: '>=', value: 5 },
+                    formatter() { return `<span style="font-weight:800">${this.percentage.toFixed(0)}%</span>`; },
+                    style: { fontSize: '11px', color: '#475569', textOutline: '2px #ffffff' }
+                },
+                states: { hover: { brightness: 0.06, halo: { size: 0 } }, inactive: { opacity: 0.45 } }
+            }
+        },
+        series: [{ name: 'Defects', data: data.map((p, i) => i === 0 ? { ...p, sliced: true, selected: true } : p) }]
+    };
+    if (_donut3d && _donut3d.renderTo === host && document.body.contains(host)) {
+        _donut3d.series[0].setData(opts.series[0].data, false);
+        _donut3d.redraw();
+    } else {
+        if (_donut3d) { try { _donut3d.destroy(); } catch (e) {} }
+        _donut3d = H.chart(host, opts);
+    }
+    return true;
+}
+function donutFlat(top, other, ytd) {
+    const w = document.querySelector('.d3-wrap'); if (w) w.classList.remove('is3d');
     chart('c-y-donut', {
         type: 'doughnut',
         data: { labels: top.map(x => DLABEL[x[0]]).concat(other ? ['Others'] : []), datasets: [{ data: top.map(x => x[1]).concat(other ? [other] : []), backgroundColor: PALETTE, borderColor: '#fff', borderWidth: 2, hoverOffset: 8 }] },
         options: { cutout: '62%', plugins: { legend: { position: 'right' }, tooltip: { callbacks: { label: c => ` ${c.label}: ${fmt(c.raw)} (${pct(c.raw, ytd.def, 1)})` } } } }
     });
-    // matrix
+}
+function renderYearlyMatrix(ms, ytd, Y) {
     const pctView = Y.view === 'pct';
     let prevDef = null;
     const body = ms.map((a, i) => {
@@ -832,7 +923,7 @@ function exportCsv() {
     const q = v => { const s = String(v == null ? '' : v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
     const lines = [head.map(q).join(',')].concat(list.map(e => { const t = defTotal(e); return [e.date, e.model, e.prod, ...DKEYS.map(k => +e.d?.[k] || 0), t, e.prod ? (t / e.prod * 100).toFixed(2) + '%' : '0%', e.dis || 0, e.rem || ''].map(q).join(','); }));
     const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `MEP-Rejection-${$('r-month').value || 'all'}${$('r-model').value ? '-' + $('r-model').value : ''}.csv`;
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `MEP-Defect-${$('r-month').value || 'all'}${$('r-model').value ? '-' + $('r-model').value : ''}.csv`;
     document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
 }
 
@@ -903,6 +994,176 @@ async function initFirebase() {
         console.error('Firebase unavailable:', e);
         setCloud('offline');
     }
+}
+
+// =====================================================================
+// PASTE FROM EXCEL — rows copied from the "Rejection Entry" sheet
+//   Date | Model | Production Quantity | 16 defects (sheet order) | Total Rejection | Rejection % | Disassembled Fan | Remarks
+// Header row optional (columns are then matched by name, so re-ordered sheets also work).
+// =====================================================================
+const PX = { rows: [], fmt: 'auto' };
+const PX_HEAD = {
+    date: /^date$/, model: /^model/, prod: /^prod/,
+    humming: /humm/, bearing: /bearing/, taptal: /tap/, fitting: /fitting/, rotor: /rotor/, jam: /^jam/, xlcrack: /xl/,
+    wireleak: /wire/, lockwatt: /lock/, painting: /paint/, border: /border/, highwatt: /high/, shaft: /shaft/, notrunning: /not\s*run/,
+    crack: /crack\s*body|body/, conveyor: /con?m?veyor|comveyor|scratch/, total: /^total/, rate: /%|rejection\s*%/, dis: /disas/, rem: /remark/
+};
+const PX_ORDER = ['date', 'model', 'prod', ...DKEYS, 'total', 'rate', 'dis', 'rem'];
+const MON3 = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
+function pxNum(v) { if (v == null) return 0; const s = String(v).replace(/[,\s]/g, ''); if (s === '' || s === '-' || s === '–') return 0; const n = parseFloat(s); return isFinite(n) ? n : NaN; }
+// returns { key, how } — how explains the reading so ambiguous dates can be shown to the user
+function pxDate(raw, dfmt) {
+    const s = String(raw || '').trim();
+    if (!s) return null;
+    let m;
+    if ((m = s.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/))) return { key: m[1] + '-' + pad(+m[2]) + '-' + pad(+m[3]), amb: false };
+    if ((m = s.match(/^(\d{1,2})[-/ .]([A-Za-z]{3})[A-Za-z]*[-/ .,]*(\d{2,4})$/))) {
+        const mo = MON3[m[2].toLowerCase()]; if (mo == null) return null;
+        const y = +m[3] < 100 ? 2000 + +m[3] : +m[3]; return { key: y + '-' + pad(mo + 1) + '-' + pad(+m[1]), amb: false };
+    }
+    if ((m = s.match(/^([A-Za-z]{3})[A-Za-z]*[-/ .]+(\d{1,2})[,\s-]+(\d{4})$/))) {
+        const mo = MON3[m[1].toLowerCase()]; if (mo == null) return null; return { key: m[3] + '-' + pad(mo + 1) + '-' + pad(+m[2]), amb: false };
+    }
+    if ((m = s.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{2,4})$/))) {
+        let a = +m[1], b = +m[2]; const y = +m[3] < 100 ? 2000 + +m[3] : +m[3];
+        let mo, d, amb = false;
+        if (dfmt === 'mdy') { mo = a; d = b; }
+        else if (dfmt === 'dmy') { mo = b; d = a; }
+        else if (a > 12) { d = a; mo = b; } else if (b > 12) { mo = a; d = b; }
+        else { mo = a; d = b; amb = a !== b; }   // Excel (US) default: month first, as in the entry sheet
+        if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+        return { key: y + '-' + pad(mo) + '-' + pad(d), amb };
+    }
+    if (/^\d{5}(\.\d+)?$/.test(s)) {                  // Excel serial date
+        const dt = new Date(Math.round((+s - 25569) * 864e5)); return { key: dt.getUTCFullYear() + '-' + pad(dt.getUTCMonth() + 1) + '-' + pad(dt.getUTCDate()), amb: false };
+    }
+    return null;
+}
+function pxParse(text, dfmt) {
+    const lines = String(text || '').replace(/\r/g, '').split('\n').filter(l => l.replace(/\t/g, '').trim() !== '');
+    if (!lines.length) return { rows: [], note: '' };
+    const split = l => l.includes('\t') ? l.split('\t') : l.trim().split(/\s{2,}|\s*,\s*/);
+    let map = null, start = 0;
+    const first = split(lines[0]).map(c => c.trim().toLowerCase());
+    if (first.some(c => /date|model|production/.test(c))) {
+        map = {};
+        first.forEach((h, i) => {
+            for (const [k, re] of Object.entries(PX_HEAD)) {
+                if (map[k] == null && re.test(h) && !(k === 'rate' && /disas/.test(h))) { map[k] = i; break; }
+            }
+        });
+        start = 1;
+    }
+    const rows = [];
+    for (let li = start; li < lines.length; li++) {
+        const c = split(lines[li]);
+        const get = k => { const i = map ? map[k] : PX_ORDER.indexOf(k); return i == null || i < 0 ? '' : (c[i] ?? ''); };
+        const r = { line: li + 1, raw: lines[li], errs: [], warns: [] };
+        const dt = pxDate(get('date'), dfmt);
+        if (!dt) r.errs.push(`Date not recognised: “${get('date') || 'blank'}”`); else { r.date = dt.key; r.amb = dt.amb; }
+        r.model = String(get('model')).trim().replace(/\.0+$/, '');
+        if (!r.model) r.errs.push('Model is blank');
+        r.prod = pxNum(get('prod'));
+        if (!(r.prod > 0)) r.errs.push('Production quantity missing');
+        r.d = {};
+        DKEYS.forEach(k => { const v = pxNum(get(k)); if (isNaN(v)) r.errs.push(`${DLABEL[k]} is not a number`); else if (v) r.d[k] = Math.round(v); });
+        const dis = pxNum(get('dis')); r.dis = isNaN(dis) ? 0 : Math.round(dis);
+        r.rem = String(get('rem') || '').trim();
+        r.def = defTotal(r);
+        const tot = pxNum(get('total'));
+        if (get('total') !== '' && !isNaN(tot) && tot) {
+            const noConv = r.def - (r.d.conveyor || 0);    // the sheet's Total = SUM(D:R) skips Conveyor Scratch
+            if (Math.round(tot) !== r.def && Math.round(tot) !== noConv) r.warns.push(`Excel total ${fmt(tot)} ≠ sum of defects ${fmt(r.def)} — check the row`);
+        }
+        if (r.def > r.prod && r.prod > 0) r.warns.push('Total defect is more than production');
+        if (r.dis > r.def) r.warns.push('Disassembled is more than total defect');
+        if (r.date && r.date > todayKey()) r.warns.push('Date is in the future');
+        rows.push(r);
+    }
+    // same date + model twice in one paste → keep the last, flag the earlier
+    const seen = {};
+    rows.forEach((r, i) => { if (!r.errs.length) { const k = r.date + '_' + r.model; if (seen[k] != null) rows[seen[k]].errs.push('Repeated below — the later row is used'); seen[k] = i; } });
+    return { rows, header: !!map };
+}
+function pxRender() {
+    const { rows, header } = pxParse($('px-text').value, PX.fmt);
+    PX.rows = rows;
+    const good = rows.filter(r => !r.errs.length), bad = rows.length - good.length;
+    $('px-drop').classList.toggle('has', rows.length > 0);
+    const st = $('px-stat');
+    if (!rows.length) { st.className = 'px-stat'; st.textContent = $('px-text').value.trim() ? 'No data rows found' : 'Waiting for data…'; }
+    else {
+        const days = [...new Set(good.map(r => r.date))];
+        st.className = 'px-stat ' + (bad ? 'err' : 'ok');
+        st.textContent = `✓ ${good.length} row${good.length === 1 ? '' : 's'} detected • ${days.length} day${days.length === 1 ? '' : 's'} • ${[...new Set(good.map(r => r.model))].join(', ') || '—'}${header ? ' • header matched' : ''}${bad ? ` • ${bad} with errors` : ''}`;
+    }
+    const amb = rows.some(r => r.amb && PX.fmt === 'auto');
+    $('px-hint').textContent = amb ? 'Dates like 11/7/2026 are read month-first (Nov 7), as in the Excel sheet — switch to D/M/Y if that is wrong.' : 'Existing entries for the same date + model are replaced.';
+    $('px-prev').innerHTML = rows.length ? '<div class="px-cards">' + rows.map(r => {
+        const exists = r.date && (S.byDate.get(r.date) || []).some(e => String(e.model) === r.model);
+        const tag = r.errs.length ? '<span class="pxc-tag err">Skipped</span>' : exists ? '<span class="pxc-tag rep">Replaces entry</span>' : '<span class="pxc-tag new">New</span>';
+        const defs = DKEYS.filter(k => r.d[k]).sort((a, b) => r.d[b] - r.d[a]).map(k => `<span>${DLABEL[k]}<b>${r.d[k]}</b></span>`).join('') || '<span class="none">No defects</span>';
+        const msgs = r.errs.map(e => `<div class="pxc-msg bad">✕ ${esc(e)}</div>`).join('') + r.warns.map(w => `<div class="pxc-msg warn">⚠ ${esc(w)}</div>`).join('');
+        return `<div class="pxc${r.errs.length ? ' bad' : r.warns.length ? ' warn' : ''}">
+            <div class="pxc-h"><span class="pxc-model">${esc(r.model || '?')}</span><span class="pxc-date"><b>${r.date ? longDate(r.date) : '—'}</b><span>row ${r.line}${r.rem ? ' • ' + esc(r.rem) : ''}</span></span>${tag}</div>
+            <div class="pxc-kpi"><div><small>Production</small><b>${fmt(r.prod || 0)}</b></div><div><small>Defect</small><b style="color:#be123c">${fmt(r.def)}</b></div><div><small>Rate</small><b>${pct(r.def, r.prod)}</b></div><div><small>Disasm.</small><b>${fmt(r.dis)}</b></div></div>
+            <div class="pxc-def">${defs}</div>${msgs}</div>`;
+    }).join('') + '</div>' : '';
+    const n = good.length;
+    $('px-save').disabled = !n;
+    $('px-save-tx').textContent = n ? `Save ${n} entr${n === 1 ? 'y' : 'ies'}` : 'Save entries';
+}
+function pxOpen(text) {
+    const ov = $('px-ov'); ov.classList.add('open'); ov.setAttribute('aria-hidden', 'false');
+    if (text != null) $('px-text').value = text;
+    pxRender();
+    setTimeout(() => $('px-text').focus(), 60);
+}
+function pxClose() { const ov = $('px-ov'); ov.classList.remove('open'); ov.setAttribute('aria-hidden', 'true'); }
+async function pxSave() {
+    const good = PX.rows.filter(r => !r.errs.length);
+    if (!good.length) return;
+    const rep = good.filter(r => (S.byDate.get(r.date) || []).some(e => String(e.model) === r.model)).length;
+    if (rep && !confirm(`${rep} of ${good.length} row${good.length > 1 ? 's' : ''} already exist for that date + model and will be replaced. Continue?`)) return;
+    $('px-save').disabled = true;
+    let ok = 0;
+    for (const r of good) {
+        const clash = (S.byDate.get(r.date) || []).find(e => String(e.model) === r.model);
+        const id = clash ? clash.id : r.date + '_' + r.model;
+        const now = new Date();
+        const rec = { date: r.date, model: r.model, prod: Math.round(r.prod), d: r.d, ts: now.getTime(), src: 'paste',
+            savedAt: now.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }) };
+        if (r.dis) rec.dis = r.dis;
+        if (r.rem) rec.rem = r.rem;
+        if (await writeEntry(id, rec)) ok++;
+    }
+    const days = [...new Set(good.map(r => r.date))].sort();
+    toast(`✓ ${good.length} entr${good.length === 1 ? 'y' : 'ies'} saved${ok < good.length ? ' (' + (good.length - ok) + ' queued offline)' : ''} • ${days.map(shortDate).join(', ')}`);
+    $('px-text').value = ''; pxRender(); pxClose();
+    $('f-date').value = days[days.length - 1]; S.daily.date = days[days.length - 1];
+    resetForm(true); S.dirty.add('entry'); renderEntry();
+}
+function wirePaste() {
+    $('f-paste').addEventListener('click', () => pxOpen());
+    $('px-close').addEventListener('click', pxClose);
+    $('px-clear').addEventListener('click', () => { $('px-text').value = ''; pxRender(); $('px-text').focus(); });
+    $('px-save').addEventListener('click', pxSave);
+    let t; $('px-text').addEventListener('input', () => { clearTimeout(t); t = setTimeout(pxRender, 120); });
+    $('px-dfmt').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; PX.fmt = b.dataset.f; $('px-dfmt').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); pxRender(); });
+    $('px-ov').addEventListener('mousedown', e => { if (e.target === $('px-ov')) pxClose(); });
+    document.addEventListener('keydown', e => {
+        if (!$('px-ov').classList.contains('open')) return;
+        if (e.key === 'Escape') { e.preventDefault(); pxClose(); }
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); pxSave(); }
+    });
+    // Ctrl+V anywhere on the Entry page (not inside a field) opens the dialog with the pasted rows
+    document.addEventListener('paste', e => {
+        if (S.page !== 'entry' || $('px-ov').classList.contains('open')) return;
+        const tg = e.target; if (tg && (tg.closest('input, textarea, select, [contenteditable="true"]'))) return;
+        const text = (e.clipboardData || window.clipboardData).getData('text');
+        if (!text || !text.includes('\t')) return;
+        e.preventDefault(); pxOpen(text);
+    });
 }
 
 // =====================================================================
@@ -988,7 +1249,7 @@ function rpKpis(x, Y, tiles) {
 function rpFooter(x, Y, note) {
     x.strokeStyle = RP.line; x.lineWidth = 1; x.beginPath(); x.moveTo(RP.PAD, Y); x.lineTo(RP.W - RP.PAD, Y); x.stroke();
     rpT(x, note, RP.PAD, Y + 30, { s: 12, w: 600, c: RP.mute });
-    rpT(x, 'Generated ' + new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }) + '  •  MEP Rejection Module',
+    rpT(x, 'Generated ' + new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }) + '  •  MEP Defect Module',
         RP.W - RP.PAD, Y + 30, { s: 12, w: 700, c: RP.redD, a: 'right' });
     return 56;
 }
@@ -1132,7 +1393,7 @@ async function exportDailyReport() {
     rpInsights(x, RP.PAD + half + 16, y, half, 'Key points', ins.slice(0, 4));
     y += ch + 28;
     y += rpFooter(x, y, 'Rate = rejection ÷ production. Missing days and holidays fall back to the last entered day.');
-    rpDownload(rpCrop(c, y + 10), `MEP-Rejection-Daily-${day}.jpg`) && toast('✓ Daily report downloaded • ' + shortDate(day));
+    rpDownload(rpCrop(c, y + 10), `MEP-Defect-Daily-${day}.jpg`) && toast('✓ Daily report downloaded • ' + shortDate(day));
 }
 
 async function exportMonthlyReport() {
@@ -1215,7 +1476,7 @@ async function exportMonthlyReport() {
     rpInsights(x, RP.PAD + half + 16, y, half, 'Key points', ins.slice(0, 4));
     y += ch + 28;
     y += rpFooter(x, y, isRunning ? 'Running month: quantities are month-to-date; compare rates (% of production) for a fair view.' : 'Rate = rejection ÷ production.');
-    rpDownload(rpCrop(c, y + 10), `MEP-Rejection-Monthly-${Y}-${pad(M + 1)}.jpg`) && toast('✓ Monthly report downloaded • ' + MONTHS[M] + ' ' + Y);
+    rpDownload(rpCrop(c, y + 10), `MEP-Defect-Monthly-${Y}-${pad(M + 1)}.jpg`) && toast('✓ Monthly report downloaded • ' + MONTHS[M] + ' ' + Y);
 }
 
 // =====================================================================
@@ -1360,13 +1621,15 @@ function fillSelectors() {
 function wire() {
     document.querySelectorAll('.sb-item[data-page]').forEach(b => b.addEventListener('click', () => show(b.dataset.page)));
     // daily
-    $('d-date').addEventListener('change', e => { S.daily.date = e.target.value; S.dirty.add('daily'); renderActive(); });
+    // S.daily.picked = the user chose a day themselves; otherwise the dashboard follows the latest entry
+    $('d-date').addEventListener('change', e => { S.daily.date = e.target.value; S.daily.picked = true; S.dirty.add('daily'); renderActive(); });
     document.querySelectorAll('[data-shift]').forEach(b => b.addEventListener('click', () => {
         const k = S.daily.date, i = S.dates.indexOf(k), n = +b.dataset.shift;
         S.daily.date = i > -1 ? (S.dates[i + n] || k) : (n < 0 ? S.dates.filter(x => x < k).pop() : S.dates.find(x => x > k)) || k;
+        S.daily.picked = S.daily.date !== S.dates[S.dates.length - 1];
         S.dirty.add('daily'); renderActive();
     }));
-    $('d-latest').addEventListener('click', () => { S.daily.date = S.dates[S.dates.length - 1]; S.dirty.add('daily'); renderActive(); });
+    $('d-latest').addEventListener('click', () => { S.daily.date = S.dates[S.dates.length - 1]; S.daily.picked = false; S.dirty.add('daily'); renderActive(); });
     // monthly
     const mUpd = () => { S.dirty.add('monthly'); renderActive(); };
     $('m-month').addEventListener('change', e => { S.monthly.m = +e.target.value; mUpd(); });
