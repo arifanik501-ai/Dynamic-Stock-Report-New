@@ -8,7 +8,7 @@
            shift any existing layout.
            ======================================================== */
         *, ::before, ::after { box-sizing: border-box; border-width: 0; border-style: solid; }
-        html { -webkit-text-size-adjust: 100%; tab-size: 4; line-height: 1.5; scrollbar-gutter: stable; }
+        html { -webkit-text-size-adjust: 100%; tab-size: 4; line-height: 1.5; scrollbar-gutter: stable; scroll-behavior: auto !important; overscroll-behavior-y: none; text-rendering: optimizeSpeed; }
         body { margin: 0; line-height: inherit; }
         h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; margin: 0; }
         p, blockquote, figure, pre, dl, dd { margin: 0; }

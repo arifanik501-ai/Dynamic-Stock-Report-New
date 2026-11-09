@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="sfg-standalone">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,23 +10,229 @@
          utility classes it provided are hand-written and now live in app.css,
          which is loaded with a cacheable <link> instead of a 4,000-line inline
          style block. -->
-    <!-- Standalone build (GitHub Pages): no ERP login gate; runs directly from this folder. -->
-
     <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Sacramento&family=JetBrains+Mono:wght@500;800&display=swap">
     <meta name="theme-color" content="#0891b2">
     <link rel="stylesheet" href="app.css">
-    <link rel="stylesheet" href="premium_clock.css">
-    <link rel="stylesheet" href="erp-topbar.css?v=20261026i">
-    <script defer src="premium_clock.js"></script>
     <!-- themes.js moved up into <head>: the pre-paint bootstrap at the top of
          <body> needs the palette list while the document is still being parsed,
          long before the module at the end of <body> runs. -->
     <script src="themes.js"></script>
+    <link rel="prefetch" href="../portal.html" as="document">
+    <!-- ============ CORNER GLASSMORPHISM PORTAL BUTTON STYLES ============ -->
+    <style>
+        .portal-return-corner {
+            position: fixed;
+            top: 16px;
+            left: 20px;
+            z-index: 1000;
+            pointer-events: auto;
+        }
+
+        .btn-portal-glass {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 16px 7px 11px;
+            border-radius: 9999px;
+            text-decoration: none;
+            cursor: pointer;
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            color: #ffffff;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.05) 100%);
+            backdrop-filter: blur(24px) saturate(200%);
+            -webkit-backdrop-filter: blur(24px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            box-shadow: 
+                0 10px 28px -4px rgba(0, 0, 0, 0.35),
+                0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+                0 1px 0 rgba(255, 255, 255, 0.35) inset;
+            transition: all 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: none;
+            overflow: hidden;
+            animation: portalReturnReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.15s backwards;
+        }
+
+        @keyframes portalReturnReveal {
+            from {
+                opacity: 0;
+                transform: translateX(-16px) scale(0.95);
+                filter: blur(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        /* Glass Specular Reflection Highlight */
+        .btn-portal-glass::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 48%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0) 100%);
+            border-radius: 9999px 9999px 0 0;
+            pointer-events: none;
+        }
+
+        .btn-portal-glass .portal-glass-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.28s;
+            flex-shrink: 0;
+        }
+
+        .btn-portal-glass .portal-glass-icon svg {
+            width: 14px;
+            height: 14px;
+            stroke-width: 2.6;
+        }
+
+        .btn-portal-glass .portal-glass-grid {
+            display: inline-flex;
+            align-items: center;
+            opacity: 0.8;
+            transition: opacity 0.28s;
+            flex-shrink: 0;
+        }
+
+        .btn-portal-glass .portal-glass-grid svg {
+            width: 13px;
+            height: 13px;
+        }
+
+        .btn-portal-glass .portal-glass-label {
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            line-height: 1;
+        }
+
+        /* Hover & Focus Interactions */
+        .btn-portal-glass:hover {
+            transform: translateY(-2px) scale(1.02);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.10) 100%);
+            border-color: rgba(255, 255, 255, 0.42);
+            box-shadow: 
+                0 16px 36px -6px rgba(0, 0, 0, 0.45),
+                0 0 20px rgba(59, 130, 246, 0.35),
+                0 0 0 1px rgba(255, 255, 255, 0.15) inset,
+                0 1px 0 rgba(255, 255, 255, 0.55) inset;
+        }
+
+        .btn-portal-glass:hover .portal-glass-icon {
+            transform: translateX(-3px);
+            background: rgba(59, 130, 246, 0.4);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .btn-portal-glass:hover .portal-glass-grid {
+            opacity: 1;
+        }
+
+        .btn-portal-glass:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: 
+                0 6px 16px -2px rgba(0, 0, 0, 0.3),
+                inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Lite Mode Adaptability */
+        body.lite-mode .btn-portal-glass {
+            color: #0f172a;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(239, 246, 255, 0.78) 100%);
+            border: 1px solid rgba(37, 99, 235, 0.28);
+            box-shadow: 
+                0 12px 28px -4px rgba(37, 99, 235, 0.16),
+                0 0 0 1px rgba(255, 255, 255, 0.9) inset,
+                0 1px 0 rgba(255, 255, 255, 1) inset;
+        }
+
+        body.lite-mode .btn-portal-glass::before {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 100%);
+        }
+
+        body.lite-mode .btn-portal-glass .portal-glass-icon {
+            background: rgba(37, 99, 235, 0.12);
+            border: 1px solid rgba(37, 99, 235, 0.22);
+            color: #2563eb;
+        }
+
+        body.lite-mode .btn-portal-glass .portal-glass-grid {
+            color: #2563eb;
+            opacity: 0.85;
+        }
+
+        body.lite-mode .btn-portal-glass:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(219, 234, 254, 0.88) 100%);
+            border-color: rgba(37, 99, 235, 0.55);
+            box-shadow: 
+                0 16px 36px -4px rgba(37, 99, 235, 0.24),
+                0 0 18px rgba(37, 99, 235, 0.18);
+        }
+
+        @media (max-width: 768px) {
+            .portal-return-corner {
+                top: 10px;
+                left: 10px;
+                z-index: 1001;
+            }
+            .btn-portal-glass {
+                padding: 6px 12px 6px 8px;
+                font-size: 11px;
+                gap: 6px;
+            }
+            .btn-portal-glass .portal-glass-grid {
+                display: none;
+            }
+            body.mobile-active .tab-navigation {
+                top: 52px !important;
+            }
+            body.mobile-active .page-content {
+                padding-top: 110px !important;
+            }
+        }
+    </style>
+
 </head>
 <body class="mobile-active">
+    <!-- ============ CORNER GLASSMORPHISM PORTAL RETURN BUTTON ============ -->
+    <div class="portal-return-corner no-print" aria-hidden="false">
+        <a href="../portal.html" id="btn-return-portal" class="btn-portal-glass" onclick="returnToModulePortal(event)" title="Return to MEP Enterprise Portal">
+            <span class="portal-glass-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+            </span>
+            <span class="portal-glass-grid" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <rect x="3" y="3" width="7" height="7" rx="1.8"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1.8"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1.8"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1.8"/>
+                </svg>
+            </span>
+            <span class="portal-glass-label">Portal</span>
+        </a>
+    </div>
+
 
     <!-- ============ PRE-PAINT UI BOOTSTRAP ============
          ROOT CAUSE of the refresh flash: the browser paints the parsed HTML as
@@ -123,6 +329,15 @@
     })();
     </script>
 
+    <div class="performance-corner-hotspot no-print" aria-hidden="false">
+        <button id="performance-toggle" class="performance-toggle" type="button" aria-pressed="false" title="Toggle performance mode">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 3L4 14h7l-1 7 10-12h-7l0-6Z"></path>
+            </svg>
+            <span>FAST</span>
+        </button>
+    </div>
+
     <!-- ============ ANIMATED BACKGROUND ============ -->
     <div class="bg-canvas" id="bg-canvas">
         <div class="bg-orb"></div>
@@ -134,26 +349,321 @@
     <div class="bg-grid"></div>
     <div class="bg-scanlines"></div>
 
-    <!-- ============ ERP TOP BAR (same layout as the other modules) ============
-         Holds the original #tab-nav and FAST toggle unchanged; styles in erp-topbar.css. -->
-    <header class="erp-topbar no-print" id="erp-topbar">
-        <div class="erp-topbar__left">
-            <div class="erp-crumbs">
-                <a href="../portal.html" title="Return to Module Portal">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.4" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>
-                    <span>Modules</span>
-                </a>
-                <svg class="erp-crumb-sep erp-crumb-sep--mid" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-                <span class="erp-crumb-mid">SFG Stock</span>
-                <svg class="erp-crumb-sep" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-                <span class="erp-crumb-current" id="erp-crumb-current">Generator</span>
+    <!-- ============ LEFT SIDEBAR (mirrors the Production module's azure "sidebar-theme-blue" rail) ============ -->
+    <style>
+        :root { --sb-w: 236px; }
+        .sfg-sidebar {
+            position: fixed; top: 0; left: 0; bottom: 0; width: var(--sb-w); z-index: 900; isolation: isolate;
+            display: flex; flex-direction: column; justify-content: space-between;
+            background: linear-gradient(168deg, rgba(250,253,255,0.90) 0%, rgba(226,238,252,0.80) 46%, rgba(238,246,255,0.90) 100%);
+            backdrop-filter: blur(22px) saturate(165%); -webkit-backdrop-filter: blur(22px) saturate(165%);
+            border-right: 1px solid rgba(186,214,244,0.72);
+            box-shadow: 8px 0 34px -26px rgba(15,45,100,0.45), inset -1px 0 0 rgba(255,255,255,0.72);
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #1e293b;
+            overflow-y: auto; scrollbar-width: none; -webkit-font-smoothing: antialiased;
+        }
+        .sfg-sidebar::-webkit-scrollbar { display: none; }
+        .sfg-sidebar::before {
+            content: ""; position: absolute; inset: 0 0 auto 0; height: 62%; pointer-events: none; z-index: -1;
+            background:
+                radial-gradient(58% 46% at 16% 6%, rgba(59,130,246,0.26) 0%, transparent 72%),
+                radial-gradient(52% 42% at 88% 20%, rgba(56,189,248,0.20) 0%, transparent 74%),
+                radial-gradient(70% 58% at 42% 58%, rgba(99,102,241,0.14) 0%, transparent 76%);
+        }
+        .sfg-sidebar::after {
+            content: ""; position: absolute; inset: auto 0 0 0; height: 34%; pointer-events: none; z-index: -1;
+            background: radial-gradient(72% 62% at 50% 100%, rgba(37,99,235,0.16) 0%, transparent 74%);
+        }
+        .sfg-sidebar *, .sfg-sidebar *::before, .sfg-sidebar *::after { box-sizing: border-box; }
+        .sb-top { padding: 14px; display: flex; flex-direction: column; gap: 20px; }
+        .sb-nav { display: flex; flex-direction: column; gap: 8px; }
+
+        /* Brand lockup */
+        .sb-brand { display: flex; align-items: center; gap: 12px; padding: 0 6px; user-select: none; }
+        .sb-logo {
+            width: 40px; height: 40px; border-radius: 12px; padding: 2px; flex-shrink: 0; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(140deg, rgba(255,255,255,0.96) 0%, rgba(219,234,254,0.94) 62%, rgba(191,219,254,0.90) 100%);
+            border: 1px solid rgba(147,197,253,0.95);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.98), 0 8px 20px -8px rgba(37,99,235,0.55);
+        }
+        .sb-logo img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+        .sb-brand h1 { margin: 0; font-size: 12px; font-weight: 700; line-height: 1.25; color: #0f172a; letter-spacing: -0.01em; }
+        .sb-brand p { margin: 0; font-size: 10px; font-weight: 600; color: #2563eb; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        /* Parent navigation pills (.ops-parent-btn) */
+        .sb-item {
+            width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+            padding: 10px 12px; border-radius: 18px; cursor: pointer; user-select: none; text-align: left; text-decoration: none;
+            font: inherit; font-size: 13px; font-weight: 700; color: #1e293b;
+            background: linear-gradient(135deg, rgba(255,255,255,0.86) 0%, rgba(214,232,251,0.62) 100%);
+            border: 1px solid rgba(212,230,250,0.96);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.98), 0 6px 18px -12px rgba(15,52,110,0.40);
+            backdrop-filter: blur(18px) saturate(180%); -webkit-backdrop-filter: blur(18px) saturate(180%);
+            transition: transform .18s ease, background .18s ease, border-color .18s ease;
+        }
+        .sb-item:hover {
+            background: linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(200,224,250,0.80) 100%);
+            border-color: rgba(59,130,246,0.55); transform: translateY(-1px);
+        }
+        .sb-item.active {
+            background: linear-gradient(135deg, rgba(59,130,246,0.22) 0%, rgba(37,99,235,0.26) 52%, rgba(56,189,248,0.16) 100%);
+            border: 1.5px solid rgba(37,99,235,0.55);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.92), 0 10px 26px -14px rgba(30,64,175,0.55);
+        }
+        .sb-item.active .sb-label { color: #10356b; }
+        .sb-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+        .sb-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* 24px tinted icon tiles */
+        .sb-ico { width: 24px; height: 24px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .sb-ico svg { width: 14px; height: 14px; }
+        .sb-ico.c-emerald { background: rgba(16,185,129,0.10); color: #059669; }
+        .sb-ico.c-blue    { background: rgba(59,130,246,0.10); color: #2563eb; }
+        .sb-ico.c-amber   { background: rgba(245,158,11,0.10); color: #d97706; }
+        .sb-ico.c-rose    { background: rgba(244,63,94,0.10);  color: #e11d48; }
+        .sb-ico.c-violet  { background: rgba(139,92,246,0.10); color: #7c3aed; }
+        .sb-ico.c-cyan    { background: rgba(6,182,212,0.10);  color: #0891b2; }
+        .sb-ico.c-slate   { background: rgba(100,116,139,0.12);color: #475569; }
+        .sb-ico.c-grad    { background: linear-gradient(to top right, rgba(16,185,129,0.20), rgba(20,184,166,0.15), rgba(6,182,212,0.20)); color: #059669; }
+        .sb-caret { width: 12px; height: 12px; color: #94a3b8; transition: transform .2s ease; flex-shrink: 0; }
+        .sb-group.open .sb-caret { transform: rotate(90deg); }
+        .sb-ext { width: 12px; height: 12px; color: #94a3b8; flex-shrink: 0; }
+
+        /* Glass pill badge (.glass-pill) */
+        .sb-pill {
+            font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 999px; white-space: nowrap;
+            color: #059669; background: linear-gradient(135deg, rgba(255,255,255,0.92), rgba(219,234,252,0.70));
+            border: 1px solid rgba(200,224,248,0.95);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.98), 0 2px 6px -4px rgba(12,52,110,0.35);
+        }
+        .sb-pill.empty { color: #94a3b8; }
+
+        /* Accordion sub-card (.ops-sub-card) + child items (.ops-child-item) */
+        .sb-group { display: flex; flex-direction: column; }
+        .sb-sub {
+            border-radius: 20px; overflow: hidden; max-height: 0; opacity: 0; padding: 0 7px; margin: 0;
+            pointer-events: none; transform: translateY(-4px); border: 1px solid transparent;
+            background: linear-gradient(135deg, rgba(255,255,255,0.62) 0%, rgba(219,234,254,0.45) 100%);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.92), 0 10px 26px -18px rgba(37,99,235,0.55);
+            transition: max-height .35s cubic-bezier(.16,1,.3,1), opacity .25s ease, padding .35s cubic-bezier(.16,1,.3,1), margin .35s cubic-bezier(.16,1,.3,1), transform .35s cubic-bezier(.16,1,.3,1);
+        }
+        .sb-group.open .sb-sub {
+            max-height: 420px; opacity: 1; padding: 7px; margin-top: 6px; pointer-events: auto; transform: none;
+            border-color: rgba(191,219,254,0.95);
+        }
+        .sb-child {
+            width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+            padding: 8px 11px; border-radius: 14px; border: 1px solid transparent; background: transparent;
+            font: inherit; font-size: 12px; font-weight: 600; color: #475569; cursor: pointer; text-align: left;
+            transition: all .18s ease;
+        }
+        .sb-child .sb-left { gap: 8px; }
+        .sb-child svg { width: 14px; height: 14px; flex-shrink: 0; }
+        .sb-child:hover {
+            color: #1e3a8a; background: rgba(219,234,254,0.72); border-color: rgba(147,197,253,0.85);
+            box-shadow: 0 8px 18px -12px rgba(37,99,235,0.60); transform: translateX(2px);
+        }
+
+        /* Green "Entry" pill — green twin of the Production module's red Target Entry button */
+        /* Red "Rejection" module link */
+        .sb-item.sb-rejection {
+            color: #be123c;
+            background: linear-gradient(135deg, rgba(244,63,94,0.14) 0%, rgba(225,29,72,0.09) 100%);
+            border: 1px solid rgba(244,63,94,0.42);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.9), 0 8px 20px -14px rgba(225,29,72,0.65);
+        }
+        .sb-item.sb-rejection:hover {
+            background: linear-gradient(135deg, rgba(244,63,94,0.22) 0%, rgba(225,29,72,0.15) 100%);
+            border-color: rgba(225,29,72,0.65);
+        }
+        .sb-item.sb-rejection .sb-label { font-weight: 900; letter-spacing: 0.02em; }
+        .sb-item.sb-rejection .sb-ext { color: #e11d48; }
+        .sb-ico.c-red-solid { background: linear-gradient(to bottom right, #f43f5e, #be123c); color: #fff; box-shadow: 0 6px 14px -6px rgba(225,29,72,0.7); }
+
+        .sb-item.sb-entry {
+            color: #047857;
+            background: linear-gradient(135deg, rgba(16,185,129,0.14) 0%, rgba(34,197,94,0.09) 100%);
+            border: 1px solid rgba(16,185,129,0.40);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.8), 0 2px 8px rgba(16,185,129,0.10);
+        }
+        .sb-item.sb-entry:hover {
+            background: linear-gradient(135deg, rgba(16,185,129,0.24) 0%, rgba(34,197,94,0.18) 100%);
+            border-color: rgba(16,185,129,0.65); box-shadow: 0 4px 14px rgba(16,185,129,0.24);
+        }
+        .sb-entry .sb-label { font-weight: 900; letter-spacing: 0.03em; }
+        .sb-ico.c-green-solid { background: linear-gradient(to bottom right, #10b981, #16a34a); color: #fff; box-shadow: 0 1px 3px rgba(16,185,129,0.35); }
+        .sb-tag { padding: 2px 6px; border-radius: 6px; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em; background: #10b981; color: #fff; }
+
+        .sb-child.active {
+            color: #10356b; border-color: rgba(37,99,235,0.42);
+            background: linear-gradient(135deg, rgba(59,130,246,0.16) 0%, rgba(37,99,235,0.18) 100%);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.90), 0 8px 20px -12px rgba(37,99,235,0.70);
+        }
+
+        /* Section eyebrow with divider (Connected Modules style) */
+        .sb-divider { padding-top: 8px; border-top: 1px solid rgba(191,219,254,0.90); }
+        .sb-section { margin: 0; padding: 0 8px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.14em; color: #1d4ed8; }
+
+        /* Footer profile card (.sidebar-profile-card) */
+        .sb-foot { padding: 12px; border-top: 1px solid rgba(191,219,254,0.90); }
+        .sb-user {
+            position: relative; overflow: hidden; display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; cursor: default;
+            background: linear-gradient(135deg, rgba(255,255,255,0.90) 0%, rgba(217,232,250,0.66) 100%);
+            border: 1px solid rgba(198,222,246,0.96);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.95), 0 10px 26px -16px rgba(37,99,235,0.55);
+            transition: all .25s ease;
+        }
+        .sb-user:hover { border-color: rgba(96,165,250,0.78); box-shadow: 0 14px 32px -14px rgba(37,99,235,0.62), 0 0 0 1px rgba(59,130,246,0.35); }
+        .sb-avatar { width: 36px; height: 36px; border-radius: 12px; overflow: hidden; flex-shrink: 0; border: 1px solid rgba(16,185,129,0.30); box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+        .sb-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .sb-user-name { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; color: #0f172a; line-height: 1.25; }
+        .sb-user-name svg { width: 12px; height: 12px; color: #10b981; }
+        .sb-user-role { font-size: 11px; font-weight: 600; color: #475569; line-height: 1.25; }
+        .sb-user-status { display: flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 500; color: #64748b; line-height: 1.25; }
+        .sb-dot { position: relative; width: 8px; height: 8px; display: inline-flex; }
+        .sb-dot::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: #34d399; opacity: .75; animation: sbPing 1.2s cubic-bezier(0,0,.2,1) infinite; }
+        .sb-dot::after { content: ""; position: relative; width: 8px; height: 8px; border-radius: 50%; background: #10b981; }
+        @keyframes sbPing { 75%, 100% { transform: scale(2); opacity: 0; } }
+
+        /* Report Tools stay visible on every page now (there is no Generator button to
+           come back with). Tools that need the report page switch to it themselves. */
+
+        @media screen and (min-width: 900px) {
+            body { padding-left: var(--sb-w) !important; }
+            #tab-nav, #theme-controls, #generator-controls { display: none !important; }
+            .portal-return-corner { left: calc(var(--sb-w) + 20px) !important; }
+            body.mobile-active .page-content { padding-top: 40px !important; }
+        }
+        @media screen and (max-width: 899px) { .sfg-sidebar { display: none; } }
+        @media print { .sfg-sidebar { display: none !important; } body { padding-left: 0 !important; } }
+    </style>
+
+    <aside class="sfg-sidebar no-print" id="sfg-sidebar">
+        <div class="sb-top">
+            <!-- Brand -->
+            <div class="sb-brand">
+                <div class="sb-logo"><img src="/assets/logo-128.png" alt="MEP" width="40" height="40" onerror="this.onerror=null;this.src='icon-192x192.png'"></div>
+                <div><h1>MEP FAN LTD</h1><p>SFG Stock</p></div>
             </div>
-            <a href="../portal.html" id="erp-portal-return" class="erp-capsule" title="Back to Select Operating Module">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.6" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5m6-6l-6 6 6 6"/></svg>
-                <span class="erp-capsule__label">Select Module</span>
-            </a>
-            <div id="mep-premium-clock" class="mep-glass-clock-capsule"></div>
+
+            <nav class="sb-nav">
+                <!-- Entry (green) — took the Generator slot. It also returns to the
+                     report page, so Report Tools stay reachable without a Generator button. -->
+                <button type="button" class="sb-item sb-entry" id="sb-entry" onclick="switchPage('generator'); openEntrySheet()" title="Data Entry">
+                    <span class="sb-left"><span class="sb-ico c-green-solid"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></span><span class="sb-label">Entry</span></span>
+                </button>
+
+                <!-- Report Archive accordion -->
+                <div class="sb-group open" id="sb-grp-archive">
+                    <button type="button" class="sb-item" onclick="sbToggleGroup('sb-grp-archive')" title="Saved report archives">
+                        <span class="sb-left"><span class="sb-ico c-grad"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5M3 17.5l9 5 9-5"/></svg></span><span class="sb-label">Stock Archive</span></span>
+                        <svg class="sb-caret" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                    </button>
+                    <div class="sb-sub">
+                        <button type="button" class="sb-child" id="sb-archive-accessories" onclick="switchPage('archive-accessories')">
+                            <span class="sb-left"><svg style="color:#10b981" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3"><path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg><span class="sb-label">Accessories</span></span>
+                            <span class="sb-pill empty" data-mirror="badge-accessories">EMPTY</span>
+                        </button>
+                        <button type="button" class="sb-child" id="sb-archive-armature" onclick="switchPage('archive-armature')">
+                            <span class="sb-left"><svg style="color:#3b82f6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3"><path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg><span class="sb-label">Armature</span></span>
+                            <span class="sb-pill empty" data-mirror="badge-armature">EMPTY</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Report Tools accordion (generator page only) -->
+                <div class="sb-group open" id="sb-gen-tools">
+                    <button type="button" class="sb-item" onclick="sbToggleGroup('sb-gen-tools')" title="Report tools">
+                        <span class="sb-left"><span class="sb-ico c-blue"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 00-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 005.4-5.4l-2.5 2.5-2.4-.6-.6-2.4 2.5-2.5z"/></svg></span><span class="sb-label">Report Tools</span></span>
+                        <svg class="sb-caret" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                    </button>
+                    <div class="sb-sub">
+                        <button type="button" class="sb-child" onclick="promptTargetPassword()" title="Edit target (password required)">
+                            <span class="sb-left"><svg style="color:#f59e0b" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></svg><span class="sb-label">Day Target</span></span>
+                            <span class="sb-pill" id="sb-target-display">1600</span>
+                        </button>
+                        <button type="button" class="sb-child" onclick="switchPage('generator'); toggleModal(true)">
+                            <span class="sb-left"><svg style="color:#3b82f6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8l2 2v12.5A1.5 1.5 0 0116.5 20h-9A1.5 1.5 0 016 18.5v-13A1.5 1.5 0 017.5 4H8ZM9 13.2l2 2 4-5M9 8h4"/></svg><span class="sb-label">Import Data</span></span>
+                        </button>
+                        <button type="button" class="sb-child" onclick="switchPage('generator'); setTimeout(function () { takeScreenshot(); }, 80)">
+                            <span class="sb-left"><svg style="color:#d97706" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 8.5h2.3l1.1-1.7c.35-.54.95-.86 1.6-.86h1c.65 0 1.25.32 1.6.86l1.1 1.7h2.3A2.5 2.5 0 0120 11v5.5a2.5 2.5 0 01-2.5 2.5h-11A2.5 2.5 0 014 16.5V11a2.5 2.5 0 012.5-2.5ZM15 13.8a3 3 0 11-6 0 3 3 0 016 0Z"/></svg><span class="sb-label">Download JPG</span></span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Theme -->
+                <button type="button" class="sb-item" onclick="openThemeSelector()" title="Theme gallery">
+                    <span class="sb-left"><span class="sb-ico c-violet"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.75l1.66 4.86 5.14.08-4.11 3.09 1.51 4.91L12 13.76l-4.2 2.93 1.51-4.91L5.2 8.69l5.14-.08L12 3.75z"/></svg></span><span class="sb-label">Theme</span></span>
+                </button>
+
+                <!-- Rejection module (red) — opens SFG MODULE/rejection.html with the session token -->
+                <a class="sb-item sb-rejection" id="sb-rejection" href="rejection.html" onclick="return openRejectionModule(event)" title="Assembly Rejection module">
+                    <span class="sb-left"><span class="sb-ico c-red-solid"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.86 2h8.28L22 7.86v8.28L16.14 22H7.86L2 16.14V7.86L7.86 2z"/><path d="M12 8v4m0 4h.01"/></svg></span><span class="sb-label">Rejection</span></span>
+                    <svg class="sb-ext" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                </a>
+
+            </nav>
         </div>
+
+        <!-- Profile -->
+        <div class="sb-foot">
+            <div class="sb-user" title="Arif Ahmed Anik • Assistant Engineer">
+                <div class="sb-avatar"><img src="/assets/avatar-anik.webp" alt="Arif Ahmed Anik" width="36" height="36" onerror="this.onerror=null;this.src='/assets/avatar-anik.png'"></div>
+                <div style="flex:1;min-width:0;">
+                    <div class="sb-user-name">Arif Ahmed Anik <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 1.8 3-.2.9 2.9 2.5 1.7-1 2.8 1 2.8-2.5 1.7-.9 2.9-3-.2L12 22l-2.4-1.8-3 .2-.9-2.9-2.5-1.7 1-2.8-1-2.8 2.5-1.7.9-2.9 3 .2L12 2zm-1.2 13.6l5.6-5.6-1.4-1.4-4.2 4.2-2-2-1.4 1.4 3.4 3.4z"/></svg></div>
+                    <div class="sb-user-role">Assistant Engineer</div>
+                    <div class="sb-user-status"><span class="sb-dot"></span>SFG Inventory</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <script>
+        function sbToggleGroup(id) {
+            var g = document.getElementById(id);
+            if (g) g.classList.toggle('open');
+        }
+        (function () {
+            document.body.dataset.page = 'generator';
+            // Mirror badges and the target value from the original (hidden) controls
+            function syncSidebar() {
+                document.querySelectorAll('#sfg-sidebar [data-mirror]').forEach(function (pill) {
+                    var src = document.getElementById(pill.dataset.mirror);
+                    if (!src) return;
+                    pill.textContent = src.textContent.trim();
+                    pill.classList.toggle('empty', src.classList.contains('empty'));
+                });
+                var t = document.getElementById('day-target-display');
+                var st = document.getElementById('sb-target-display');
+                if (t && st) st.textContent = t.textContent.trim();
+            }
+            function hookSwitchPage() {
+                var orig = window.switchPage;
+                if (typeof orig !== 'function' || orig.__sbHooked) return;
+                var wrapped = function (pageId) {
+                    var r = orig.apply(this, arguments);
+                    document.body.dataset.page = pageId;
+                    var gen = document.getElementById('sb-generator');
+                    if (gen) gen.classList.toggle('active', pageId === 'generator' || pageId === 'rnd-generator');
+                    ['archive-accessories', 'archive-armature'].forEach(function (p) {
+                        var b = document.getElementById('sb-' + p);
+                        if (b) b.classList.toggle('active', pageId === p);
+                    });
+                    return r;
+                };
+                wrapped.__sbHooked = true;
+                window.switchPage = wrapped;
+            }
+            window.addEventListener('load', function () {
+                hookSwitchPage();
+                syncSidebar();
+                ['badge-accessories', 'badge-armature', 'day-target-display'].forEach(function (id) {
+                    var el = document.getElementById(id);
+                    if (el) new MutationObserver(syncSidebar).observe(el, { childList: true, characterData: true, subtree: true, attributes: true });
+                });
+            });
+        })();
+    </script>
 
     <nav class="tab-navigation no-print" id="tab-nav">
         <!-- iOS 26 Glass Slider -->
@@ -180,143 +690,7 @@
             <span class="tab-badge empty" id="badge-armature">EMPTY</span>
         </button>
 
-        <button class="tab-btn" onclick="switchPage('archive-armature-rnd')" id="tab-rnd">
-            <svg class="tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-            </svg>
-            Armature RND
-            <span class="tab-badge empty" id="badge-armature-rnd">EMPTY</span>
-        </button>
-
-        <button class="tab-btn" onclick="switchPage('archive-fan')" id="tab-fan">
-            <svg class="tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-            </svg>
-            Fan Assemble
-            <span class="tab-badge empty" id="badge-fan">EMPTY</span>
-        </button>
     </nav>
-
-        <div class="erp-topbar__right">
-            <div class="performance-corner-hotspot no-print" aria-hidden="false">
-                <button id="performance-toggle" class="performance-toggle" type="button" aria-pressed="false" title="Toggle performance mode">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 3L4 14h7l-1 7 10-12h-7l0-6Z"></path>
-                    </svg>
-                    <span>FAST</span>
-                </button>
-            </div>
-            <div class="erp-user" title="Signed in">
-                <img id="erp-user-avatar" src="assets/avatar-male.svg" alt="" width="32" height="32" onerror="this.onerror=null;this.src='assets/avatar-male.svg'">
-                <span class="erp-user__text">
-                    <span class="erp-user__name" id="erp-user-name">MEP User</span>
-                    <span class="erp-user__role" id="erp-user-role">SFG Stock</span>
-                </span>
-            </div>
-            <button type="button" class="erp-orb erp-orb--rose" id="erp-logout" title="Sign Out" aria-label="Sign Out">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.4" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17l5-5-5-5M20 12H9M12 20H6a2 2 0 01-2-2V6a2 2 0 012-2h6"/></svg>
-            </button>
-        </div>
-    </header>
-    <script>
-    // ERP top bar: user badge, sign-out, breadcrumb that follows the active tab,
-    // and --erp-topbar-h so the page content always clears the header.
-    (function () {
-        var bar = document.getElementById('erp-topbar');
-        var nav = document.getElementById('tab-nav');
-        try {
-            var profile = JSON.parse(localStorage.getItem('mep_user_profile') || sessionStorage.getItem('mep_user_profile') || 'null') || {};
-            var email = localStorage.getItem('mep_auth_user') || sessionStorage.getItem('mep_auth_user') || '';
-            var name = profile.name || (email ? email.split('@')[0] : 'MEP User');
-            document.getElementById('erp-user-name').textContent = name;
-            document.getElementById('erp-user-role').textContent = profile.designation || profile.role || 'SFG Stock';
-            var avatar = profile.avatar || (email.toLowerCase() === 'arif.anik501@gmail.com' ? 'assets/avatar-anik.webp' : '');
-            if (avatar) {
-                // Profile avatars are stored relative to the ERP root
-                document.getElementById('erp-user-avatar').src = /^(data:|https?:|\/)/.test(avatar) ? avatar : '../' + avatar;
-            }
-        } catch (e) { /* keep defaults */ }
-
-        document.getElementById('erp-logout').addEventListener('click', function () {
-            if (!confirm('Sign out from the MEP ERP?')) return;
-            try { fetch('/api/auth/logout', { method: 'POST' }).catch(function () {}); } catch (e) {}
-            ['mep_auth_token', 'mep_auth_user', 'mep_user_profile', 'mep_user_logged_in'].forEach(function (k) {
-                try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch (e) {}
-            });
-            document.cookie = 'mep_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=Lax';
-            window.location.replace('../index.html?logged_out=1');
-        });
-
-        var crumb = document.getElementById('erp-crumb-current');
-        function syncCrumb() {
-            var active = nav.querySelector('.tab-btn.active');
-            if (!active) return;
-            var label = '';
-            active.childNodes.forEach(function (n) { if (n.nodeType === 3) label += n.textContent; });
-            label = label.trim();
-            if (label && crumb.textContent !== label) crumb.textContent = label;
-        }
-        new MutationObserver(syncCrumb).observe(nav, { subtree: true, attributes: true, attributeFilter: ['class'] });
-        syncCrumb();
-
-        // Theme gallery (✨ button): its first open after a page load stalled 0.2-0.6s while the
-        // browser built the panel for the first time. Warm it once, invisibly, while the page is idle.
-        window.addEventListener('load', function () {
-            var warm = function () {
-                var ov = document.getElementById('theme-selector-overlay');
-                if (!ov || typeof openThemeSelector !== 'function' || ov.classList.contains('active')) return;
-                ov.style.setProperty('opacity', '0', 'important');
-                ov.style.setProperty('pointer-events', 'none', 'important');
-                openThemeSelector();
-                requestAnimationFrame(function () { requestAnimationFrame(function () { requestAnimationFrame(function () {
-                    closeThemeSelector();
-                    ov.style.removeProperty('opacity');
-                    ov.style.removeProperty('pointer-events');
-                }); }); });
-            };
-            if (window.requestIdleCallback) requestIdleCallback(warm, { timeout: 2500 });
-            else setTimeout(warm, 1500);
-        });
-
-        // Stay on the same tab after a refresh: remember the active tab and reopen it on load.
-        // Armature RND / Fan Assemble are hidden, so those fall back to Generator.
-        var TAB_KEY = 'mep_sfg_active_tab';
-        var restoring = true;
-        new MutationObserver(function () {
-            var active = nav.querySelector('.tab-btn.active');
-            if (active && !restoring) { try { localStorage.setItem(TAB_KEY, active.id); } catch (e) {} }
-        }).observe(nav, { subtree: true, attributes: true, attributeFilter: ['class'] });
-        window.addEventListener('load', function () {
-            var saved = null;
-            try { saved = localStorage.getItem(TAB_KEY); } catch (e) {}
-            if (saved === 'tab-rnd' || saved === 'tab-fan') saved = 'tab-generator';
-            var active = nav.querySelector('.tab-btn.active');
-            var target = document.getElementById(saved || '') ||
-                ((active && (active.id === 'tab-rnd' || active.id === 'tab-fan')) ? document.getElementById('tab-generator') : null);
-            // Let the app finish its own first render before switching
-            setTimeout(function () {
-                if (target && target !== nav.querySelector('.tab-btn.active')) target.click();
-                restoring = false;
-                // The app's own boot animation can park the slider on Generator afterwards; snap it back
-                [300, 900, 1600].forEach(function (ms) {
-                    setTimeout(function () { nav.dispatchEvent(new Event('scroll')); }, ms);
-                });
-            }, 50);
-        });
-
-        // Keep content clear of the header and re-sync the glass slider when the header reflows
-        function syncHeight() {
-            document.documentElement.style.setProperty('--erp-topbar-h', Math.ceil(bar.getBoundingClientRect().height) + 'px');
-        }
-        if (window.ResizeObserver) {
-            new ResizeObserver(function () {
-                syncHeight();
-                nav.dispatchEvent(new Event('scroll'));
-            }).observe(bar);
-        }
-        syncHeight();
-    })();
-    </script>
 
     <!-- Theme and Global Controls (Available on all pages) -->
     <div class="controls-panel left-panel no-print" id="theme-controls">
@@ -375,8 +749,8 @@
 
                     <!-- TARGET (password-protected edit) -->
                     <div class="ctrl-item" style="--i:2">
-                        <div onclick="promptTargetPassword()" class="target-tile-premium" style="padding:8px 6px 7px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;width:52px;box-sizing:border-box;cursor:pointer;" title="Click to edit target (password required)">
-                            <span style="font-size:6.5px;font-weight:900;letter-spacing:0.14em;text-transform:uppercase;color:#fde68a;margin-bottom:3px;font-family:'Plus Jakarta Sans',sans-serif;">TARGET</span>
+                        <div onclick="promptTargetPassword()" style="background:rgba(15,23,42,0.45);padding:8px 6px 7px;border-radius:14px;border:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;align-items:center;justify-content:center;width:52px;box-sizing:border-box;cursor:pointer;" title="Click to edit target (password required)">
+                            <span style="font-size:6.5px;font-weight:900;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent-theme);margin-bottom:3px;font-family:'Plus Jakarta Sans',sans-serif;">TARGET</span>
                             <span id="day-target-display" style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:900;color:white;letter-spacing:-0.02em;line-height:1;">1600</span>
                             <input type="hidden" id="day-target-input" value="1600">
                         </div>
@@ -483,34 +857,44 @@
                                 <div class="premium-date-glass"></div>
 
                                 <!-- Date Card — Simple table-based layout for html2canvas compatibility -->
-                                <table id="date-card-box" class="report-date-card" cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border: 2px solid var(--accent-theme); border-radius: 16px; min-width: 170px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.08);">
+                                <!-- Premium calendar tile. Still a plain <table> with the same ids,
+                                     so html2canvas (Download JPG) and updateFormattedDate keep working. -->
+                                <table id="date-card-box" class="report-date-card rdc" cellpadding="0" cellspacing="0" border="0">
                                 <tr>
-                                    <td style="padding: 0; height: 5px; background: var(--accent-theme);"></td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 10px 16px 6px 16px; text-align: center;">
-                                        <span style="font-size: 10px; font-weight: 900; letter-spacing: 0.18em; color: var(--primary-theme); text-transform: uppercase;">📅 Reporting Date</span>
+                                    <td class="rdc-head">
+                                        <span class="rdc-ring l"></span><span class="rdc-ring r"></span>
+                                        <span class="rdc-head-t">Reporting Date</span>
+                                        <span class="rdc-lock no-print" title="Password protected — click to change">🔒</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="text-align: center; padding: 4px 16px 2px 16px;">
-                                        <span id="display-date-day" style="font-size: 46px; font-weight: 900; color: var(--primary-theme); letter-spacing: -0.04em; line-height: 1.15;">11</span>
+                                    <td class="rdc-main">
+                                        <span id="display-date-day" class="rdc-day">11</span>
+                                        <span id="display-date-monthyear" class="rdc-my">APR 2026</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="text-align: center; padding: 0 16px 4px 16px;">
-                                        <span id="display-date-monthyear" style="font-size: 12px; font-weight: 900; color: var(--accent-theme); letter-spacing: 0.2em; text-transform: uppercase;">APR 2026</span>
+                                    <td class="rdc-wd-row">
+                                        <span id="display-date-weekday" class="rdc-wd">Saturday</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="text-align: center; padding: 4px 16px 12px 16px;">
-                                        <span id="display-date-weekday" style="display: inline-block; font-size: 9px; font-weight: 800; color: #ffffff; background: var(--accent-theme); padding: 4px 14px; border-radius: 20px; letter-spacing: 0.15em; text-transform: uppercase;">Saturday</span>
+                                    <td class="rdc-meta">
+                                        <span class="rdc-meta-i"><b id="rdc-week">W—</b><small>Week</small></span>
+                                        <span class="rdc-meta-sep"></span>
+                                        <span class="rdc-meta-i"><b id="rdc-doy">—</b><small>Day of yr</small></span>
+                                        <span class="rdc-meta-sep"></span>
+                                        <span class="rdc-meta-i"><b id="rdc-left">—</b><small>Days left</small></span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="text-align: center; padding: 10px 16px; border-top: 1px dashed var(--accent-theme); background: #f8fafc;">
-                                        <span style="font-size: 10px; color: var(--accent-theme); vertical-align: middle;">🕐</span>
-                                        <span id="digital-clock" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 900; color: var(--primary-theme); letter-spacing: 0.08em; vertical-align: middle; margin-left: 4px;">00:00:00</span>
+                                    <td class="rdc-prog-row"><span class="rdc-prog"><i id="rdc-prog-fill"></i></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="rdc-foot">
+                                        <span class="rdc-live"></span>
+                                        <span id="digital-clock" class="rdc-clock">00:00:00</span>
+                                        <span class="rdc-tz">BST</span>
                                     </td>
                                 </tr>
                             </table>
@@ -543,6 +927,83 @@
                                 var picker = document.getElementById('statement-date-picker');
                                 if (picker && !picker.value) picker.value = iso;
                                 window.__earlyDatePaint = performance.now();
+                            })();
+                            </script>
+
+                            <style>
+                                .rdc { min-width: 184px; border-collapse: separate; border-spacing: 0; overflow: hidden; border-radius: 18px;
+                                    background: linear-gradient(170deg, #ffffff 0%, #f8fbff 100%); border: 1px solid rgba(148, 163, 184, 0.28);
+                                    box-shadow: 0 1px 0 #fff inset, 0 18px 38px -18px rgba(15, 23, 42, 0.35), 0 4px 10px -6px rgba(15, 23, 42, 0.12);
+                                    font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+                                .rdc td { text-align: center; }
+                                /* accent only: some themes set --primary-theme to a near-white, which washed these out */
+                                .rdc-head { position: relative; padding: 9px 14px 8px; color: #fff;
+                                    background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(0, 0, 0, 0.08)), var(--accent-theme); }
+                                .rdc-head-t { font-size: 9.5px; font-weight: 900; letter-spacing: 0.22em; text-transform: uppercase; }
+                                .rdc-ring { position: absolute; top: -5px; width: 8px; height: 14px; border-radius: 6px; background: #fff;
+                                    box-shadow: inset 0 -3px 0 rgba(15, 23, 42, 0.18), 0 1px 2px rgba(15, 23, 42, 0.25); }
+                                .rdc-ring.l { left: 26px; } .rdc-ring.r { right: 26px; }
+                                .rdc-lock { position: absolute; right: 9px; top: 50%; transform: translateY(-50%); font-size: 9px; opacity: 0.85; }
+                                .rdc-main { padding: 12px 14px 2px; }
+                                .rdc-day { display: block; font-family: 'Manrope', 'Plus Jakarta Sans', sans-serif; font-size: 56px; font-weight: 800; line-height: 0.95;
+                                    letter-spacing: -0.05em; color: #0f172a; font-variant-numeric: lining-nums; }
+                                .rdc-my { display: block; margin-top: 6px; font-size: 11.5px; font-weight: 900; letter-spacing: 0.26em; text-transform: uppercase; color: var(--accent-theme); }
+                                .rdc-wd-row { padding: 8px 14px 10px; }
+                                .rdc-wd { display: inline-block; font-size: 9px; font-weight: 900; letter-spacing: 0.16em; text-transform: uppercase; color: #fff;
+                                    padding: 5px 14px; border-radius: 999px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(0, 0, 0, 0.06)), var(--accent-theme);
+                                    box-shadow: 0 6px 14px -6px var(--accent-theme), inset 0 1px 0 rgba(255, 255, 255, 0.35); }
+                                .rdc-meta { padding: 8px 10px 6px; border-top: 1px solid rgba(148, 163, 184, 0.22); white-space: nowrap; }
+                                .rdc-meta-i { display: inline-block; vertical-align: middle; min-width: 44px; }
+                                .rdc-meta-i b { display: block; font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 800; color: #0f172a; line-height: 1.1;
+                                    font-variant-numeric: tabular-nums; }
+                                .rdc-meta-i small { display: block; font-size: 7.5px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #94a3b8; margin-top: 2px; }
+                                .rdc-meta-sep { display: inline-block; vertical-align: middle; width: 1px; height: 20px; margin: 0 4px; background: rgba(148, 163, 184, 0.3); }
+                                .rdc-prog-row { padding: 2px 14px 10px; }
+                                .rdc-prog { display: block; height: 4px; border-radius: 4px; background: rgba(148, 163, 184, 0.2); overflow: hidden; }
+                                .rdc-prog i { display: block; height: 100%; width: 0; border-radius: 4px; background: var(--accent-theme); }
+                                .rdc-foot { padding: 8px 12px; background: linear-gradient(180deg, rgba(241, 245, 249, 0.9), rgba(226, 232, 240, 0.6));
+                                    border-top: 1px solid rgba(148, 163, 184, 0.22); white-space: nowrap; }
+                                .rdc-live { display: inline-block; vertical-align: middle; width: 7px; height: 7px; border-radius: 50%; background: #10b981;
+                                    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); animation: rdcPulse 2s ease-in-out infinite; }
+                                .rdc-clock { display: inline-block; vertical-align: middle; margin: 0 5px 0 7px; font-family: 'Manrope', sans-serif; font-size: 13px;
+                                    font-weight: 800; color: #0f172a; letter-spacing: 0.01em; font-variant-numeric: tabular-nums; }
+                                .rdc-tz { display: inline-block; vertical-align: middle; font-size: 8px; font-weight: 900; letter-spacing: 0.12em; color: #64748b;
+                                    padding: 2px 5px; border-radius: 5px; background: rgba(148, 163, 184, 0.18); }
+                                @keyframes rdcPulse { 0%, 100% { box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); } 50% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.05); } }
+                                .premium-date-wrapper:hover .rdc-ring { transform: translateY(-1px); }
+                                @media (prefers-reduced-motion: reduce) { .rdc-live { animation: none; } }
+                                .capturing .rdc-live { animation: none; }
+                                .capturing .rdc-lock { display: none; }
+                            </style>
+                            <script>
+                            // Week no., day of year, days left and the year progress bar follow
+                            // whatever date the card shows (the picker value is the source).
+                            (function () {
+                                function pad(n) { return String(n).padStart(2, '0'); }
+                                function paint() {
+                                    var p = document.getElementById('statement-date-picker');
+                                    var v = p && p.value;
+                                    if (!v) return;
+                                    var a = v.split('-'), d = new Date(+a[0], +a[1] - 1, +a[2]);
+                                    var start = new Date(d.getFullYear(), 0, 1);
+                                    var doy = Math.round((d - start) / 864e5) + 1;
+                                    var total = ((d.getFullYear() % 4 === 0 && d.getFullYear() % 100 !== 0) || d.getFullYear() % 400 === 0) ? 366 : 365;
+                                    // ISO-8601 week number
+                                    var t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+                                    var dn = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - dn);
+                                    var wk = Math.ceil(((t - Date.UTC(t.getUTCFullYear(), 0, 1)) / 864e5 + 1) / 7);
+                                    var set = function (id, val) { var el = document.getElementById(id); if (el) el.textContent = val; };
+                                    set('rdc-week', 'W' + pad(wk));
+                                    set('rdc-doy', doy);
+                                    set('rdc-left', total - doy);
+                                    var f = document.getElementById('rdc-prog-fill');
+                                    if (f) f.style.width = (doy / total * 100).toFixed(1) + '%';
+                                }
+                                paint();
+                                var wd = document.getElementById('display-date-weekday');
+                                if (wd && window.MutationObserver) new MutationObserver(paint).observe(wd, { childList: true, characterData: true, subtree: true });
+                                document.addEventListener('change', function (e) { if (e.target && e.target.id === 'statement-date-picker') setTimeout(paint, 0); });
+                                window.addEventListener('load', paint);
                             })();
                             </script>
                             </div> <!-- End premium-date-wrapper -->
@@ -1143,6 +1604,113 @@
             };
         }
 
+        // ---------- Premium JPG frame ----------
+        // Wraps the raw html2canvas capture in a presentation frame: soft theme-tinted
+        // backdrop, rounded sheet with a real drop shadow, and a branded info footer.
+        function _xfColor(expr, fallback) {
+            try {
+                const probe = document.createElement('span');
+                probe.style.cssText = 'position:absolute;left:-9999px;color:' + expr;
+                document.body.appendChild(probe);
+                const c = getComputedStyle(probe).color;
+                probe.remove();
+                // canvas understands rgb()/rgba(); anything else (color(), oklch…) → fallback
+                return /^rgba?\(/.test(c) ? c : fallback;
+            } catch (e) { return fallback; }
+        }
+        function _xfAlpha(rgb, a) {
+            const m = String(rgb).match(/[\d.]+/g);
+            return m && m.length >= 3 ? `rgba(${m[0]}, ${m[1]}, ${m[2]}, ${a})` : `rgba(8, 145, 178, ${a})`;
+        }
+        function _xfRound(ctx, x, y, w, h, r) {
+            ctx.beginPath();
+            if (ctx.roundRect) { ctx.roundRect(x, y, w, h, r); return; }
+            ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+            ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+        }
+        function exportMeta() {
+            const picker = document.getElementById('statement-date-picker');
+            const dateKey = picker && picker.value ? picker.value : new Date().toISOString().split('T')[0];
+            const cfg = REPORT_CONFIG[currentReportType];
+            const typeLabel = cfg ? cfg.title : 'INVENTORY REPORT';
+            const typeSlug = currentReportType && currentReportType !== 'initial' ? currentReportType.replace(/[^a-z0-9-]/gi, '') : 'report';
+            const dateText = (document.getElementById('display-date-text') || {}).innerText || dateKey;
+            return { dateKey, typeLabel, typeSlug, dateText };
+        }
+        function composeExportFrame(raw, s) {
+            const meta = exportMeta();
+            const pad = Math.round(34 * s), foot = Math.round(62 * s), radius = Math.round(18 * s);
+            s = s * 1.35; // footer type/marks drawn a bit larger than 1:1 so they read on phones
+            const W = raw.width + pad * 2, H = raw.height + pad * 2 + foot;
+            const out = document.createElement('canvas');
+            out.width = W; out.height = H;
+            const ctx = out.getContext('2d');
+            const primary = _xfColor('var(--primary-theme)', 'rgb(8, 145, 178)');
+            const accent = _xfColor('var(--accent-theme)', 'rgb(20, 184, 166)');
+
+            // backdrop: cool paper gradient + two theme blooms
+            const bg = ctx.createLinearGradient(0, 0, W, H);
+            bg.addColorStop(0, '#f4f7fb'); bg.addColorStop(1, '#e7eef6');
+            ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+            [[W * 0.08, H * 0.06, primary, 0.20], [W * 0.95, H * 0.92, accent, 0.18]].forEach(([x, y, c, a]) => {
+                const g = ctx.createRadialGradient(x, y, 0, x, y, Math.max(W, H) * 0.55);
+                g.addColorStop(0, _xfAlpha(c, a)); g.addColorStop(1, _xfAlpha(c, 0));
+                ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+            });
+
+            // sheet with layered shadow
+            ctx.save();
+            ctx.shadowColor = 'rgba(15, 23, 42, 0.16)'; ctx.shadowBlur = 36 * s; ctx.shadowOffsetY = 14 * s;
+            _xfRound(ctx, pad, pad, raw.width, raw.height, radius);
+            ctx.fillStyle = '#ffffff'; ctx.fill();
+            ctx.restore();
+            ctx.save();
+            _xfRound(ctx, pad, pad, raw.width, raw.height, radius);
+            ctx.clip();
+            ctx.drawImage(raw, pad, pad);
+            ctx.restore();
+            ctx.save();
+            _xfRound(ctx, pad + 0.5, pad + 0.5, raw.width - 1, raw.height - 1, radius);
+            ctx.strokeStyle = 'rgba(148, 163, 184, 0.35)'; ctx.lineWidth = Math.max(1, s * 0.75); ctx.stroke();
+            ctx.restore();
+
+            // footer
+            // footer sits centred in the band below the sheet
+            const midY = pad + raw.height + (H - pad - raw.height) / 2;
+            const font = "'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif";
+            ctx.textBaseline = 'middle';
+            // brand mark
+            const mark = Math.round(20 * s);
+            const mg = ctx.createLinearGradient(pad, midY - mark / 2, pad + mark, midY + mark / 2);
+            mg.addColorStop(0, accent); mg.addColorStop(1, _xfAlpha(accent, 0.82));
+            _xfRound(ctx, pad, midY - mark / 2, mark, mark, 6 * s); ctx.fillStyle = mg; ctx.fill();
+            ctx.fillStyle = '#ffffff'; ctx.font = `800 ${11 * s}px ${font}`; ctx.textAlign = 'center';
+            ctx.fillText('M', pad + mark / 2, midY + 0.5 * s);
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#0f172a'; ctx.font = `800 ${11.5 * s}px ${font}`;
+            ctx.fillText('MEP FAN LTD', pad + mark + 9 * s, midY - 5.5 * s);
+            ctx.fillStyle = '#64748b'; ctx.font = `700 ${8 * s}px ${font}`;
+            ctx.fillText('SFG STOCK  •  ' + meta.typeLabel.toUpperCase(), pad + mark + 9 * s, midY + 7 * s);
+            // right side: report date pill + generated stamp
+            const gen = 'Generated ' + new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
+            ctx.font = `700 ${8 * s}px ${font}`;
+            const genW = ctx.measureText(gen).width;
+            ctx.fillStyle = '#94a3b8'; ctx.textAlign = 'right';
+            ctx.fillText(gen, W - pad, midY + 7 * s);
+            const pillTxt = meta.dateText.toUpperCase();
+            ctx.font = `800 ${8.5 * s}px ${font}`;
+            const pw = ctx.measureText(pillTxt).width + 18 * s, ph = 15 * s;
+            const px = W - pad - pw, py = midY - 5.5 * s - ph / 2;
+            const pg = ctx.createLinearGradient(px, py, px + pw, py);
+            pg.addColorStop(0, accent); pg.addColorStop(1, _xfAlpha(accent, 0.85));
+            _xfRound(ctx, px, py, pw, ph, ph / 2); ctx.fillStyle = pg; ctx.fill();
+            ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center';
+            ctx.fillText(pillTxt, px + pw / 2, py + ph / 2 + 0.5 * s);
+            ctx.textAlign = 'left';
+            void genW;
+            return out;
+        }
+
         function triggerJpgDownload(dataUrl, filename) {
             const link = document.createElement('a');
             link.download = filename;
@@ -1334,36 +1902,6 @@
             }
         }
 
-        // Second, rule-independent pass over the captured subtree. When the page is opened
-        // straight from disk (file://) Chrome blocks cssRules access, so the stylesheet walk
-        // above patches nothing and html2canvas died on "unsupported color function color".
-        // Here every element of the clone (including html2canvas's own ::before/::after
-        // stand-in nodes) gets any remaining color()/color-mix() value inlined as rgb().
-        function sanitizeCaptureSubtree(root) {
-            if (!root) return;
-            try {
-                const view = root.ownerDocument.defaultView;
-                const nodes = [root, ...root.querySelectorAll('*')];
-                for (const el of nodes) {
-                    if (!el.style) continue;
-                    const cs = view.getComputedStyle(el);
-                    for (let i = 0; i < cs.length; i++) {
-                        const prop = cs[i];
-                        if (prop.startsWith('--')) continue;
-                        const v = cs.getPropertyValue(prop);
-                        if (v && _hasUnsupported(v)) {
-                            const fixed = sanitizeCssValue(v);
-                            if (fixed !== v) {
-                                try { el.style.setProperty(prop, fixed, 'important'); } catch (e) {}
-                            }
-                        }
-                    }
-                }
-            } catch (err) {
-                console.warn('Capture colour pass skipped:', err);
-            }
-        }
-
         function shouldRandomizeTheme() {
             return true; // Randomize on every refresh
         }
@@ -1421,8 +1959,8 @@
                 'archive-accessories': 'tab-accessories',
                 'archive-armature': 'tab-armature',
                 'rnd-generator': 'tab-generator',
-                'archive-armature-rnd': 'tab-rnd',
-                'archive-fan': 'tab-fan'
+                'archive-armature-rnd': 'tab-generator',
+                'archive-fan': 'tab-generator'
             };
             document.getElementById(tabMap[pageId]).classList.add('active');
 
@@ -2076,9 +2614,10 @@
             renderTable();
             updateReportBranding(type);
 
-            // Sync the date picker if it matches
+            // Sync the date picker AND the date card to the report's own date
+            // (the card used to keep showing today's date for an older report).
             const picker = document.getElementById('statement-date-picker');
-            if (picker && dateKey) picker.value = dateKey;
+            if (picker && dateKey) { picker.value = dateKey; updateFormattedDate(dateKey); }
 
             switchPage('generator');
             showToast(`${REPORT_CONFIG[type].emoji} Loaded [${dateKey}]`);
@@ -2088,6 +2627,7 @@
         function updateBadges() {
             ['accessories', 'armature', 'armature-rnd', 'fan'].forEach(type => {
                 const badge = document.getElementById('badge-' + type);
+                if (!badge) return;
                 const storedRaw = localStorage.getItem(window.STORAGE_KEYS[type]);
                 if (storedRaw) {
                     const archiveMap = JSON.parse(storedRaw);
@@ -2836,8 +3376,38 @@
             container.appendChild(frag);
         }
 
+        // Privacy modes (Firefox "resist fingerprinting", Brave Shields strict, some extensions)
+        // block reading pixels back from a <canvas>. The capture then comes out empty and the
+        // JPEG is solid black. Probe with one known pixel before and after the capture.
+        function canvasReadbackBlocked(cv) {
+            try {
+                let c = cv, x;
+                if (!c) {
+                    c = document.createElement('canvas'); c.width = c.height = 4;
+                    x = c.getContext('2d'); x.fillStyle = 'rgb(255,0,0)'; x.fillRect(0, 0, 4, 4);
+                    const d = x.getImageData(1, 1, 1, 1).data;
+                    return !(d[0] > 200 && d[1] < 60 && d[2] < 60 && d[3] > 200);
+                }
+                // exported canvas: sample a 5×5 grid; all fully transparent/black = blocked
+                x = c.getContext('2d');
+                let lit = 0;
+                for (let i = 1; i <= 5; i++) for (let j = 1; j <= 5; j++) {
+                    const d = x.getImageData(Math.floor(c.width * i / 6), Math.floor(c.height * j / 6), 1, 1).data;
+                    if (d[3] > 0 && (d[0] + d[1] + d[2]) > 30) lit++;
+                }
+                return lit === 0;
+            } catch (e) { return true; }
+        }
+        const CANVAS_BLOCKED_MSG = 'Browser blocked the image (privacy setting). Click the 🖼 icon left of the address bar → Allow, then Download again.';
+
         async function takeScreenshot(silentDownload = false) {
             const sheet = document.getElementById('report-page');
+
+            if (canvasReadbackBlocked()) {
+                showToast(CANVAS_BLOCKED_MSG);
+                console.warn('Canvas readback is blocked by the browser — JPG export skipped to avoid a black image.');
+                return;
+            }
 
             if (silentDownload) {
                 showToast("Syncing Snapshot to Cloud Storage...");
@@ -2870,7 +3440,24 @@
                     clonedDoc.body.classList.remove('mobile-active');
                 }
                 const wd = clonedDoc.getElementById('display-date-weekday');
-                if (wd) wd.style.padding = '2px 14px 6px 14px';
+                if (wd && !wd.classList.contains('rdc-wd')) wd.style.padding = '2px 14px 6px 14px';
+                // html2canvas packs tight line-heights tighter than the browser: give the
+                // big day number room so it never touches the month line, and keep the
+                // weekday pill text centred and solid.
+                const rdcDay = clonedDoc.getElementById('display-date-day');
+                if (rdcDay && rdcDay.classList.contains('rdc-day')) { rdcDay.style.lineHeight = '1.15'; rdcDay.style.paddingBottom = '4px'; }
+                if (wd && wd.classList.contains('rdc-wd')) {
+                    // fixed box + matching line-height = text dead-centre in html2canvas;
+                    // solid theme fill (the light end of the gradient washed the label out)
+                    // html2canvas draws this text ~4px low, so pad more below than above.
+                    wd.style.display = 'inline-block';
+                    wd.style.lineHeight = '12px';
+                    wd.style.padding = '2px 14px 8px';
+                    wd.style.background = _xfColor('var(--accent-theme)', 'rgb(8, 145, 178)');
+                    wd.style.boxShadow = 'none';
+                }
+                const clk = clonedDoc.getElementById('digital-clock');
+                if (clk) clk.style.letterSpacing = '0';
                 // The only mandatory html2canvas workaround: background-clip:text doesn't
                 // render, so swap .text-huge to a solid theme-coloured fill. Everything
                 // else (table headers, pills, signature) renders straight from the live
@@ -2884,38 +3471,46 @@
                 }
                 stabilizeDateCardsAndBars(clonedSheet);
                 sanitizeClonedDocColors(clonedDoc);
-                sanitizeCaptureSubtree(clonedSheet);
             };
 
-            // JPEG has no alpha: with backgroundColor:null every semi-transparent surface of the
-            // sheet was flattened onto black, so the exported/pasted image came out grey and dim.
-            // Capture onto a solid light paper colour (the theme background when it is light).
-            const paperColor = (() => {
-                const probe = document.createElement('div');
-                probe.style.cssText = 'position:absolute;visibility:hidden;background:var(--bg-retro, #ffffff)';
-                document.body.appendChild(probe);
-                const rgb = getComputedStyle(probe).backgroundColor;
-                probe.remove();
-                const m = rgb.match(/\d+(\.\d+)?/g);
-                if (!m || m.length < 3 || (m[3] !== undefined && Number(m[3]) < 1)) return '#ffffff';
-                const [r, g, b] = m.map(Number);
-                return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 > 0.85 ? `rgb(${r}, ${g}, ${b})` : '#ffffff';
-            })();
-
             try {
-                const canvasImg = await capture(sheet, {
-                    // Optimization: 2x is visually identical for A4 at 96 DPI
-                    // while using ~75% less canvas memory and time than 4x.
-                    scale: 2,
-                    useCORS: true,
-                    backgroundColor: paperColor,
-                    logging: false,
-                    allowTaint: true,
-                    removeContainer: true,
-                    onclone: buildOnClone,
-                });
-                const dataUrl = canvasImg.toDataURL('image/jpeg', 1.0);
-                const filename = `MEP-Ledger-${new Date().toISOString().split('T')[0]}.jpg`;
+                // Web fonts (Manrope / Plus Jakarta) must be ready or the JPG falls back to Arial.
+                if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch (e) {} }
+                // 3x = crisp on phones / WhatsApp zoom; the frame is drawn at the same scale.
+                const EXPORT_SCALE = 3;
+                // At browser zoom ≠ 100% the hairline gradient under each table header
+                // computes to < 1px; html2canvas then asks for a 0-px pattern and the
+                // whole capture throws. Skip just those empty patterns during capture.
+                const _origCreatePattern = CanvasRenderingContext2D.prototype.createPattern;
+                CanvasRenderingContext2D.prototype.createPattern = function (img, rep) {
+                    if (img && (img.width === 0 || img.height === 0)) return null;
+                    return _origCreatePattern.call(this, img, rep);
+                };
+                let rawCanvas;
+                try {
+                    rawCanvas = await capture(sheet, {
+                        scale: EXPORT_SCALE,
+                        useCORS: true,
+                        backgroundColor: null,
+                        logging: false,
+                        allowTaint: true,
+                        removeContainer: true,
+                        onclone: buildOnClone,
+                    });
+                } finally {
+                    CanvasRenderingContext2D.prototype.createPattern = _origCreatePattern;
+                }
+                let canvasImg = rawCanvas;
+                try { canvasImg = composeExportFrame(rawCanvas, EXPORT_SCALE); } catch (e) { console.warn('Export frame skipped:', e); }
+                // 0.95 is visually lossless and roughly half the size of 1.0.
+                if (canvasReadbackBlocked(canvasImg)) {
+                    showToast(CANVAS_BLOCKED_MSG);
+                    console.warn('Exported canvas came back empty — download cancelled.');
+                    return;
+                }
+                const dataUrl = canvasImg.toDataURL('image/jpeg', 0.95);
+                const _meta = exportMeta();
+                const filename = `MEP-SFG-${_meta.typeSlug}-${_meta.dateKey}.jpg`;
 
                 if (!silentDownload) {
                     triggerJpgDownload(dataUrl, filename);
@@ -3369,9 +3964,10 @@ function stabilizeDateCardsAndBars(root) {
     root.querySelectorAll('.report-date-card').forEach(card => {
         card.style.setProperty('display', 'table', 'important');
         card.style.setProperty('background', '#ffffff', 'important');
-        card.style.setProperty('border', '2px solid #0891b2', 'important');
-        card.style.setProperty('border-radius', '16px', 'important');
-        card.style.setProperty('box-shadow', '8px 8px 0 rgba(8, 145, 178, 0.12)', 'important');
+        const isRdc = card.classList.contains('rdc');
+        card.style.setProperty('border', isRdc ? '1px solid #cbd5e1' : '2px solid #0891b2', 'important');
+        card.style.setProperty('border-radius', isRdc ? '18px' : '16px', 'important');
+        card.style.setProperty('box-shadow', isRdc ? 'none' : '8px 8px 0 rgba(8, 145, 178, 0.12)', 'important');
         card.style.setProperty('overflow', 'hidden', 'important');
     });
     root.querySelectorAll('.report-header-bar').forEach(bar => {
@@ -3727,10 +4323,13 @@ if (shouldRandomizeTheme() && !Number.isInteger(window.__bootThemeIndex)) {
 
 <!-- ============ PWA & NOTIFICATION ENGINE ============ -->
 <script>
-    // Service worker intentionally NOT registered inside the ERP.
-    // A PWA cache on the ERP origin used to keep serving stale module shells
-    // (and the ledger itself) after updates, so sw.js is only kept in the
-    // folder for the standalone/GitHub-Pages build.
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('PWA Ready'))
+                .catch(err => console.error('PWA SW Failed', err));
+        });
+    }
 
     function initNotificationEngine() {
         if (!('Notification' in window)) return;
@@ -3832,6 +4431,1077 @@ if (shouldRandomizeTheme() && !Number.isInteger(window.__bootThemeIndex)) {
     window.addEventListener('load', () => {
         document.documentElement.classList.remove('ui-booting');
     });
+
+    // ============ RETURN TO EXECUTIVE PORTAL HANDLER ============
+    (function () {
+        try {
+            var params = new URLSearchParams(window.location.search);
+            var token = params.get('token');
+            if (token) {
+                localStorage.setItem('mep_auth_token', token);
+                sessionStorage.setItem('mep_auth_token', token);
+            }
+        } catch (e) {}
+    })();
+
+    function returnToModulePortal(event) {
+        if (event) event.preventDefault();
+        try {
+            var params = new URLSearchParams(window.location.search);
+            var token = params.get('token')
+                || localStorage.getItem('mep_auth_token')
+                || sessionStorage.getItem('mep_auth_token')
+                || '';
+            var target = '../portal.html' + (token ? '?token=' + encodeURIComponent(token) : '');
+            window.location.href = target;
+        } catch (e) {
+            window.location.href = '../portal.html';
+        }
+    }
+    window.returnToModulePortal = returnToModulePortal;
+
+    function openRejectionModule(event) {
+        if (event) event.preventDefault();
+        var token = '';
+        try {
+            token = new URLSearchParams(window.location.search).get('token')
+                || localStorage.getItem('mep_auth_token') || sessionStorage.getItem('mep_auth_token') || '';
+        } catch (e) {}
+        window.location.href = 'rejection.html' + (token ? '?token=' + encodeURIComponent(token) : '');
+        return false;
+    }
+    window.openRejectionModule = openRejectionModule;
+
+</script>
+
+<!-- ============ SFG ENTRY SHEET (Armature SFG Report Entry + SFG Accessories) ============
+     Mirrors the two Excel entry sheets: Item Name | Opening | Daily Production |
+     Consumption (Assemble Floor) | Closing (= O + P - C) | Remarks.
+     Saves into the same archive the rest of the module reads
+     (localStorage mep_report_<type> + Firebase inventory_reports/<type>/<date>). -->
+<style>
+    .es-overlay { position: fixed; inset: 0; z-index: 9990; display: none; align-items: center; justify-content: center;
+        background: rgba(15, 23, 42, 0.42); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); padding: 14px;
+        font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif; }
+    .es-overlay.open { display: flex; }
+    .es-panel { width: min(1040px, 100%); max-height: calc(100vh - 28px); display: flex; flex-direction: column; background: #fff;
+        border-radius: 18px; overflow: hidden; box-shadow: 0 30px 80px -20px rgba(15, 23, 42, 0.45), 0 0 0 1px rgba(15, 23, 42, 0.06);
+        animation: esIn .22s cubic-bezier(.16, 1, .3, 1); }
+    @keyframes esIn { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: none; } }
+    .es-head { display: flex; align-items: center; gap: 12px; padding: 12px 16px; color: #fff;
+        background: linear-gradient(120deg, #059669 0%, #10b981 55%, #22c55e 100%); }
+    .es-head-ico { width: 34px; height: 34px; border-radius: 10px; background: rgba(255, 255, 255, 0.2); display: grid; place-items: center; flex: none; }
+    .es-head h2 { margin: 0; font-size: 15px; font-weight: 900; letter-spacing: .02em; line-height: 1.1; }
+    .es-head p { margin: 2px 0 0; font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; opacity: .85; }
+    .es-cloud { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 800; letter-spacing: .06em;
+        text-transform: uppercase; background: rgba(255, 255, 255, 0.18); padding: 5px 10px; border-radius: 999px; white-space: nowrap; }
+    .es-cloud i { width: 7px; height: 7px; border-radius: 50%; background: #bbf7d0; box-shadow: 0 0 0 3px rgba(187, 247, 208, .3); }
+    .es-cloud.off i { background: #fde68a; box-shadow: 0 0 0 3px rgba(253, 230, 138, .3); }
+    .es-cloud.err i { background: #fecaca; }
+    .es-x { width: 30px; height: 30px; border: 0; border-radius: 9px; background: rgba(255, 255, 255, 0.18); color: #fff; cursor: pointer; font-size: 18px; line-height: 1; flex: none; }
+    .es-x:hover { background: rgba(255, 255, 255, 0.3); }
+
+    .es-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid #e2e8f0; background: #f8fafc; }
+    .es-seg { display: inline-flex; background: #e2e8f0; border-radius: 10px; padding: 3px; gap: 2px; }
+    .es-seg button { border: 0; background: transparent; padding: 6px 12px; border-radius: 8px; font: inherit; font-size: 11.5px; font-weight: 800; color: #475569; cursor: pointer; white-space: nowrap; }
+    .es-seg button.on { background: #fff; color: #047857; box-shadow: 0 1px 3px rgba(15, 23, 42, .12); }
+    .es-date { display: inline-flex; align-items: center; gap: 4px; background: #fff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 2px; }
+    .es-date button { border: 0; background: transparent; width: 26px; height: 26px; border-radius: 7px; cursor: pointer; color: #334155; font-weight: 900; }
+    .es-date button:hover { background: #f1f5f9; }
+    .es-date input { border: 0; outline: none; font: inherit; font-size: 12px; font-weight: 800; color: #0f172a; background: transparent; width: 122px; }
+    .es-day { font-size: 10px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: #fff; background: #0ea5e9; padding: 4px 8px; border-radius: 999px; }
+    .es-btn-today { border: 1px solid #cbd5e1; background: #fff; color: #334155; font: inherit; font-size: 11px; font-weight: 800; padding: 6px 10px; border-radius: 9px; cursor: pointer; }
+    .es-btn-today:hover { border-color: #10b981; color: #047857; }
+    .es-status { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 800; padding: 5px 10px; border-radius: 999px; white-space: nowrap; }
+    .es-status.new { background: #e0f2fe; color: #0369a1; }
+    .es-status.saved { background: #dcfce7; color: #15803d; }
+    .es-status.dirty { background: #fef3c7; color: #b45309; }
+
+    .es-strip { display: flex; gap: 6px; padding: 8px 16px; overflow-x: auto; border-bottom: 1px solid #eef2f7; scrollbar-width: thin; }
+    .es-chip { flex: none; display: flex; flex-direction: column; align-items: center; min-width: 44px; padding: 4px 6px; border-radius: 9px; border: 1px solid #e2e8f0;
+        background: #fff; cursor: pointer; font: inherit; color: #475569; }
+    .es-chip b { font-size: 13px; font-weight: 900; line-height: 1.1; color: #0f172a; }
+    .es-chip small { font-size: 8.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+    .es-chip .dot { width: 5px; height: 5px; border-radius: 50%; background: #cbd5e1; margin-top: 3px; }
+    .es-chip.has .dot { background: #10b981; }
+    .es-chip.on { border-color: #10b981; background: #ecfdf5; box-shadow: 0 0 0 2px rgba(16, 185, 129, .18); }
+    .es-chip.future { opacity: .45; }
+
+    .es-body { overflow: auto; flex: 1; min-height: 120px; }
+    .es-grid { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12.5px; }
+    .es-grid th { position: sticky; top: 0; z-index: 2; background: #0f766e; color: #fff; font-size: 9.5px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase;
+        padding: 8px 8px; text-align: right; white-space: nowrap; border-right: 1px solid rgba(255, 255, 255, .12); }
+    .es-grid th:first-child, .es-grid th.l { text-align: left; }
+    .es-grid th small { display: block; font-size: 8px; font-weight: 700; letter-spacing: .04em; opacity: .75; text-transform: none; }
+    .es-grid td { border-bottom: 1px solid #edf2f7; border-right: 1px solid #f1f5f9; padding: 0; height: 34px; vertical-align: middle; }
+    .es-grid tbody tr:nth-child(even) td { background: #fafcff; }
+    .es-grid tbody tr:hover td { background: #f0fdf4; }
+    .es-sl { width: 30px; text-align: center; color: #94a3b8; font-weight: 800; font-size: 11px; }
+    .es-name { padding: 0 10px !important; font-weight: 700; font-size: 12px; color: #0f172a; min-width: 230px; white-space: nowrap; }
+    .es-name-wrap { display: flex; align-items: center; gap: 6px; }
+    .es-name-wrap span { flex: 1; }
+    .es-del { border: 0; background: transparent; color: #cbd5e1; cursor: pointer; font-size: 15px; line-height: 1; padding: 2px 4px; border-radius: 5px; }
+    .es-del:hover { color: #dc2626; background: #fee2e2; }
+    .es-in { width: 100%; height: 34px; border: 0; outline: none; background: transparent; padding: 0 9px; font-family: 'JetBrains Mono', ui-monospace, monospace;
+        font-size: 12.5px; font-weight: 700; color: #0f172a; text-align: right; box-sizing: border-box; }
+    .es-in.txt { font-family: inherit; text-align: left; font-weight: 600; }
+    .es-in:focus { background: #fff !important; box-shadow: inset 0 0 0 2px #10b981; border-radius: 4px; }
+    .es-in::placeholder { color: #cbd5e1; font-weight: 600; }
+    td.es-op { position: relative; width: 108px; }
+    td.es-op.carry .es-in { color: #0369a1; }
+    td.es-op.diff::after { content: ''; position: absolute; top: 4px; right: 4px; width: 6px; height: 6px; border-radius: 50%; background: #f59e0b; }
+    td.es-pr { width: 118px; } td.es-pr .es-in { color: #047857; }
+    td.es-co { width: 124px; } td.es-co .es-in { color: #b91c1c; }
+    td.es-cl { width: 108px; text-align: right; padding: 0 10px !important; font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 900; color: #0f172a; background: #f8fafc !important; }
+    td.es-cl.neg { color: #dc2626; background: #fef2f2 !important; }
+    td.es-cv { width: 70px; text-align: center; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; font-weight: 800; color: #64748b; }
+    td.es-rm { min-width: 130px; }
+    .es-grid tfoot td { position: sticky; bottom: 0; background: #ecfdf5 !important; border-top: 2px solid #10b981; font-family: 'JetBrains Mono', ui-monospace, monospace;
+        font-weight: 900; font-size: 12.5px; text-align: right; padding: 0 10px; color: #065f46; }
+    .es-grid tfoot td.l { text-align: left; font-family: inherit; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
+    .es-add { margin: 8px 16px; border: 1px dashed #94a3b8; background: transparent; color: #475569; font: inherit; font-size: 11px; font-weight: 800; padding: 6px 12px; border-radius: 9px; cursor: pointer; }
+    .es-add:hover { border-color: #10b981; color: #047857; background: #f0fdf4; }
+
+    .es-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 10px 16px; border-top: 1px solid #e2e8f0; background: #f8fafc; }
+    .es-hint { font-size: 10.5px; color: #64748b; font-weight: 600; line-height: 1.5; }
+    .es-hint kbd { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; background: #fff; border: 1px solid #cbd5e1; border-bottom-width: 2px; border-radius: 4px; padding: 0 4px; color: #334155; }
+    .es-legend { display: inline-flex; align-items: center; gap: 4px; margin-left: 8px; }
+    .es-legend i { width: 6px; height: 6px; border-radius: 50%; background: #f59e0b; display: inline-block; }
+    .es-actions { margin-left: auto; display: flex; gap: 8px; }
+    .es-b { border: 1px solid #cbd5e1; background: #fff; color: #334155; font: inherit; font-size: 12px; font-weight: 800; padding: 8px 14px; border-radius: 10px; cursor: pointer; }
+    .es-b:hover { border-color: #94a3b8; }
+    .es-b.pri { border: 0; color: #fff; background: linear-gradient(135deg, #10b981, #16a34a); box-shadow: 0 8px 18px -8px rgba(22, 163, 74, .7); }
+    .es-b.pri:hover { filter: brightness(1.05); }
+    .es-b.dark { border: 0; color: #fff; background: #0f766e; }
+    .es-b:disabled { opacity: .55; cursor: wait; }
+    @media (max-width: 640px) { .es-status { margin-left: 0; } .es-actions { margin-left: 0; width: 100%; } .es-actions .es-b { flex: 1; } }
+    @media print { .es-overlay { display: none !important; } }
+
+    /* ---------- Glass skin + compact sizing (overrides the base rules above) ---------- */
+    .es-overlay { background: radial-gradient(1200px 600px at 20% 10%, rgba(16,185,129,.18), transparent 60%), rgba(15, 23, 42, 0.30);
+        backdrop-filter: blur(10px) saturate(140%); -webkit-backdrop-filter: blur(10px) saturate(140%); }
+    .es-panel { width: min(980px, 100%); position: relative; background: linear-gradient(160deg, rgba(255,255,255,.78), rgba(255,255,255,.58));
+        backdrop-filter: blur(26px) saturate(180%); -webkit-backdrop-filter: blur(26px) saturate(180%);
+        border: 1px solid rgba(255,255,255,.75); border-radius: 20px;
+        box-shadow: 0 30px 70px -24px rgba(15,23,42,.45), inset 0 1px 0 rgba(255,255,255,.9); }
+    .es-head { position: relative; overflow: hidden; padding: 9px 14px; gap: 10px;
+        background: linear-gradient(120deg, rgba(5,150,105,.92), rgba(16,185,129,.86) 55%, rgba(34,197,94,.80)); }
+    .es-head::after { content: ''; position: absolute; inset: 0 0 50% 0; background: linear-gradient(180deg, rgba(255,255,255,.22), transparent); pointer-events: none; }
+    .es-head-ico { width: 30px; height: 30px; background: rgba(255,255,255,.22); border: 1px solid rgba(255,255,255,.4); box-shadow: inset 0 1px 0 rgba(255,255,255,.5); }
+    .es-head h2 { font-size: 14px; }
+    .es-head p { font-size: 9px; }
+    .es-cloud, .es-x { background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.38); box-shadow: inset 0 1px 0 rgba(255,255,255,.45);
+        backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+    .es-cloud { padding: 4px 10px; position: relative; z-index: 1; }
+    .es-x { width: 28px; height: 28px; position: relative; z-index: 1; transition: background .15s, transform .15s; }
+    .es-x:hover { background: rgba(255,255,255,.32); transform: rotate(90deg); }
+
+    .es-bar, .es-foot { background: rgba(255,255,255,.32); border-color: rgba(255,255,255,.6); padding: 8px 14px; gap: 8px; }
+    .es-strip { padding: 7px 14px; border-color: rgba(255,255,255,.55); background: rgba(255,255,255,.18); }
+
+    /* glass control base */
+    .es-seg, .es-date, .es-btn-today, .es-chip, .es-b, .es-add {
+        background: linear-gradient(135deg, rgba(255,255,255,.80), rgba(255,255,255,.42));
+        border: 1px solid rgba(255,255,255,.85);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 4px 14px -8px rgba(15,23,42,.30);
+        backdrop-filter: blur(12px) saturate(160%); -webkit-backdrop-filter: blur(12px) saturate(160%);
+        transition: transform .15s ease, box-shadow .15s ease, background .15s ease, border-color .15s ease; }
+    .es-btn-today:hover, .es-chip:hover, .es-b:hover, .es-add:hover { transform: translateY(-1px);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 8px 18px -8px rgba(15,23,42,.35); border-color: rgba(16,185,129,.55); }
+    .es-b:active, .es-chip:active, .es-btn-today:active { transform: translateY(0) scale(.98); }
+
+    .es-seg { padding: 3px; border-radius: 12px; }
+    .es-seg button { padding: 5px 11px; font-size: 11px; border-radius: 9px; transition: background .15s, color .15s; }
+    .es-seg button:hover:not(.on) { background: rgba(255,255,255,.5); }
+    .es-seg button.on { background: linear-gradient(135deg, rgba(16,185,129,.92), rgba(22,163,74,.85)); color: #fff;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.4), 0 4px 12px -4px rgba(22,163,74,.6); }
+    .es-date { border-radius: 11px; }
+    .es-date button { width: 24px; height: 24px; }
+    .es-date button:hover { background: rgba(16,185,129,.14); color: #047857; }
+    .es-date input { font-size: 11.5px; width: 116px; }
+    .es-day { background: linear-gradient(135deg, rgba(14,165,233,.92), rgba(59,130,246,.85)); border: 1px solid rgba(255,255,255,.5);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 4px 10px -4px rgba(14,165,233,.6); font-size: 9.5px; padding: 3px 9px; }
+    .es-btn-today { border-radius: 10px; padding: 5px 11px; font-size: 10.5px; }
+    .es-status { font-size: 10px; padding: 4px 10px; border: 1px solid rgba(255,255,255,.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+    .es-status.new { background: rgba(224,242,254,.75); }
+    .es-status.saved { background: rgba(220,252,231,.8); }
+    .es-status.dirty { background: rgba(254,243,199,.85); }
+
+    .es-chip { min-width: 40px; padding: 3px 5px; border-radius: 10px; }
+    .es-chip b { font-size: 12px; }
+    .es-chip small { font-size: 8px; }
+    .es-chip.on { background: linear-gradient(135deg, rgba(16,185,129,.92), rgba(22,163,74,.85)); border-color: rgba(255,255,255,.6);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.4), 0 6px 14px -6px rgba(22,163,74,.7); }
+    .es-chip.on b, .es-chip.on small { color: #fff; }
+    .es-chip.on .dot { background: #fff; }
+
+    .es-body { background: rgba(255,255,255,.35); }
+    .es-grid { font-size: 12px; }
+    .es-grid th { padding: 6px 8px; font-size: 9px; background: rgba(15,118,110,.90); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        border-right-color: rgba(255,255,255,.14); }
+    .es-grid th small { font-size: 7.5px; }
+    .es-grid td { height: 30px; border-bottom-color: rgba(148,163,184,.18); border-right-color: rgba(148,163,184,.12); background: rgba(255,255,255,.55); }
+    .es-grid tbody tr:nth-child(even) td { background: rgba(248,250,252,.62); }
+    .es-grid tbody tr:hover td { background: rgba(236,253,245,.85); }
+    .es-in { height: 30px; font-size: 12px; padding: 0 8px; transition: box-shadow .12s, background .12s; }
+    .es-in:focus { background: rgba(255,255,255,.95) !important; box-shadow: inset 0 0 0 2px rgba(16,185,129,.85), 0 0 0 3px rgba(16,185,129,.15); }
+    td.es-cl { background: rgba(241,245,249,.75) !important; }
+    td.es-cl.neg { background: rgba(254,242,242,.9) !important; }
+    .es-grid tfoot td { height: 30px; background: rgba(236,253,245,.88) !important; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-size: 12px; }
+    .es-add { margin: 7px 14px; border-style: dashed; border-color: rgba(100,116,139,.45); padding: 5px 11px; border-radius: 10px; font-size: 10.5px; }
+
+    .es-b { border-radius: 11px; padding: 7px 14px; font-size: 11.5px; color: #1e293b; }
+    .es-b.dark { color: #fff; background: linear-gradient(135deg, rgba(15,118,110,.92), rgba(13,148,136,.82)); border: 1px solid rgba(255,255,255,.35);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 8px 18px -8px rgba(15,118,110,.7); }
+    .es-b.pri { color: #fff; background: linear-gradient(135deg, rgba(16,185,129,.95), rgba(22,163,74,.85)); border: 1px solid rgba(255,255,255,.4);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 10px 22px -8px rgba(22,163,74,.75); }
+    .es-b.dark:hover, .es-b.pri:hover { filter: brightness(1.06); border-color: rgba(255,255,255,.6); }
+    .es-hint { font-size: 10px; }
+    .es-hint kbd { background: rgba(255,255,255,.7); border-color: rgba(203,213,225,.9); }
+    @media (prefers-reduced-motion: reduce) { .es-panel { animation: none; } .es-b, .es-chip, .es-x { transition: none; } }
+
+    /* Softer, readable glass: the page behind is blurred by the overlay, and the
+       panel itself is nearly opaque so the report underneath no longer shows through.
+       (A backdrop-filter nested inside another one only sees the parent's tint,
+       so the panel's own blur did nothing — the overlay does the blurring.) */
+    .es-overlay { background: rgba(15, 23, 42, 0.26); backdrop-filter: blur(16px) saturate(130%); -webkit-backdrop-filter: blur(16px) saturate(130%); }
+    .es-panel { background: linear-gradient(160deg, rgba(255,255,255,.95), rgba(248,250,252,.90)); backdrop-filter: none; -webkit-backdrop-filter: none; }
+    .es-body { background: rgba(255,255,255,.75); }
+    .es-grid td { background: rgba(255,255,255,.92); }
+    .es-grid tbody tr:nth-child(even) td { background: rgba(248,250,252,.95); }
+    .es-grid tbody tr:hover td { background: rgba(236,253,245,.98); }
+    .es-bar, .es-foot { background: rgba(248,250,252,.85); }
+    .es-panel .es-strip-row { background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(248,250,252,.75)); }
+
+    /* ---------- Holiday ---------- */
+    .es-dayopt { position: relative; }
+    .es-opt-btn { display: inline-flex; align-items: center; gap: 5px; }
+    .es-menu { position: absolute; top: calc(100% + 6px); left: 0; z-index: 20; width: 230px; padding: 6px; border-radius: 13px; display: none;
+        background: linear-gradient(160deg, rgba(255,255,255,.92), rgba(255,255,255,.72)); border: 1px solid rgba(255,255,255,.9);
+        backdrop-filter: blur(18px) saturate(170%); -webkit-backdrop-filter: blur(18px) saturate(170%);
+        box-shadow: 0 18px 40px -16px rgba(15,23,42,.45), inset 0 1px 0 #fff; animation: esIn .16s ease; }
+    .es-dayopt.open .es-menu { display: block; }
+    .es-menu-item { width: 100%; text-align: left; border: 1px solid rgba(245,158,11,.35); border-radius: 9px; padding: 8px 10px; cursor: pointer; font: inherit;
+        font-size: 12px; font-weight: 800; color: #92400e; background: linear-gradient(135deg, rgba(254,243,199,.95), rgba(253,230,138,.6));
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.8); transition: transform .12s, filter .12s; }
+    .es-menu-item:hover { transform: translateY(-1px); filter: brightness(1.03); }
+    .es-menu-item.undo { color: #0f766e; border-color: rgba(15,118,110,.3); background: linear-gradient(135deg, rgba(204,251,241,.95), rgba(153,246,228,.55)); }
+    .es-menu-note { font-size: 10px; color: #64748b; font-weight: 600; line-height: 1.4; padding: 6px 4px 2px; }
+    .es-status.holiday { background: rgba(254,243,199,.9); color: #92400e; }
+    .es-status.gap { background: rgba(254,226,226,.85); color: #b91c1c; }
+    .es-chip.holiday { background: linear-gradient(135deg, rgba(254,243,199,.95), rgba(253,230,138,.55)); border-color: rgba(245,158,11,.45); }
+    .es-chip.holiday b, .es-chip.holiday small { color: #92400e; }
+    .es-chip.holiday .dot { width: auto; height: auto; background: none; font-size: 8px; line-height: 1; margin-top: 1px; }
+    .es-chip.holiday .dot::before { content: '🏖'; }
+    .es-chip.holiday.on { box-shadow: 0 0 0 2px rgba(245,158,11,.45); }
+    .es-holiday { display: none; align-items: center; gap: 12px; margin: 10px 14px; padding: 12px 14px; border-radius: 14px;
+        background: linear-gradient(135deg, rgba(254,243,199,.9), rgba(253,230,138,.45)); border: 1px solid rgba(245,158,11,.35);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.85); }
+    .es-holiday-ico { font-size: 26px; line-height: 1; }
+    .es-holiday-txt { flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 2px; }
+    .es-holiday-txt b { font-size: 13px; font-weight: 900; color: #78350f; }
+    .es-holiday-txt span { font-size: 11px; font-weight: 600; color: #92400e; line-height: 1.45; }
+    .es-holiday-act { display: flex; gap: 8px; flex-wrap: wrap; }
+    .es-panel.is-holiday .es-holiday { display: flex; }
+    .es-panel.is-holiday .es-body { display: none; }
+    .es-panel.is-holiday #es-save, .es-panel.is-holiday #es-save-view, .es-panel.is-holiday .es-foot .es-actions > .es-b:first-child { display: none; }
+
+    /* ---------- Premium number font (Manrope, tabular figures so columns line up) ---------- */
+    .es-in, td.es-cl, td.es-cv, .es-grid tfoot td, .es-date input, .es-chip b {
+        font-family: 'Manrope', 'Plus Jakarta Sans', system-ui, sans-serif !important;
+        font-variant-numeric: tabular-nums lining-nums; font-feature-settings: 'tnum' 1, 'lnum' 1; letter-spacing: -0.01em; }
+    .es-in { font-size: 13px; font-weight: 700; }
+    .es-in.txt { font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important; font-size: 12px; font-weight: 600; letter-spacing: 0; }
+    .es-in::placeholder { color: #d5dce6; font-weight: 500; }
+    td.es-op .es-in { color: #0b6bcb; font-weight: 800; }
+    td.es-pr .es-in { color: #059669; font-weight: 800; }
+    td.es-co .es-in { color: #dc2626; font-weight: 800; }
+    td.es-cl { font-size: 13.5px; font-weight: 800; color: #0f172a; }
+    td.es-cv { font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.02em; }
+    .es-grid tfoot td { font-size: 13.5px; font-weight: 800; color: #065f46; }
+    .es-grid tfoot td.l { font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important; font-size: 10px; letter-spacing: .12em; }
+    .es-name { font-size: 12.5px; font-weight: 700; letter-spacing: -0.005em; }
+
+    /* ---------- Day timeline ---------- */
+    .es-strip-row { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-bottom: 1px solid rgba(255,255,255,.55);
+        background: linear-gradient(180deg, rgba(255,255,255,.30), rgba(255,255,255,.12)); }
+    .es-strip-row .es-strip { flex: 1; min-width: 0; padding: 4px 2px 6px; border: 0; background: transparent; gap: 6px; align-items: stretch;
+        scroll-behavior: smooth; scrollbar-width: none; mask-image: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 14px), transparent); }
+    .es-strip-row .es-strip::-webkit-scrollbar { display: none; }
+    .es-nav { flex: none; width: 28px; height: 58px; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: 900; color: #0f766e;
+        background: linear-gradient(135deg, rgba(255,255,255,.85), rgba(255,255,255,.45)); border: 1px solid rgba(255,255,255,.9);
+        box-shadow: inset 0 1px 0 #fff, 0 4px 12px -8px rgba(15,23,42,.35); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: transform .15s; }
+    .es-nav:hover { transform: translateY(-1px); color: #047857; }
+
+    .es-mon { flex: none; width: 18px; display: flex; align-items: center; justify-content: center; border-radius: 8px;
+        background: linear-gradient(180deg, rgba(15,118,110,.9), rgba(16,185,129,.8)); box-shadow: inset 0 1px 0 rgba(255,255,255,.35); }
+    .es-mon span { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 9px; font-weight: 900; letter-spacing: .18em; color: #fff; text-transform: uppercase; }
+
+    .es-dc { flex: none; width: 52px; height: 58px; padding: 5px 4px 4px; border-radius: 12px; cursor: pointer; font: inherit; position: relative;
+        display: flex; flex-direction: column; align-items: center; justify-content: space-between; color: #475569;
+        background: linear-gradient(160deg, rgba(255,255,255,.9), rgba(255,255,255,.5)); border: 1px solid rgba(255,255,255,.95);
+        box-shadow: inset 0 1px 0 #fff, 0 4px 12px -8px rgba(15,23,42,.35); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        transition: transform .16s cubic-bezier(.16,1,.3,1), box-shadow .16s, border-color .16s; }
+    .es-dc:hover { transform: translateY(-2px); box-shadow: inset 0 1px 0 #fff, 0 10px 20px -10px rgba(15,23,42,.45); }
+    .es-dc-wd { font-size: 8px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; line-height: 1; }
+    .es-dc-n { font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 800; color: #0f172a; line-height: 1; letter-spacing: -0.02em; }
+    .es-dc-bar { width: 78%; height: 3px; border-radius: 3px; background: rgba(148,163,184,.25); overflow: hidden; }
+    .es-dc-bar i { display: block; height: 100%; border-radius: 3px; background: linear-gradient(90deg, #34d399, #059669); }
+    .es-dc-v { font-family: 'Manrope', sans-serif; font-size: 8.5px; font-weight: 800; line-height: 1; letter-spacing: .02em; color: #94a3b8; }
+
+    .es-dc.saved { border-color: rgba(16,185,129,.35); }
+    .es-dc.saved .es-dc-v { color: #047857; }
+    .es-dc.holiday { background: linear-gradient(160deg, rgba(254,243,199,.95), rgba(253,230,138,.55)); border-color: rgba(245,158,11,.45); }
+    .es-dc.holiday .es-dc-wd, .es-dc.holiday .es-dc-n { color: #92400e; }
+    .es-dc.holiday .es-dc-bar { visibility: hidden; }
+    .es-dc.holiday .es-dc-v { font-size: 10px; }
+    .es-dc.missing { background: linear-gradient(160deg, rgba(255,241,242,.95), rgba(254,226,226,.55)); border-color: rgba(239,68,68,.35); }
+    .es-dc.missing .es-dc-v { color: #dc2626; }
+    .es-dc.missing .es-dc-n { color: #991b1b; }
+    .es-dc.due .es-dc-v { color: #0284c7; }
+    .es-dc.future { opacity: .5; }
+    .es-dc.future .es-dc-bar { visibility: hidden; }
+    .es-dc.fri:not(.holiday):not(.on) .es-dc-wd { color: #b45309; }
+    .es-dc.today { border-color: rgba(14,165,233,.7); box-shadow: inset 0 1px 0 #fff, 0 0 0 2px rgba(14,165,233,.18), 0 4px 12px -8px rgba(14,165,233,.6); }
+    .es-dc.today .es-dc-wd { color: #0284c7; }
+    .es-dc.on { background: linear-gradient(150deg, rgba(16,185,129,.97), rgba(5,150,105,.9)); border-color: rgba(255,255,255,.55);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 10px 22px -10px rgba(5,150,105,.85); transform: translateY(-2px); }
+    .es-dc.on .es-dc-wd, .es-dc.on .es-dc-n, .es-dc.on .es-dc-v { color: #fff; }
+    .es-dc.on .es-dc-bar { background: rgba(255,255,255,.3); }
+    .es-dc.on .es-dc-bar i { background: #fff; }
+    .es-dc.on.holiday { background: linear-gradient(150deg, rgba(245,158,11,.97), rgba(217,119,6,.9)); }
+    .es-dc.on.missing { background: linear-gradient(150deg, rgba(239,68,68,.95), rgba(220,38,38,.88)); }
+
+    .es-sum { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; padding-left: 8px; border-left: 1px solid rgba(148,163,184,.25); }
+    .es-sum { display: grid; grid-template-columns: repeat(2, auto); gap: 4px; align-content: center; }
+    .es-sum-m { grid-column: 1 / -1; justify-self: end; font-size: 9px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; color: #0f766e; }
+    .es-pill { display: inline-flex; align-items: baseline; justify-content: center; gap: 3px; min-width: 44px; padding: 3px 7px; border-radius: 8px; cursor: default;
+        font-family: 'Manrope', sans-serif; font-size: 11px; font-weight: 800; border: 1px solid rgba(255,255,255,.85);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+    .es-pill em { font-style: normal; font-size: 8px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; opacity: .7; }
+    .es-pill.ok { background: rgba(220,252,231,.85); color: #15803d; }
+    .es-pill.off { background: rgba(254,243,199,.85); color: #92400e; }
+    .es-pill.miss { background: rgba(241,245,249,.85); color: #64748b; }
+    .es-pill.miss.hot { background: rgba(254,226,226,.9); color: #b91c1c; }
+    .es-pill.pr { background: rgba(224,242,254,.85); color: #0369a1; }
+
+    .es-tip { position: fixed; z-index: 9995; min-width: 200px; padding: 10px 12px; border-radius: 13px; pointer-events: none; opacity: 0; transform: translateY(-4px);
+        transition: opacity .12s, transform .12s; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #e2e8f0;
+        background: linear-gradient(160deg, rgba(15,23,42,.92), rgba(30,41,59,.86)); border: 1px solid rgba(255,255,255,.12);
+        box-shadow: 0 18px 40px -14px rgba(0,0,0,.55); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+    .es-tip.show { opacity: 1; transform: none; }
+    .es-tip-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+    .es-tip-h b { font-size: 11.5px; font-weight: 800; color: #fff; }
+    .es-tip-s { font-size: 8.5px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; padding: 2px 7px; border-radius: 999px; background: rgba(148,163,184,.25); }
+    .es-tip-s.saved { background: rgba(16,185,129,.25); color: #6ee7b7; }
+    .es-tip-s.holiday { background: rgba(245,158,11,.25); color: #fcd34d; }
+    .es-tip-s.missing { background: rgba(239,68,68,.25); color: #fca5a5; }
+    .es-tip-g { display: grid; grid-template-columns: 1fr auto; gap: 3px 16px; font-size: 11px; }
+    .es-tip-g span { color: #94a3b8; font-weight: 600; }
+    .es-tip-g b { font-family: 'Manrope', sans-serif; font-weight: 800; color: #f8fafc; text-align: right; font-variant-numeric: tabular-nums; }
+    .es-tip-g b.g { color: #6ee7b7; } .es-tip-g b.r { color: #fca5a5; }
+    .es-tip-f { margin-top: 6px; font-size: 10px; color: #94a3b8; font-weight: 600; }
+    @media (max-width: 760px) { .es-sum { display: none; } }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap">
+
+<div class="es-overlay" id="es-overlay" aria-hidden="true">
+    <div class="es-panel" role="dialog" aria-modal="true" aria-labelledby="es-title">
+        <div class="es-head">
+            <div class="es-head-ico">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            </div>
+            <div>
+                <h2 id="es-title">SFG Entry Sheet</h2>
+                <p id="es-subtitle">MEP FAN LTD • Daily Armature Report</p>
+            </div>
+            <span class="es-cloud" id="es-cloud"><i></i><span>Cloud</span></span>
+            <button type="button" class="es-x" onclick="closeEntrySheet()" title="Close (Esc)">&times;</button>
+        </div>
+
+        <div class="es-bar">
+            <div class="es-seg" role="tablist">
+                <button type="button" data-type="armature" onclick="esSetType('armature')">⚙️ Armature SFG</button>
+                <button type="button" data-type="accessories" onclick="esSetType('accessories')">📦 SFG Accessories</button>
+            </div>
+            <div class="es-date">
+                <button type="button" onclick="esShiftDate(-1)" title="Previous day">‹</button>
+                <input type="date" id="es-date" onchange="esSetDate(this.value)">
+                <button type="button" onclick="esShiftDate(1)" title="Next day">›</button>
+            </div>
+            <span class="es-day" id="es-day">—</span>
+            <button type="button" class="es-btn-today" onclick="esSetDate(esToday())">Today</button>
+            <div class="es-dayopt" id="es-dayopt">
+                <button type="button" class="es-btn-today es-opt-btn" onclick="esToggleDayMenu()" title="Day options (holiday)" aria-haspopup="true">
+                    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    Day <span style="opacity:.6">▾</span>
+                </button>
+                <div class="es-menu" id="es-menu" role="menu">
+                    <button type="button" class="es-menu-item" id="es-hol-btn" onclick="esToggleHoliday()" role="menuitem">🏖 Mark as Holiday</button>
+                    <div class="es-menu-note" id="es-hol-note">Off day — no entry. Its opening moves to the next working day.</div>
+                </div>
+            </div>
+            <span class="es-status new" id="es-status">New entry</span>
+        </div>
+
+        <div class="es-strip-row">
+            <button type="button" class="es-nav" onclick="esStripShift(-7)" title="Earlier week">‹</button>
+            <div class="es-strip" id="es-strip"></div>
+            <button type="button" class="es-nav" onclick="esStripShift(7)" title="Later week">›</button>
+            <div class="es-sum" id="es-sum"></div>
+        </div>
+        <div class="es-tip" id="es-tip" role="tooltip"></div>
+
+        <div class="es-holiday" id="es-holiday">
+            <div class="es-holiday-ico">🏖</div>
+            <div class="es-holiday-txt">
+                <b id="es-hol-title">Holiday</b>
+                <span id="es-hol-desc">No entry for this day.</span>
+            </div>
+            <div class="es-holiday-act">
+                <button type="button" class="es-b" onclick="esToggleHoliday()">↺ Undo Holiday</button>
+                <button type="button" class="es-b pri" onclick="esShiftDate(1)">Next day ›</button>
+            </div>
+        </div>
+
+        <div class="es-body">
+            <table class="es-grid">
+                <thead>
+                    <tr>
+                        <th class="l" style="text-align:center">#</th>
+                        <th class="l">Item Name</th>
+                        <th>Opening<small>prev. closing</small></th>
+                        <th>Daily Production</th>
+                        <th>Consumption<small>Assemble Floor</small></th>
+                        <th>Closing<small>O + P − C</small></th>
+                        <th style="text-align:center">Cover</th>
+                        <th class="l">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody id="es-tbody"></tbody>
+                <tfoot>
+                    <tr>
+                        <td></td>
+                        <td class="l">Total</td>
+                        <td id="es-t-op">0</td>
+                        <td id="es-t-pr">0</td>
+                        <td id="es-t-co">0</td>
+                        <td id="es-t-cl">0</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+            <button type="button" class="es-add" onclick="esAddRow()">+ Add item</button>
+        </div>
+
+        <div class="es-foot">
+            <div class="es-hint">
+                <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> / <kbd>Enter</kbd> move &nbsp;•&nbsp; <kbd>Ctrl</kbd>+<kbd>S</kbd> save &nbsp;•&nbsp; Paste straight from Excel
+                <span class="es-legend"><i></i> opening ≠ previous closing</span>
+            </div>
+            <div class="es-actions">
+                <button type="button" class="es-b" onclick="esReset()">Reset</button>
+                <button type="button" class="es-b dark" id="es-save" onclick="esSave(false)">Save</button>
+                <button type="button" class="es-b pri" id="es-save-view" onclick="esSave(true)">Save &amp; View Report</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    'use strict';
+    var DEFAULT_ITEMS = {
+        armature: [
+            'Winding Armature 7 Circle 15mm',
+            'Winding Armature 6 Circle 16mm',
+            'Winding Armature 5.5 Circle 16mm',
+            'Winding Armature 7 Circle 16mm (5606)',
+            'Winding Armature 7 Circle 16mm (5607)'
+        ],
+        accessories: [
+            'Complete Down Pipe 10 Inch- 4801, 5601, 5603 - Ivory',
+            'Complete Down Pipe 10 Inch -(5602,3601,2401)- Ivory',
+            'Complete Canopy Big - 4801, 5601, 5603',
+            'Complete Canopy Small-5602',
+            'Completed Clamp with Accessories - 4801, 5601, 5603'
+        ]
+    };
+    var SUBTITLE = { armature: 'MEP FAN LTD • Daily Armature Report', accessories: 'MEP FAN LTD • Daily Fan Accessories SFG Report' };
+    var KEYS = { armature: 'mep_report_armature', accessories: 'mep_report_accessories' };
+    var DP = /^\d{4}-\d{2}-\d{2}$/;
+    var st = { type: 'armature', date: null, rows: [], dirty: false, existing: null, prev: null, cloud: 'idle' };
+
+    function $(id) { return document.getElementById(id); }
+    function pad(n) { return String(n).padStart(2, '0'); }
+    function keyOf(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+    function dateOf(k) { var p = k.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+    function esToday() { return keyOf(new Date()); }
+    function norm(s) { return String(s || '').toLowerCase().replace(/\s+/g, ' ').trim(); }
+    function num(v) { if (v === '' || v === null || v === undefined) return 0; var n = parseFloat(String(v).replace(/,/g, '')); return isFinite(n) ? n : 0; }
+    function fmt(n) { return (Math.round(n * 100) / 100).toLocaleString('en-US'); }
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+    function dayTarget() { var n = Number(localStorage.getItem('mep_day_target_value')); return isFinite(n) && n > 0 ? n : 1600; }
+    function closingOf(r) { return num(r.opening) + num(r.production) - num(r.consumption); }
+
+    // ---------- holidays (factory off days; shared by Armature + Accessories) ----------
+    // localStorage mep_sfg_holidays + Firebase inventory_reports/_settings/holidays/<date>.
+    // A holiday has no entry, so the next working day's opening is simply the
+    // closing of the last saved day before it (prevOf already skips the gap).
+    var HOL_KEY = 'mep_sfg_holidays', HOL_PATH = 'inventory_reports/_settings/holidays';
+    function readHol() { try { var h = JSON.parse(localStorage.getItem(HOL_KEY) || '{}'); return h && typeof h === 'object' ? h : {}; } catch (e) { return {}; } }
+    function writeHol(h) { localStorage.setItem(HOL_KEY, JSON.stringify(h)); }
+    function longDate(k) { return dateOf(k).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' }); }
+    function shortDate(k) { return dateOf(k).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }); }
+
+    function readMap(type) {
+        try {
+            var p = JSON.parse(localStorage.getItem(KEYS[type]) || '{}');
+            var m = {};
+            if (!p || typeof p !== 'object' || (p.type && Array.isArray(p.data))) return m;
+            Object.keys(p).forEach(function (k) { if (DP.test(k) && p[k] && Array.isArray(p[k].data)) m[k] = p[k]; });
+            return m;
+        } catch (e) { return {}; }
+    }
+    function prevOf(map, date) {
+        var ks = Object.keys(map).filter(function (k) { return k < date; }).sort();
+        return ks.length ? { date: ks[ks.length - 1], rep: map[ks[ks.length - 1]] } : null;
+    }
+    function looksLikeItems(type, rep) {
+        return rep && rep.data.some(function (r) { return DEFAULT_ITEMS[type].some(function (d) { return norm(d) === norm(r.name); }); });
+    }
+
+    // ---------- build rows for current type/date ----------
+    function buildRows() {
+        var map = readMap(st.type);
+        st.map = map; // reused by renderStrip — one parse per build instead of two
+        var ex = map[st.date] || null;
+        var prev = prevOf(map, st.date);
+        st.existing = ex;
+        st.prev = prev && looksLikeItems(st.type, prev.rep) ? prev : null;
+        var hol = readHol();
+        st.holiday = !!hol[st.date];
+        // Days between the previous entry and this one: holidays are fine, any
+        // other day is a missing entry worth flagging.
+        st.skippedHol = []; st.gaps = [];
+        if (st.prev) {
+            var d = dateOf(st.prev.date); d.setDate(d.getDate() + 1);
+            for (var guard = 0; keyOf(d) < st.date && guard < 60; guard++, d.setDate(d.getDate() + 1)) {
+                (hol[keyOf(d)] ? st.skippedHol : st.gaps).push(keyOf(d));
+            }
+        }
+        var carry = {};
+        if (st.prev) st.prev.rep.data.forEach(function (r) { carry[norm(r.name)] = closingOf(r); });
+
+        var names;
+        if (ex && ex.data.length) names = ex.data.map(function (r) { return r.name; });
+        else if (st.prev) names = st.prev.rep.data.map(function (r) { return r.name; }).filter(Boolean);
+        else names = DEFAULT_ITEMS[st.type].slice();
+
+        var exBy = {};
+        if (ex) ex.data.forEach(function (r) { exBy[norm(r.name)] = r; });
+        st.rows = names.map(function (n) {
+            var k = norm(n), e = exBy[k];
+            var c = Object.prototype.hasOwnProperty.call(carry, k) ? carry[k] : null;
+            var isDefault = DEFAULT_ITEMS[st.type].some(function (d) { return norm(d) === k; });
+            if (e) return { name: n, opening: e.opening === 0 || e.opening ? String(e.opening) : '', production: e.production ? String(e.production) : '', consumption: e.consumption ? String(e.consumption) : '', remarks: e.remarks || '', carry: c, custom: !isDefault };
+            return { name: n, opening: c !== null ? String(c) : '', production: '', consumption: '', remarks: '', carry: c, custom: !isDefault };
+        });
+        st.dirty = false;
+    }
+
+    // ---------- render ----------
+    function render() {
+        document.querySelectorAll('.es-seg button').forEach(function (b) { b.classList.toggle('on', b.dataset.type === st.type); });
+        $('es-subtitle').textContent = SUBTITLE[st.type];
+        $('es-date').value = st.date;
+        $('es-day').textContent = dateOf(st.date).toLocaleDateString('en-US', { weekday: 'long' });
+        var html = '';
+        st.rows.forEach(function (r, i) {
+            var nameCell = r.custom
+                ? '<div class="es-name-wrap"><input class="es-in txt" data-r="' + i + '" data-c="0" value="' + esc(r.name) + '" placeholder="Item name"><button type="button" class="es-del" title="Remove row" onclick="esDelRow(' + i + ')">&times;</button></div>'
+                : '<div class="es-name-wrap"><span>' + esc(r.name) + '</span></div>';
+            html += '<tr data-row="' + i + '">' +
+                '<td class="es-sl">' + (i + 1) + '</td>' +
+                '<td class="es-name">' + nameCell + '</td>' +
+                '<td class="es-op"><input class="es-in" inputmode="decimal" data-r="' + i + '" data-c="1" value="' + esc(r.opening) + '" placeholder="0"></td>' +
+                '<td class="es-pr"><input class="es-in" inputmode="decimal" data-r="' + i + '" data-c="2" value="' + esc(r.production) + '" placeholder="0"></td>' +
+                '<td class="es-co"><input class="es-in" inputmode="decimal" data-r="' + i + '" data-c="3" value="' + esc(r.consumption) + '" placeholder="0"></td>' +
+                '<td class="es-cl"></td>' +
+                '<td class="es-cv"></td>' +
+                '<td class="es-rm"><input class="es-in txt" data-r="' + i + '" data-c="4" value="' + esc(r.remarks) + '" placeholder="—"></td>' +
+                '</tr>';
+        });
+        $('es-tbody').innerHTML = html;
+        recalc();
+        renderHoliday();
+        renderStrip();
+        renderStatus();
+        renderCloud();
+    }
+
+    function recalc() {
+        var t = { op: 0, pr: 0, co: 0, cl: 0 }, target = dayTarget();
+        st.rows.forEach(function (r, i) {
+            var tr = $('es-tbody').querySelector('tr[data-row="' + i + '"]');
+            if (!tr) return;
+            var cl = closingOf(r);
+            t.op += num(r.opening); t.pr += num(r.production); t.co += num(r.consumption); t.cl += cl;
+            var clTd = tr.querySelector('.es-cl');
+            clTd.textContent = fmt(cl);
+            clTd.classList.toggle('neg', cl < 0);
+            var cover = '—';
+            if (cl > 0 && target > 0) { var d = cl / target, w = Math.floor(d); cover = w + 'D ' + Math.round((d - w) * 11) + 'H'; }
+            tr.querySelector('.es-cv').textContent = cover;
+            var op = tr.querySelector('.es-op');
+            var hasCarry = r.carry !== null && r.carry !== undefined;
+            op.classList.toggle('carry', hasCarry && r.opening !== '' && num(r.opening) === r.carry);
+            op.classList.toggle('diff', hasCarry && r.opening !== '' && num(r.opening) !== r.carry);
+            op.title = hasCarry ? ('Previous closing (' + st.prev.date + '): ' + fmt(r.carry) + (num(r.opening) !== r.carry ? '  — double-click to use it' : '')) : 'No previous day found — type opening';
+        });
+        $('es-t-op').textContent = fmt(t.op); $('es-t-pr').textContent = fmt(t.pr);
+        $('es-t-co').textContent = fmt(t.co); $('es-t-cl').textContent = fmt(t.cl);
+    }
+
+    function renderHoliday() {
+        document.querySelector('.es-panel').classList.toggle('is-holiday', !!st.holiday);
+        var btn = $('es-hol-btn');
+        btn.textContent = st.holiday ? '↺ Undo Holiday' : '🏖 Mark as Holiday';
+        btn.classList.toggle('undo', !!st.holiday);
+        $('es-hol-note').textContent = st.holiday
+            ? 'Back to a normal working day — you can enter data again.'
+            : 'Off day — no entry. Its opening moves to the next working day.';
+        if (st.holiday) {
+            $('es-hol-title').textContent = longDate(st.date) + ' — Holiday';
+            $('es-hol-desc').textContent = 'No entry needed. The next working day takes its opening from ' +
+                (st.prev ? 'the closing of ' + shortDate(st.prev.date) + '.' : 'the last saved day.');
+        }
+    }
+
+    // ---------- day timeline (14 day cards + month stats + hover details) ----------
+    var STRIP_DAYS = 14;
+    function addDays(k, n) { var d = dateOf(k); d.setDate(d.getDate() + n); return keyOf(d); }
+    function shortNum(n) { var a = Math.abs(n); return a >= 1e6 ? (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M' : a >= 1e4 ? Math.round(n / 1e3) + 'k' : a >= 1e3 ? (n / 1e3).toFixed(1).replace(/\.0$/, '') + 'k' : String(Math.round(n)); }
+    function totalsOf(rep) {
+        var t = { op: 0, pr: 0, co: 0, cl: 0 };
+        (rep.data || []).forEach(function (r) { t.op += num(r.opening); t.pr += num(r.production); t.co += num(r.consumption); t.cl += closingOf(r); });
+        return t;
+    }
+    function stripEndFor(sel) {
+        var today = esToday();
+        if (sel > today) return sel;
+        if (sel > addDays(today, -STRIP_DAYS)) return today;
+        return addDays(sel, 3);
+    }
+    window.esStripShift = function (n) {
+        var e = addDays(st.stripEnd || stripEndFor(st.date), n);
+        var cap = addDays(esToday() > st.date ? esToday() : st.date, 14);
+        st.stripEnd = e > cap ? cap : e;
+        renderStrip(true);
+    };
+
+    function renderStrip(keepEnd) {
+        var map = st.map || readMap(st.type), today = esToday(), hol = readHol();
+        var end = st.stripEnd;
+        if (!keepEnd || !end) {
+            var start0 = end ? addDays(end, -(STRIP_DAYS - 1)) : null;
+            if (!end || st.date < start0 || st.date > end) end = stripEndFor(st.date);
+        }
+        st.stripEnd = end;
+        var firstEntry = Object.keys(map).sort()[0] || today;
+        var keys = [], maxPr = 0;
+        for (var i = STRIP_DAYS - 1; i >= 0; i--) {
+            var k = addDays(end, -i); keys.push(k);
+            if (map[k]) maxPr = Math.max(maxPr, totalsOf(map[k]).pr);
+        }
+        st.stripInfo = {};
+        var html = '';
+        keys.forEach(function (k, idx) {
+            var d = dateOf(k), rep = map[k], t = rep ? totalsOf(rep) : null;
+            var state = hol[k] ? 'holiday' : rep ? 'saved' : k === today ? 'due' : (k < today && k >= firstEntry) ? 'missing' : (k > today ? 'future' : 'empty');
+            st.stripInfo[k] = { state: state, t: t, rep: rep };
+            if (idx === 0 || d.getDate() === 1) {
+                html += '<span class="es-mon"><span>' + d.toLocaleDateString('en-US', { month: 'short' }) + '</span></span>';
+            }
+            var pct = t && maxPr > 0 ? Math.max(6, Math.round(t.pr / maxPr * 100)) : 0;
+            var val = state === 'saved' ? (t.pr ? shortNum(t.pr) : '0') : state === 'holiday' ? 'OFF' : state === 'missing' ? 'MISS' : state === 'due' ? 'DUE' : '—';
+            var cls = 'es-dc ' + state + (k === st.date ? ' on' : '') + (k === today ? ' today' : '') + ((d.getDay() === 5) ? ' fri' : '');
+            html += '<button type="button" class="' + cls + '" data-k="' + k + '" onclick="esSetDate(\'' + k + '\')" aria-label="' + longDate(k) + ' • ' + state + '">' +
+                '<span class="es-dc-wd">' + (k === today ? 'Today' : d.toLocaleDateString('en-US', { weekday: 'short' })) + '</span>' +
+                '<span class="es-dc-n">' + d.getDate() + '</span>' +
+                '<span class="es-dc-bar"><i style="width:' + pct + '%"></i></span>' +
+                '<span class="es-dc-v">' + (state === 'holiday' ? '🏖' : val) + '</span>' +
+                '</button>';
+        });
+        var strip = $('es-strip');
+        strip.innerHTML = html;
+        var on = strip.querySelector('.on');
+        if (on) strip.scrollLeft = on.offsetLeft - strip.clientWidth / 2;
+        else strip.scrollLeft = strip.scrollWidth;
+        renderMonthSummary(map, hol, today, firstEntry);
+    }
+
+    function renderMonthSummary(map, hol, today, firstEntry) {
+        var mk = st.date.slice(0, 7), sel = dateOf(st.date);
+        var last = keyOf(new Date(sel.getFullYear(), sel.getMonth() + 1, 0));
+        var stop = last < today ? last : today;
+        var saved = 0, off = 0, miss = 0, pr = 0, co = 0, missList = [];
+        for (var k = mk + '-01'; k <= stop; k = addDays(k, 1)) {
+            if (hol[k]) off++;
+            else if (map[k]) { saved++; var t = totalsOf(map[k]); pr += t.pr; co += t.co; }
+            else if (k >= firstEntry && k < today) { miss++; missList.push(k); }
+        }
+        var avg = saved ? pr / saved : 0;
+        var mName = sel.toLocaleDateString('en-US', { month: 'long' });
+        $('es-sum').innerHTML =
+            '<span class="es-sum-m">' + mName + '</span>' +
+            '<span class="es-pill ok" title="Days saved in ' + mName + '">✓ ' + saved + '</span>' +
+            '<span class="es-pill off" title="Holidays in ' + mName + '">🏖 ' + off + '</span>' +
+            '<span class="es-pill miss' + (miss ? ' hot' : '') + '" title="' + (miss ? 'Missing: ' + missList.join(', ') : 'No missing days') + '">⚠ ' + miss + '</span>' +
+            '<span class="es-pill pr" title="Production this month (avg ' + fmt(Math.round(avg)) + '/day) • Consumption ' + fmt(co) + '">▲ ' + shortNum(pr) + '<em>prod</em></span>';
+    }
+
+    // Hover card for day cards
+    function showTip(btn) {
+        var k = btn.dataset.k, info = st.stripInfo && st.stripInfo[k]; if (!info) return;
+        var tip = $('es-tip'), label = { saved: 'Saved', holiday: 'Holiday', missing: 'Missing entry', due: 'Due today', future: 'Upcoming', empty: 'No entry' }[info.state];
+        var body = '';
+        if (info.t) {
+            body = '<div class="es-tip-g">' +
+                '<span>Opening</span><b>' + fmt(info.t.op) + '</b>' +
+                '<span>Production</span><b class="g">' + fmt(info.t.pr) + '</b>' +
+                '<span>Consumption</span><b class="r">' + fmt(info.t.co) + '</b>' +
+                '<span>Closing</span><b>' + fmt(info.t.cl) + '</b></div>' +
+                '<div class="es-tip-f">' + esc(info.rep.savedAt || '') + '</div>';
+        } else if (info.state === 'holiday') body = '<div class="es-tip-f">Off day — opening carries to the next working day.</div>';
+        else if (info.state === 'missing') body = '<div class="es-tip-f">No entry yet. Enter it, or mark as Holiday.</div>';
+        else if (info.state === 'due') body = '<div class="es-tip-f">Today\'s entry is still pending.</div>';
+        tip.innerHTML = '<div class="es-tip-h"><b>' + longDate(k) + '</b><span class="es-tip-s ' + info.state + '">' + label + '</span></div>' + body;
+        var r = btn.getBoundingClientRect();
+        tip.classList.add('show');
+        var w = tip.offsetWidth, x = Math.min(window.innerWidth - w - 8, Math.max(8, r.left + r.width / 2 - w / 2));
+        tip.style.left = x + 'px';
+        tip.style.top = (r.bottom + 8) + 'px';
+    }
+    function hideTip() { $('es-tip').classList.remove('show'); }
+
+    function renderStatus() {
+        var el = $('es-status');
+        el.title = '';
+        if (st.holiday) { el.className = 'es-status holiday'; el.textContent = '🏖 Holiday'; return; }
+        if (!st.dirty && !st.existing && st.gaps && st.gaps.length) {
+            el.className = 'es-status gap';
+            el.textContent = '⚠ ' + st.gaps.length + ' day' + (st.gaps.length > 1 ? 's' : '') + ' missing before this';
+            el.title = 'No entry and not a holiday: ' + st.gaps.join(', ') + '\nOpening is taken from ' + st.prev.date + '. Mark those days as Holiday or enter them.';
+            return;
+        }
+        if (st.dirty) { el.className = 'es-status dirty'; el.textContent = '● Unsaved changes'; }
+        else if (st.existing) { el.className = 'es-status saved'; el.textContent = '✓ Saved • ' + (st.existing.savedAt || st.date); }
+        else {
+            el.className = 'es-status new';
+            el.textContent = st.prev ? 'New entry • opening from ' + shortDate(st.prev.date) : 'New entry';
+            if (st.skippedHol && st.skippedHol.length) {
+                el.textContent += ' (🏖 ' + st.skippedHol.map(shortDate).join(', ') + ' skipped)';
+            }
+        }
+    }
+
+    function renderCloud(state) {
+        if (state) st.cloud = state;
+        var el = $('es-cloud'), ok = !!(window.firebaseSet && window.firebaseRef && window.firebaseDB);
+        var label = { idle: ok ? 'Firebase connected' : 'Offline • local only', syncing: 'Syncing…', synced: 'Synced to Firebase', error: 'Sync failed • saved locally', queued: 'Queued • will sync' }[st.cloud];
+        el.className = 'es-cloud' + (st.cloud === 'error' ? ' err' : (!ok || st.cloud === 'queued') ? ' off' : '');
+        el.querySelector('span').textContent = label;
+    }
+
+    // ---------- interaction ----------
+    function confirmDiscard() { return !st.dirty || confirm('Unsaved changes will be lost. Continue?'); }
+
+    window.esToday = esToday;
+    window.openEntrySheet = function (type) {
+        if (type && KEYS[type]) st.type = type;
+        if (!st.date) st.date = esToday();
+        buildRows(); render();
+        var ov = $('es-overlay'); ov.classList.add('open'); ov.setAttribute('aria-hidden', 'false');
+        setTimeout(function () { var f = $('es-tbody').querySelector('input[data-c="2"]'); if (f) f.focus(); }, 60);
+    };
+    window.closeEntrySheet = function () {
+        if (!confirmDiscard()) return;
+        st.dirty = false;
+        var ov = $('es-overlay'); ov.classList.remove('open'); ov.setAttribute('aria-hidden', 'true');
+    };
+    window.esSetType = function (type) { if (type === st.type || !confirmDiscard()) return; st.type = type; buildRows(); render(); };
+    window.esSetDate = function (k) { if (!k || !DP.test(k) || k === st.date) { $('es-date').value = st.date; return; } if (!confirmDiscard()) { $('es-date').value = st.date; return; } st.date = k; buildRows(); render(); };
+    window.esShiftDate = function (n) { var d = dateOf(st.date); d.setDate(d.getDate() + n); window.esSetDate(keyOf(d)); };
+    window.esReset = function () { if (!confirmDiscard()) return; buildRows(); render(); };
+    window.esAddRow = function () {
+        st.rows.push({ name: '', opening: '', production: '', consumption: '', remarks: '', carry: null, custom: true });
+        st.dirty = true; render();
+        var f = $('es-tbody').querySelector('input[data-r="' + (st.rows.length - 1) + '"][data-c="0"]'); if (f) f.focus();
+    };
+    window.esDelRow = function (i) { st.rows.splice(i, 1); st.dirty = true; render(); };
+
+    var FIELD = { 0: 'name', 1: 'opening', 2: 'production', 3: 'consumption', 4: 'remarks' };
+    // PERF: listen on the sheet only, so typing elsewhere in the module never runs this code.
+    var OV = $('es-overlay');
+    var _recalcQueued = false;
+    function queueRecalc() { if (_recalcQueued) return; _recalcQueued = true; requestAnimationFrame(function () { _recalcQueued = false; recalc(); }); }
+    OV.addEventListener('input', function (e) {
+        var t = e.target; if (!t.classList || !t.classList.contains('es-in')) return;
+        var r = st.rows[+t.dataset.r]; if (!r) return;
+        var f = FIELD[t.dataset.c];
+        if (+t.dataset.c >= 1 && +t.dataset.c <= 3) t.value = t.value.replace(/[^0-9.,\-]/g, '');
+        r[f] = t.value;
+        if (!st.dirty) { st.dirty = true; renderStatus(); }
+        if (f !== 'remarks' && f !== 'name') queueRecalc();
+    });
+    OV.addEventListener('dblclick', function (e) {
+        var td = e.target.closest && e.target.closest('td.es-op'); if (!td) return;
+        var inp = td.querySelector('input'), r = st.rows[+inp.dataset.r];
+        if (r && r.carry !== null) { r.opening = String(r.carry); inp.value = r.opening; st.dirty = true; renderStatus(); recalc(); }
+    });
+    OV.addEventListener('focusin', function (e) { if (e.target.classList && e.target.classList.contains('es-in') && !e.target.classList.contains('txt')) e.target.select(); });
+
+    function focusCell(r, c) {
+        var cand = $('es-tbody').querySelector('input[data-r="' + r + '"][data-c="' + c + '"]');
+        if (cand) { cand.focus(); return true; }
+        return false;
+    }
+    document.addEventListener('keydown', function (e) {
+        var ov = $('es-overlay'); if (!ov || !ov.classList.contains('open')) return;
+        if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) { e.preventDefault(); window.esSave(false); return; }
+        if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); window.closeEntrySheet(); return; }
+        var t = e.target; if (!t.classList || !t.classList.contains('es-in')) return;
+        var r = +t.dataset.r, c = +t.dataset.c, isTxt = t.classList.contains('txt');
+        if (e.key === 'ArrowDown' || e.key === 'Enter') { e.preventDefault(); focusCell(r + 1, c) || (e.key === 'Enter' && focusCell(0, c + 1 > 4 ? 1 : c + 1)); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); focusCell(r - 1, c); }
+        else if (e.key === 'ArrowRight' && (!isTxt || t.selectionStart === t.value.length)) { var n = c + 1; while (n <= 4 && !focusCell(r, n)) n++; if (n <= 4) e.preventDefault(); }
+        else if (e.key === 'ArrowLeft' && (!isTxt || t.selectionStart === 0)) { var p = c - 1; while (p >= 0 && !focusCell(r, p)) p--; if (p >= 0) e.preventDefault(); }
+    }, true);
+
+    // Paste a block copied from Excel. Rows that start with an item name are
+    // matched by name (Item | Opening | Production | Consumption [| Closing | Remarks]);
+    // pure-number blocks fill positionally from the focused cell.
+    OV.addEventListener('paste', function (e) {
+        var t = e.target; if (!t.classList || !t.classList.contains('es-in')) return;
+        var text = (e.clipboardData || window.clipboardData).getData('text');
+        if (!text || (text.indexOf('\t') < 0 && text.indexOf('\n') < 0)) return;
+        e.preventDefault();
+        var lines = text.replace(/\r/g, '').split('\n').filter(function (l) { return l.trim() !== ''; });
+        var startR = +t.dataset.r, startC = +t.dataset.c, filled = 0;
+        var isNum = function (s) { return s.trim() !== '' && isFinite(num(s)) && /^[\s\-0-9.,]+$/.test(s); };
+        lines.forEach(function (line, li) {
+            var cells = line.split('\t');
+            if (cells.length && !isNum(cells[0]) && cells[0].trim()) {
+                var k = norm(cells[0]);
+                var row = st.rows.filter(function (r) { return norm(r.name) === k; })[0];
+                if (!row) return;
+                var nums = cells.slice(1).filter(function (c) { return c.trim() === '' || isNum(c); });
+                if (nums[0] !== undefined) row.opening = nums[0].trim().replace(/,/g, '');
+                if (nums[1] !== undefined) row.production = nums[1].trim().replace(/,/g, '');
+                if (nums[2] !== undefined) row.consumption = nums[2].trim().replace(/,/g, '');
+                filled++;
+            } else {
+                var row2 = st.rows[startR + li]; if (!row2) return;
+                cells.forEach(function (v, ci) {
+                    var c = startC + ci; if (c < 1 || c > 4) return;
+                    row2[FIELD[c]] = c === 4 ? v.trim() : v.trim().replace(/,/g, '');
+                });
+                filled++;
+            }
+        });
+        if (filled) { st.dirty = true; render(); if (window.showToast) window.showToast('Pasted ' + filled + ' rows'); }
+    });
+
+    // ---------- save ----------
+    function cloudWrite(type, date, report) { return cloudSet('inventory_reports/' + type + '/' + date, report); }
+    function cloudSet(path, value) {
+        if (!(window.firebaseSet && window.firebaseRef && window.firebaseDB)) {
+            (window._esPending = window._esPending || []).push([path, value]);
+            renderCloud('queued');
+            scheduleFlush();
+            return Promise.resolve(false);
+        }
+        renderCloud('syncing');
+        return window.firebaseSet(window.firebaseRef(window.firebaseDB, path), value)
+            .then(function () { renderCloud('synced'); return true; })
+            .catch(function (err) { console.error('Entry sheet Firebase sync failed:', err); renderCloud('error'); return false; });
+    }
+    var _flushTimer = null;
+    function scheduleFlush() {
+        if (_flushTimer) return;
+        _flushTimer = setInterval(function () {
+            if (!(window.firebaseSet && window.firebaseRef && window.firebaseDB)) return;
+            clearInterval(_flushTimer); _flushTimer = null;
+            var q = window._esPending || []; window._esPending = [];
+            q.forEach(function (x) { cloudSet(x[0], x[1]); });
+        }, 2000);
+    }
+
+    function makeReport(type, date, data) {
+        var now = new Date();
+        return {
+            type: type,
+            data: data,
+            targetPerDay: dayTarget(),
+            reportDate: dateOf(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', weekday: 'long' }).replace(',', ' •'),
+            savedAt: now.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }),
+            savedTimestamp: now.getTime(),
+            source: 'entry-sheet'
+        };
+    }
+
+    // ---------- holiday toggle / undo ----------
+    window.esToggleDayMenu = function (force) {
+        var w = $('es-dayopt');
+        w.classList.toggle('open', typeof force === 'boolean' ? force : !w.classList.contains('open'));
+    };
+    function refreshModuleViews() {
+        if (typeof window.updateBadges === 'function') window.updateBadges();
+        var act = document.querySelector('.page-content.active');
+        if (act && act.id.indexOf('page-archive-') === 0 && typeof window.renderArchivePage === 'function') window.renderArchivePage(act.id.replace('page-archive-', ''));
+    }
+    window.esToggleHoliday = function () {
+        window.esToggleDayMenu(false);
+        var h = readHol(), k = st.date;
+        if (h[k]) {
+            delete h[k];
+            writeHol(h);
+            cloudSet(HOL_PATH + '/' + k, null);
+            if (window.showToast) window.showToast('Holiday removed • ' + shortDate(k));
+        } else {
+            if (st.dirty && !confirm('Unsaved changes on this day will be lost. Mark it as holiday?')) return;
+            // A holiday has no entry. If either sheet already saved this date, it must go.
+            var withData = Object.keys(KEYS).filter(function (t) { return readMap(t)[k]; });
+            if (withData.length) {
+                var names = withData.map(function (t) { return t === 'armature' ? 'Armature' : 'Accessories'; }).join(' + ');
+                if (!confirm(shortDate(k) + ' already has a saved ' + names + ' entry.\nMarking it as holiday will delete that entry. Continue?')) return;
+                withData.forEach(function (t) {
+                    var m = readMap(t); delete m[k];
+                    localStorage.setItem(KEYS[t], JSON.stringify(m));
+                    cloudWrite(t, k, null);
+                });
+            }
+            h[k] = { at: Date.now(), by: 'entry-sheet' };
+            writeHol(h);
+            cloudSet(HOL_PATH + '/' + k, h[k]);
+            if (window.showToast) window.showToast('🏖 ' + shortDate(k) + ' marked as holiday');
+        }
+        st.dirty = false;
+        buildRows(); render();
+        refreshModuleViews();
+    };
+
+    // Keep holidays in step with other PCs (listener only for this small node).
+    function subscribeHolidays(tries) {
+        if (!(window.firebaseDB && window.firebaseRef)) { if ((tries || 0) < 40) setTimeout(function () { subscribeHolidays((tries || 0) + 1); }, 1500); return; }
+        import('https://www.gstatic.com/firebasejs/12.12.0/firebase-database.js').then(function (m) {
+            m.onValue(window.firebaseRef(window.firebaseDB, HOL_PATH), function (snap) {
+                if (window._esPending && window._esPending.length) return; // local change not uploaded yet
+                var v = snap.val() || {}, clean = {};
+                Object.keys(v).forEach(function (k) { if (DP.test(k) && v[k]) clean[k] = v[k]; });
+                var s = JSON.stringify(clean);
+                if (s === localStorage.getItem(HOL_KEY)) return;
+                writeHol(clean);
+                if (OV.classList.contains('open') && !st.dirty) { buildRows(); render(); }
+            });
+        }).catch(function (e) { console.warn('Holiday sync unavailable:', e); });
+    }
+    subscribeHolidays(0);
+
+    window.esSave = function (view) {
+        if (st.holiday) { alert(shortDate(st.date) + ' is marked as a holiday. Undo the holiday to enter data.'); return; }
+        var data = [], missingName = false;
+        st.rows.forEach(function (r) {
+            var name = String(r.name || '').trim();
+            var any = r.opening !== '' || r.production !== '' || r.consumption !== '';
+            if (!name) { if (any) missingName = true; return; }
+            var o = { name: name, opening: num(r.opening), production: num(r.production), consumption: num(r.consumption) };
+            if (String(r.remarks || '').trim()) o.remarks = String(r.remarks).trim();
+            data.push(o);
+        });
+        if (missingName) { alert('A row has numbers but no item name.'); return; }
+        if (!data.length) { alert('Nothing to save.'); return; }
+        var negs = data.filter(function (r) { return closingOf(r) < 0; });
+        if (negs.length && !confirm('Closing is negative for:\n• ' + negs.map(function (r) { return r.name; }).join('\n• ') + '\n\nSave anyway?')) return;
+
+        var type = st.type, date = st.date;
+        var map = readMap(type);
+        var report = makeReport(type, date, data);
+        map[date] = report;
+
+        // Excel-style carry forward: if later days already exist, their opening
+        // should follow this day's new closing. Offer to roll it through.
+        var later = Object.keys(map).filter(function (k) { return k > date; }).sort();
+        var touched = [];
+        if (later.length) {
+            var chainChanged = false, prevRep = report, sim = JSON.parse(JSON.stringify(map));
+            later.forEach(function (k) {
+                var carry = {}; prevRep.data.forEach(function (r) { carry[norm(r.name)] = closingOf(r); });
+                var rep = sim[k], changed = false;
+                rep.data.forEach(function (r) {
+                    var c = carry[norm(r.name)];
+                    if (c !== undefined && num(r.opening) !== c) { r.opening = c; changed = true; }
+                });
+                if (changed) { chainChanged = true; touched.push(k); }
+                prevRep = rep;
+            });
+            if (chainChanged && confirm('Later dates (' + touched.join(', ') + ') have an opening that no longer matches.\nUpdate their opening from the new closing?')) {
+                touched.forEach(function (k) {
+                    var upd = makeReport(type, k, sim[k].data);
+                    upd.reportDate = map[k].reportDate || upd.reportDate;
+                    map[k] = upd;
+                });
+            } else { touched = []; }
+        }
+
+        localStorage.setItem(KEYS[type], JSON.stringify(map));
+        window['archiveSelectedDate_' + type] = date;
+
+        var btns = [$('es-save'), $('es-save-view')]; btns.forEach(function (b) { b.disabled = true; });
+        Promise.all([cloudWrite(type, date, report)].concat(touched.map(function (k) { return cloudWrite(type, k, map[k]); })))
+            .then(function () { btns.forEach(function (b) { b.disabled = false; }); });
+
+        st.dirty = false;
+        if (typeof window.updateBadges === 'function') window.updateBadges();
+        var act = document.querySelector('.page-content.active');
+        if (act && act.id === 'page-archive-' + type && typeof window.renderArchivePage === 'function') window.renderArchivePage(type);
+        if (window.showToast) window.showToast((type === 'armature' ? '⚙️ Armature' : '📦 Accessories') + ' entry saved • ' + date + (touched.length ? ' (+' + touched.length + ' carried)' : ''));
+
+        if (view) {
+            var ov = $('es-overlay'); ov.classList.remove('open'); ov.setAttribute('aria-hidden', 'true');
+            if (typeof window.switchPage === 'function') window.switchPage('archive-' + type);
+            if (typeof window.renderArchivePage === 'function') window.renderArchivePage(type);
+        } else {
+            buildRows(); render(); renderCloud();
+        }
+    };
+
+    // Clicking the dim backdrop closes (with the unsaved-changes guard).
+    // Tooltip lives on <body>: the glass panel's backdrop-filter would otherwise
+    // become the containing block for position:fixed and misplace it.
+    document.body.appendChild($('es-tip'));
+    OV.addEventListener('mouseover', function (e) { var b = e.target.closest && e.target.closest('.es-dc'); if (b) showTip(b); });
+    OV.addEventListener('mouseout', function (e) { var b = e.target.closest && e.target.closest('.es-dc'); if (b && !b.contains(e.relatedTarget)) hideTip(); });
+    $('es-strip').addEventListener('scroll', hideTip, { passive: true });
+    $('es-strip').addEventListener('wheel', function (e) {
+        // vertical mouse wheel scrolls the timeline sideways
+        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) { this.scrollLeft += e.deltaY; e.preventDefault(); }
+    }, { passive: false });
+    // Alt + ← / → jumps a day from anywhere in the sheet
+    document.addEventListener('keydown', function (e) {
+        if (!OV.classList.contains('open') || !e.altKey) return;
+        if (e.key === 'ArrowLeft') { e.preventDefault(); window.esShiftDate(-1); }
+        else if (e.key === 'ArrowRight') { e.preventDefault(); window.esShiftDate(1); }
+    });
+
+    OV.addEventListener('mousedown', function (e) {
+        hideTip();
+        if (!e.target.closest('#es-dayopt')) window.esToggleDayMenu(false);
+        if (e.target === OV) window.closeEntrySheet();
+    });
+})();
 </script>
 
 </body>
