@@ -2106,13 +2106,14 @@
             archiveMap[dateKey] = reportData;
             localStorage.setItem(key, JSON.stringify(archiveMap));
 
-            // Sync FULL archive map to Firebase (preserves all dates in cloud)
+            // Sync ONLY this date to Firebase. Writing the whole archive map let a tab with
+            // stale local data overwrite newer days saved from another tab / the Entry Sheet.
             if (window.firebaseSet && window.firebaseRef && window.firebaseDB) {
                 // Disable the onValue listener temporarily to prevent sync loop
                 window._firebaseSaving = true;
-                window.firebaseSet(window.firebaseRef(window.firebaseDB, 'inventory_reports/' + currentReportType), archiveMap)
+                window.firebaseSet(window.firebaseRef(window.firebaseDB, 'inventory_reports/' + currentReportType + '/' + dateKey), reportData)
                     .then(() => {
-                        console.log('Full archive synced to Firebase for:', currentReportType, '(' + Object.keys(archiveMap).length + ' dates)');
+                        console.log('Report synced to Firebase:', currentReportType, dateKey);
                         setTimeout(() => { window._firebaseSaving = false; }, 1000);
                     })
                     .catch(e => {
@@ -5747,7 +5748,13 @@ if (shouldRandomizeTheme() && !Number.isInteger(window.__bootThemeIndex)) {
             }
             // keep items of that day that were not in the paste; replace the pasted ones; default order
             var byName = {};
-            (ex ? ex.data : []).forEach(function (r) { byName[norm(r.name)] = r; });
+            // keep the day's other items, but drop junk rows the old importer created
+            // (a date like "9-Nov-26" stored as an item name, or a name with no letters)
+            (ex ? ex.data : []).forEach(function (r) {
+                var nm = String(r.name || '').trim();
+                if (!nm || !/[a-z]/i.test(nm.replace(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b/ig, '')) || spDate(nm, 'auto')) return;
+                byName[norm(nm)] = r;
+            });
             g.rows.forEach(function (r) {
                 var o = { name: r.name, opening: r.opening, production: r.production, consumption: r.consumption };
                 if (r.remarks) o.remarks = r.remarks;
