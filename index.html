@@ -625,7 +625,7 @@
                         <button type="button" class="sb-child" onclick="switchPage('generator'); esPasteOpen()">
                             <span class="sb-left"><svg style="color:#3b82f6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8l2 2v12.5A1.5 1.5 0 0116.5 20h-9A1.5 1.5 0 016 18.5v-13A1.5 1.5 0 017.5 4H8ZM9 13.2l2 2 4-5M9 8h4"/></svg><span class="sb-label">Import Data</span></span>
                         </button>
-                        <button type="button" class="sb-child" onclick="switchPage('generator'); setTimeout(function () { takeScreenshot(); }, 80)">
+                        <button type="button" class="sb-child" onclick="switchPage('generator'); setTimeout(function () { takeScreenshot(); }, 450)">
                             <span class="sb-left"><svg style="color:#d97706" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 8.5h2.3l1.1-1.7c.35-.54.95-.86 1.6-.86h1c.65 0 1.25.32 1.6.86l1.1 1.7h2.3A2.5 2.5 0 0120 11v5.5a2.5 2.5 0 01-2.5 2.5h-11A2.5 2.5 0 014 16.5V11a2.5 2.5 0 012.5-2.5ZM15 13.8a3 3 0 11-6 0 3 3 0 016 0Z"/></svg><span class="sb-label">Download JPG</span></span>
                         </button>
                     </div>
@@ -3515,6 +3515,17 @@
                 }
                 stabilizeDateCardsAndBars(clonedSheet);
                 sanitizeClonedDocColors(clonedDoc);
+                // The clone keeps mid-animation styles (page fade-in, row fade-in) → washed-out JPG.
+                // Freeze every animation/transition at its END state and force full opacity.
+                const still = clonedDoc.createElement('style');
+                still.textContent = '*, *::before, *::after { animation: none !important; transition: none !important; }' +
+                    '.page-content, .page-content.active, #report-page, #report-page *:not(input):not(.date-trigger) { opacity: 1 !important; }' +
+                    // the invisible date picker + its password overlay sit on top of the date card — keep them out of the image
+                    '#report-page input, #report-page .date-trigger { opacity: 0 !important; visibility: hidden !important; }' +
+                    '#report-page tr, #report-page td, #report-page th { transform: none !important; filter: none !important; }';
+                (clonedDoc.head || clonedDoc.documentElement).appendChild(still);
+                const pg = clonedDoc.getElementById('page-generator');
+                if (pg) { pg.style.setProperty('opacity', '1', 'important'); pg.style.setProperty('transform', 'none', 'important'); }
             };
 
             try {
