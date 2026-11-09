@@ -665,6 +665,16 @@ function renderMonthly() {
     const p = aggMonth(pm[0], pm[1], M.model);
     const rate = pnum(a.def, a.prod), pRate = p.prod ? pnum(p.def, p.prod) : null;
     $('m-sub').textContent = '• ' + MONTHS[M.m] + ' ' + M.y + (M.model ? ' • model ' + M.model : '');
+    // which days of this month have entries: first – last, how many, and any gaps (not holidays)
+    const eDays = [...a.days].sort(), chip = $('m-range');
+    chip.classList.add('on');
+    const ico = '<span class="ui"><svg fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>';
+    if (!eDays.length) { chip.classList.add('none'); chip.innerHTML = ico + 'No entries this month'; }
+    else {
+        chip.classList.remove('none');
+        chip.title = `Entries from ${longDate(eDays[0])} to ${longDate(eDays[eDays.length - 1])}`;
+        chip.innerHTML = ico + `Updated <b>${shortDate(eDays[0])}</b> – <b>${shortDate(eDays[eDays.length - 1])}</b><span class="ud">${eDays.length} day${eDays.length > 1 ? 's' : ''}</span>`;
+    }
     $('m-kpis').innerHTML = [
         kpi({ lbl: 'Production', val: fmt(a.prod), ico: 'box', cls: 'k-blue', sub: `${a.days.size} working day${a.days.size === 1 ? '' : 's'} • avg <b class="num">${fmt(Math.round(a.prod / (a.days.size || 1)))}</b>/day` }),
         kpi({ lbl: 'Total Defect', val: fmt(a.def), ico: 'alert', sub: `Rate <b class="num">${rate.toFixed(2)}%</b> ${delta(rate, pRate)} vs ${MONTHS[pm[1]].slice(0, 3)}` }),
@@ -725,9 +735,10 @@ function renderMonthly() {
         : '';
     // table
     $('m-tbl-sub').textContent = rows.length + ' active categories';
-    $('m-table').innerHTML = `<thead><tr><th class="l">Defect Category</th><th>Qty</th><th>Rejection %</th><th>Share</th></tr></thead><tbody>${a.sorted.map(([k, q]) =>
-        `<tr><td class="l">${DLABEL[k]}</td><td class="${q ? 'hot' : 'z'}">${fmt(q)}</td><td class="${q ? '' : 'z'}">${pct(q, a.prod)}</td><td class="${q ? '' : 'z'}">${pct(q, a.def, 1)}</td></tr>`).join('')}</tbody>
-        <tfoot><tr class="ft-def"><td class="l">TOTAL DEFECT</td><td>${fmt(a.def)}</td><td>${pct(a.def, a.prod)}</td><td>100%</td></tr><tr class="ft-dis"><td class="l">DISASSEMBLED FAN</td><td>${fmt(a.dis)}</td><td>${pct(a.dis, a.prod)}</td><td>${pct(a.dis, a.def, 1)} of defect</td></tr></tfoot>`;
+    $('m-table').innerHTML = `<thead><tr><th class="l">Defect Category</th><th>Qty</th><th>Rejection %</th></tr></thead><tbody>${a.sorted.map(([k, q]) =>
+        `<tr><td class="l">${DLABEL[k]}</td><td class="${q ? 'hot' : 'z'}">${fmt(q)}</td><td class="${q ? '' : 'z'}">${pct(q, a.prod)}</td></tr>`).join('')}</tbody>
+        <tfoot><tr class="ft-def"><td class="l">TOTAL DEFECT</td><td>${fmt(a.def)}</td><td>${pct(a.def, a.prod)}</td></tr>
+        <tr class="ft-dis"><td class="l">DISASSEMBLED FAN <span class="prod-pill" title="Total production this month — the base for every %">Total Production <b>${fmt(a.prod)}</b></span></td><td>${fmt(a.dis)}</td><td>${pct(a.dis, a.prod)}</td></tr></tfoot>`;
     // daily trend
     const pre = M.y + '-' + pad(M.m + 1);
     const days = S.dates.filter(x => x.startsWith(pre));
@@ -832,7 +843,8 @@ async function donut3D(data, total) {
         title: { text: null }, credits: { enabled: false }, exporting: { enabled: false },
         colors,
         tooltip: {
-            useHTML: true, backgroundColor: 'rgba(15,23,42,.94)', borderWidth: 0, borderRadius: 12, shadow: false, padding: 10,
+            // outside: drawn in its own layer above the page, so the centre label / card never cover it
+            outside: true, useHTML: true, backgroundColor: 'rgba(15,23,42,.96)', borderWidth: 0, borderRadius: 12, shadow: false, padding: 10,
             style: { color: '#f8fafc', fontSize: '12px' },
             pointFormatter() { return `<b style="font-size:13px">${fmt(this.y)}</b> pcs<br><span style="opacity:.75">${this.percentage.toFixed(1)}% of all defects</span>`; },
             headerFormat: '<span style="font-weight:800">{point.key}</span><br>'
@@ -854,7 +866,12 @@ async function donut3D(data, total) {
                     formatter() { return `<span style="font-weight:800">${this.percentage.toFixed(0)}%</span>`; },
                     style: { fontSize: '11px', color: '#475569', textOutline: '2px #ffffff' }
                 },
-                states: { hover: { brightness: 0.06, halo: { size: 0 } }, inactive: { opacity: 0.45 } }
+                states: { hover: { brightness: 0.06, halo: { size: 0 } }, inactive: { opacity: 0.45 } },
+                // fade the centre total while a slice is hovered so nothing overlaps the tooltip
+                point: { events: {
+                    mouseOver() { const c = $('y-d3-center'); if (c) c.style.opacity = '0.12'; },
+                    mouseOut() { const c = $('y-d3-center'); if (c) c.style.opacity = '1'; }
+                } }
             }
         },
         series: [{ name: 'Defects', data: data.map((p, i) => i === 0 ? { ...p, sliced: true, selected: true } : p) }]
@@ -965,6 +982,7 @@ async function flushPending() {
     writePending(p);
     if (!Object.keys(p).length) toast('Queued entries synced');
 }
+const REMOTE_CACHE_KEY = 'mep_rej_remote';
 async function initFirebase() {
     const pend = readPending();
     if (Object.keys(pend).length) { S.remote = Object.assign({}, S.remote, pend); rebuild(); }
@@ -976,9 +994,21 @@ async function initFirebase() {
         const app = appM.getApps().length ? appM.getApp() : appM.initializeApp(firebaseConfig);
         S.db = dbM.getDatabase(app);
         S.fb = { ref: dbM.ref, set: dbM.set };
-        dbM.onValue(dbM.ref(S.db, '.info/connected'), s => setCloud(s.val() ? 'live' : 'offline'));
+        // Firebase reports "not connected" for a moment before the socket opens — don't flash "Offline" on load
+        const t0 = Date.now();
+        dbM.onValue(dbM.ref(S.db, '.info/connected'), s => {
+            if (s.val()) setCloud('live');
+            else if (Date.now() - t0 > 4000) setCloud('offline');
+            else setTimeout(() => { if (S.cloud !== 'live') setCloud('offline'); }, 4000 - (Date.now() - t0));
+        });
         dbM.onValue(dbM.ref(S.db, FB_PATH), snap => {
-            S.remote = Object.assign({}, snap.val() || {}, readPending());
+            const val = snap.val() || {};
+            // keep a local copy so the next refresh paints the latest entries immediately (no stale flash)
+            try { localStorage.setItem(REMOTE_CACHE_KEY, JSON.stringify(val)); } catch (e) {}
+            const next = Object.assign({}, val, readPending());
+            // skip the re-render when nothing changed since the cached paint
+            if (JSON.stringify(next) === JSON.stringify(S.remote)) return;
+            S.remote = next;
             rebuild(); fillSelectors(); renderActive();
         }, err => { console.error(err); setCloud('error'); });
         // SFG holiday list (shared off days) → greys them out of "pending"
@@ -1666,6 +1696,11 @@ function wire() {
     try {
         const cached = localStorage.getItem('mep_rej_seed');
         if (cached) S.seed = JSON.parse(cached) || [];
+    } catch (e) {}
+    // last Firebase snapshot + unsynced local saves → first paint already shows the newest data
+    try {
+        const rc = localStorage.getItem(REMOTE_CACHE_KEY);
+        S.remote = Object.assign({}, rc ? JSON.parse(rc) || {} : {}, readPending());
     } catch (e) {}
 
     rebuild();

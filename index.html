@@ -517,6 +517,15 @@
         .sb-user:hover { border-color: rgba(96,165,250,0.78); box-shadow: 0 14px 32px -14px rgba(37,99,235,0.62), 0 0 0 1px rgba(59,130,246,0.35); }
         .sb-avatar { width: 36px; height: 36px; border-radius: 12px; overflow: hidden; flex-shrink: 0; border: 1px solid rgba(16,185,129,0.30); box-shadow: 0 1px 2px rgba(0,0,0,.06); }
         .sb-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        /* inline SVG brand mark: no frame padding, the SVG is the whole tile */
+        .sb-logo.sb-logo-svg { padding: 0; background: none; border: 0; border-radius: 12px; box-shadow: 0 10px 22px -10px rgba(37,99,235,0.75); transition: transform .2s ease; }
+        .sb-logo.sb-logo-svg svg { display: block; width: 40px; height: 40px; }
+        .sb-brand:hover .sb-logo-svg { transform: translateY(-1px) rotate(-3deg); }
+        /* avatar fallback when the photo is missing (e.g. on Vercel without /assets) */
+        .sb-avatar { position: relative; }
+        .sb-ini { display: none; }
+        .sb-avatar.sb-avatar-ini { display: grid; place-items: center; background: linear-gradient(135deg, #10b981, #0f766e); border-color: rgba(255,255,255,.6); box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 6px 14px -6px rgba(15,118,110,.7); }
+        .sb-avatar.sb-avatar-ini .sb-ini { display: block; font-family: 'Manrope', 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 800; letter-spacing: .02em; color: #fff; }
         .sb-user-name { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; color: #0f172a; line-height: 1.25; }
         .sb-user-name svg { width: 12px; height: 12px; color: #10b981; }
         .sb-user-role { font-size: 11px; font-weight: 600; color: #475569; line-height: 1.25; }
@@ -543,7 +552,37 @@
         <div class="sb-top">
             <!-- Brand -->
             <div class="sb-brand">
-                <div class="sb-logo"><img src="/assets/logo-128.png" alt="MEP" width="40" height="40" onerror="this.onerror=null;this.src='icon-192x192.png'"></div>
+                <!-- Inline brand mark (no file needed — same on localhost and Vercel):
+                     glossy azure tile with an isometric 3-layer stock stack -->
+                <div class="sb-logo sb-logo-svg" aria-label="MEP SFG Stock">
+                    <svg viewBox="0 0 40 40" width="40" height="40" role="img" aria-hidden="true">
+                        <defs>
+                            <linearGradient id="sbLgBg" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0" stop-color="#38bdf8"/><stop offset=".5" stop-color="#2563eb"/><stop offset="1" stop-color="#4338ca"/>
+                            </linearGradient>
+                            <linearGradient id="sbLgGloss" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+                            </linearGradient>
+                            <linearGradient id="sbLgTop" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dbeafe"/>
+                            </linearGradient>
+                            <filter id="sbLgSh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1.2" stdDeviation="1" flood-color="#0b1b4d" flood-opacity=".35"/></filter>
+                        </defs>
+                        <rect x="1" y="1" width="38" height="38" rx="11" fill="url(#sbLgBg)"/>
+                        <rect x="1.5" y="1.5" width="37" height="18" rx="10.5" fill="url(#sbLgGloss)"/>
+                        <rect x="1" y="1" width="38" height="38" rx="11" fill="none" stroke="#fff" stroke-opacity=".35"/>
+                        <g filter="url(#sbLgSh)">
+                            <!-- bottom layer -->
+                            <path d="M20 31.5 9 25.6l11-5.9 11 5.9z" fill="#93c5fd" fill-opacity=".75"/>
+                            <!-- middle layer -->
+                            <path d="M20 26.4 9 20.5l11-5.9 11 5.9z" fill="#bfdbfe" fill-opacity=".9"/>
+                            <!-- top layer -->
+                            <path d="M20 21.3 9 15.4l11-5.9 11 5.9z" fill="url(#sbLgTop)"/>
+                            <path d="M20 9.5 31 15.4 20 21.3" fill="none" stroke="#1d4ed8" stroke-opacity=".25" stroke-width=".8"/>
+                        </g>
+                        <circle cx="31.2" cy="8.8" r="2.6" fill="#34d399" stroke="#fff" stroke-width="1.2"/>
+                    </svg>
+                </div>
                 <div><h1>MEP FAN LTD</h1><p>SFG Stock</p></div>
             </div>
 
@@ -609,7 +648,8 @@
         <!-- Profile -->
         <div class="sb-foot">
             <div class="sb-user" title="Arif Ahmed Anik • Assistant Engineer">
-                <div class="sb-avatar"><img src="/assets/avatar-anik.webp" alt="Arif Ahmed Anik" width="36" height="36" onerror="this.onerror=null;this.src='/assets/avatar-anik.png'"></div>
+                <div class="sb-avatar"><img src="/assets/avatar-anik.webp" alt="Arif Ahmed Anik" width="36" height="36"
+                    onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='/assets/avatar-anik.png';}else{this.parentNode.classList.add('sb-avatar-ini');this.remove();}"><span class="sb-ini">AA</span></div>
                 <div style="flex:1;min-width:0;">
                     <div class="sb-user-name">Arif Ahmed Anik <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 1.8 3-.2.9 2.9 2.5 1.7-1 2.8 1 2.8-2.5 1.7-.9 2.9-3-.2L12 22l-2.4-1.8-3 .2-.9-2.9-2.5-1.7 1-2.8-1-2.8 2.5-1.7.9-2.9 3 .2L12 2zm-1.2 13.6l5.6-5.6-1.4-1.4-4.2 4.2-2-2-1.4 1.4 3.4 3.4z"/></svg></div>
                     <div class="sb-user-role">Assistant Engineer</div>

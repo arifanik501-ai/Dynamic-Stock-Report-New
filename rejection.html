@@ -474,7 +474,14 @@ select.rj-native { position: absolute !important; opacity: 0 !important; pointer
 .ttag.def { background: linear-gradient(135deg, #f43f5e, #be123c); box-shadow: 0 4px 10px -5px rgba(225,29,72,.7); }
 .ttag.dis { background: linear-gradient(135deg, #fbbf24, #d97706); box-shadow: 0 4px 10px -5px rgba(217,119,6,.7); }
 .tb tfoot tr.ft-def td { color: #9f1239; }
-.tb tfoot tr.ft-dis td { background: #fffbeb; color: #92400e; border-top: 1px solid rgba(245,158,11,.4); }
+.tb tfoot tr.ft-dis td { background: #fffbeb; color: #92400e; border-top: 1px solid rgba(245,158,11,.4); height: 38px; }
+/* two sticky footer rows: lift TOTAL DEFECT above DISASSEMBLED so it is not hidden behind it */
+.tb tfoot tr.ft-dis td { height: 44px; box-sizing: border-box; padding-top: 6px; padding-bottom: 6px; }
+.tb tfoot tr.ft-def td { bottom: 44px; }
+.prod-pill { display: inline-flex; align-items: baseline; gap: 6px; margin-left: 10px; padding: 3px 10px; border-radius: 999px; vertical-align: middle;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #1d4ed8;
+    background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 1px solid rgba(59,130,246,.35); box-shadow: inset 0 1px 0 #fff; }
+.prod-pill b { font-family: var(--num); font-size: 12.5px; letter-spacing: 0; color: #1e3a8a; }
 
 /* ---- 3D donut (Highcharts 3D, lazy) ---- */
 .d3-wrap { position: relative; }
@@ -486,7 +493,21 @@ select.rj-native { position: absolute !important; opacity: 0 !important; pointer
 .d3-wrap.is3d .d3-center { display: block; }
 .d3-center b { display: block; font-family: var(--num); font-size: 26px; font-weight: 800; color: #881337; letter-spacing: -.02em; line-height: 1; text-shadow: 0 2px 0 #fff; }
 .d3-center span { display: block; margin-top: 3px; font-size: 9px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #9f1239; opacity: .75; }
-.highcharts-tooltip-container { z-index: 60 !important; }
+.highcharts-tooltip-container { z-index: 9999 !important; pointer-events: none; }
+.d3-center { transition: opacity .18s ease; }
+
+/* ---- "Updated: Nov 1 – Nov 8" chip next to the Monthly title ---- */
+.upd-chip { display: none; align-items: center; gap: 8px; margin-left: 4px; padding: 5px 12px 5px 6px; border-radius: 999px; white-space: nowrap;
+    background: linear-gradient(135deg, #fff, rgba(236,253,245,.9)); border: 1px solid rgba(16,185,129,.4);
+    box-shadow: inset 0 1px 0 #fff, 0 6px 16px -10px rgba(5,150,105,.7); font-size: 11.5px; font-weight: 700; color: #065f46; }
+.upd-chip.on { display: inline-flex; }
+.upd-chip.none { background: linear-gradient(135deg, #fff, #f1f5f9); border-color: #e2e8f0; color: #64748b; }
+.upd-chip .ui { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg, #10b981, #047857); color: #fff; flex: none; }
+.upd-chip.none .ui { background: #cbd5e1; }
+.upd-chip .ui svg { width: 12px; height: 12px; }
+.upd-chip b { font-family: var(--num); font-weight: 800; color: #047857; }
+.upd-chip .ud { font-family: var(--num); font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px; color: #fff; background: #059669; }
+.upd-chip .um { font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px; color: #b91c1c; background: #fee2e2; }
 
 /* ---- Green Recovery card ---- */
 .kpi.kpi-green { background: linear-gradient(160deg, #ffffff 0%, #ecfdf5 45%, #d1fae5 100%); border-color: rgba(16,185,129,.42); box-shadow: inset 0 1px 0 #fff, 0 18px 40px -28px rgba(5,150,105,.55); }
@@ -719,7 +740,7 @@ select.rj-native { position: absolute !important; opacity: 0 !important; pointer
 <!-- ================= MONTHLY ================= -->
 <section class="page" id="page-monthly">
     <div class="toolbar">
-        <h2>Monthly Rejection Reason Analysis <small id="m-sub"></small></h2>
+        <h2>Monthly Rejection Reason Analysis <small id="m-sub"></small><span class="upd-chip" id="m-range"></span></h2>
         <div class="ctl"><button type="button" data-mshift="-1">‹</button><select id="m-month"></select><select id="m-year"></select><button type="button" data-mshift="1">›</button></div>
         <div class="ctl"><select id="m-model"><option value="">All models</option></select></div>
     </div>
@@ -812,7 +833,7 @@ function goPortal(e) {
     return false;
 }
 </script>
-<script type="module" src="rejection.js?v=20261109i"></script>
+<script type="module" src="rejection.js?v=20261109p"></script>
 
 </body>
 </html>
