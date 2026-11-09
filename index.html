@@ -583,7 +583,7 @@
                             <span class="sb-left"><svg style="color:#f59e0b" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.3"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></svg><span class="sb-label">Day Target</span></span>
                             <span class="sb-pill" id="sb-target-display">1600</span>
                         </button>
-                        <button type="button" class="sb-child" onclick="switchPage('generator'); toggleModal(true)">
+                        <button type="button" class="sb-child" onclick="switchPage('generator'); esPasteOpen()">
                             <span class="sb-left"><svg style="color:#3b82f6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8l2 2v12.5A1.5 1.5 0 0116.5 20h-9A1.5 1.5 0 016 18.5v-13A1.5 1.5 0 017.5 4H8ZM9 13.2l2 2 4-5M9 8h4"/></svg><span class="sb-label">Import Data</span></span>
                         </button>
                         <button type="button" class="sb-child" onclick="switchPage('generator'); setTimeout(function () { takeScreenshot(); }, 80)">
@@ -760,7 +760,7 @@
 
                     <!-- IMPORT -->
                     <div class="ctrl-item" style="--i:4">
-                        <button onclick="toggleModal(true)" class="btn-util fab-action-import" type="button" title="Import Data">
+                        <button onclick="esPasteOpen()" class="btn-util fab-action-import" type="button" title="Import Data">
                             <span class="fab-icon-shell" aria-hidden="true">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M8 4h8l2 2v12.5A1.5 1.5 0 0116.5 20h-9A1.5 1.5 0 016 18.5v-13A1.5 1.5 0 017.5 4H8Z"></path>
@@ -3120,6 +3120,9 @@
         }
 
         function toggleModal(show) {
+            // Every "Import Data" entry point now uses the smart paste dialog
+            // (auto date + section detection, blank cells kept as 0).
+            if (show && typeof window.esPasteOpen === 'function') { window.esPasteOpen(); return; }
             const modal = document.getElementById('import-modal');
             if (show) {
                 modal.classList.remove('hidden');
@@ -4722,6 +4725,72 @@ if (shouldRandomizeTheme() && !Number.isInteger(window.__bootThemeIndex)) {
     .es-grid tfoot td.l { font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important; font-size: 10px; letter-spacing: .12em; }
     .es-name { font-size: 12.5px; font-weight: 700; letter-spacing: -0.005em; }
 
+    /* ---------- Live summary tiles (Defect-module style) ---------- */
+    .es-kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; padding: 12px 14px 4px; }
+    .es-kpi { position: relative; overflow: hidden; border-radius: 16px; padding: 11px 13px; background: linear-gradient(160deg, #fff, rgba(248,250,252,.9)); border: 1px solid rgba(226,232,240,.95);
+        box-shadow: inset 0 1px 0 #fff, 0 12px 26px -20px rgba(15,23,42,.45); }
+    .es-kpi::before { content: ''; position: absolute; left: 0; top: 12px; bottom: 12px; width: 4px; border-radius: 0 4px 4px 0; background: var(--kc, #10b981); }
+    .es-kpi small { display: block; font-size: 9px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #64748b; }
+    .es-kpi b { display: block; margin-top: 4px; font-family: 'Manrope', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -.02em; color: var(--kc2, #0f172a); font-variant-numeric: tabular-nums; }
+    .es-kpi span { display: block; margin-top: 2px; font-size: 10px; font-weight: 600; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .es-kpi.op { --kc: #0b6bcb; } .es-kpi.pr { --kc: #059669; --kc2: #047857; } .es-kpi.co { --kc: #dc2626; --kc2: #b91c1c; }
+    .es-kpi.cl { --kc: #0f766e; background: linear-gradient(160deg, #fff, #ecfdf5); border-color: rgba(16,185,129,.35); }
+    .es-kpi.cv { --kc: #7c3aed; }
+    .es-kpi.cl.neg { --kc2: #dc2626; background: linear-gradient(160deg, #fff, #fef2f2); border-color: rgba(220,38,38,.35); }
+    @media (max-width: 760px) { .es-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+    /* ---------- SFG paste dialog ---------- */
+    .es-b.es-paste { color: #047857; background: linear-gradient(135deg, #ecfdf5, rgba(209,250,229,.85)); border-color: rgba(16,185,129,.5); }
+    .sp-ov { position: fixed; inset: 0; z-index: 9996; display: none; align-items: center; justify-content: center; padding: 18px;
+        background: radial-gradient(900px 500px at 30% 10%, rgba(16,185,129,.16), transparent 60%), rgba(15,23,42,.36); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+        font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+    .sp-ov.open { display: flex; }
+    .sp-panel { width: min(1180px, 100%); max-height: calc(100vh - 36px); display: flex; flex-direction: column; overflow: hidden; border-radius: 22px;
+        background: linear-gradient(160deg, #fff, #f8fafc); border: 1px solid rgba(255,255,255,.9); box-shadow: 0 40px 90px -30px rgba(6,78,59,.55); animation: esIn .22s cubic-bezier(.16,1,.3,1); }
+    .sp-head { display: flex; align-items: center; gap: 14px; padding: 15px 20px; color: #fff; background: linear-gradient(120deg, #047857, #10b981 55%, #34d399); }
+    .sp-head b { display: block; font-size: 17px; font-weight: 800; } .sp-head span { font-size: 11.5px; font-weight: 600; opacity: .9; }
+    .sp-hico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; flex: none; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.35); }
+    .sp-x { margin-left: auto; width: 34px; height: 34px; border-radius: 10px; border: 1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.18); color: #fff; font-size: 22px; line-height: 1; cursor: pointer; flex: none; }
+    .sp-body { padding: 16px 20px; overflow: auto; flex: 1; }
+    .sp-drop { border-radius: 16px; border: 2px dashed rgba(16,185,129,.45); background: rgba(236,253,245,.5); }
+    .sp-drop:focus-within { border-color: #059669; background: #fff; }
+    .sp-drop.has { border-style: solid; background: #fff; }
+    .sp-drop textarea { width: 100%; min-height: 104px; max-height: 190px; resize: vertical; border: 0; outline: 0; background: transparent; padding: 14px 16px; box-sizing: border-box;
+        font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11.5px; line-height: 1.6; color: #334155; white-space: pre; }
+    .sp-bar { display: flex; align-items: center; gap: 10px; margin: 12px 0; flex-wrap: wrap; }
+    .sp-stat { font-size: 12px; font-weight: 800; color: #64748b; } .sp-stat.ok { color: #047857; } .sp-stat.err { color: #b91c1c; }
+    .sp-date { border: 1px solid #cbd5e1; border-radius: 10px; padding: 5px 8px; font: inherit; font-size: 12px; font-weight: 700; color: #0f172a; background: #fff; outline: none; }
+    .sp-date:focus { border-color: #10b981; box-shadow: 0 0 0 3px rgba(16,185,129,.15); }
+    .spc-tag.nod { color: #0369a1; background: #e0f2fe; }
+    .sp-lbl { font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #64748b; }
+    .sp-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 12px; }
+    .spc { border-radius: 18px; padding: 14px; background: #fff; border: 1px solid rgba(226,232,240,.95); box-shadow: 0 14px 30px -24px rgba(15,23,42,.55); }
+    .spc.warn { border-color: rgba(245,158,11,.6); }
+    /* holiday (no activity) card — whole card in amber/yellow */
+    .spc.off { background: linear-gradient(160deg, #fffbeb 0%, #fef3c7 55%, #fde68a 100%); border: 1.5px solid rgba(245,158,11,.65); box-shadow: 0 16px 32px -22px rgba(217,119,6,.75); }
+    .spc.off .spc-type { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .spc.off .spc-date b, .spc.off .spc-date span { color: #78350f; }
+    .spc.off th { color: #92400e; border-bottom-color: rgba(245,158,11,.35); }
+    .spc.off td { color: #78350f; border-bottom-color: rgba(245,158,11,.22); }
+    .spc.off td.p, .spc.off td.c { color: #b45309; opacity: .7; }
+    .spc.off .spc-tag.hol { color: #fff; background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 10px -5px rgba(217,119,6,.8); }
+    .spc.off .spc-msg { background: rgba(255,255,255,.65) !important; color: #78350f; border: 1px solid rgba(245,158,11,.4); }
+    .spc-h { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .spc-type { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 5px 11px; border-radius: 10px; color: #fff; background: linear-gradient(135deg, #0f766e, #10b981); }
+    .spc-type.acc { background: linear-gradient(135deg, #2563eb, #60a5fa); }
+    .spc-date b { display: block; font-size: 13px; font-weight: 800; color: #0f172a; } .spc-date span { font-size: 11px; font-weight: 600; color: #64748b; }
+    .spc-tag { margin-left: auto; font-size: 9.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; }
+    .spc-tag.new { color: #047857; background: #d1fae5; } .spc-tag.rep { color: #92400e; background: #fef3c7; } .spc-tag.hol { color: #92400e; background: #fde68a; }
+    .spc table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .spc th { font-size: 9px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #64748b; text-align: right; padding: 5px 6px; border-bottom: 1px solid #e2e8f0; }
+    .spc th:first-child, .spc td:first-child { text-align: left; }
+    .spc td { padding: 6px; text-align: right; border-bottom: 1px solid #f1f5f9; font-family: 'Manrope', sans-serif; font-weight: 700; color: #334155; }
+    .spc td:first-child { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .spc td.p { color: #047857; } .spc td.c { color: #b91c1c; } .spc td.cl { color: #0f172a; font-weight: 800; } .spc td.bad { color: #dc2626; }
+    .spc-msg { margin-top: 8px; font-size: 11.5px; font-weight: 700; padding: 7px 10px; border-radius: 10px; color: #92400e; background: #fef3c7; }
+    .spc-msg.bad { color: #b91c1c; background: #fee2e2; }
+    .sp-foot { display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-top: 1px solid #e2e8f0; background: #f8fafc; }
+
     /* ---------- Day timeline ---------- */
     .es-strip-row { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-bottom: 1px solid rgba(255,255,255,.55);
         background: linear-gradient(180deg, rgba(255,255,255,.30), rgba(255,255,255,.12)); }
@@ -4865,6 +4934,14 @@ if (shouldRandomizeTheme() && !Number.isInteger(window.__bootThemeIndex)) {
         </div>
 
         <div class="es-body">
+            <!-- Live summary (same idea as the Defect module's entry page) -->
+            <div class="es-kpis" id="es-kpis">
+                <div class="es-kpi op"><small>Opening</small><b id="es-k-op">0</b><span>carried from previous day</span></div>
+                <div class="es-kpi pr"><small>Daily Production</small><b id="es-k-pr">0</b><span id="es-k-pr-s">—</span></div>
+                <div class="es-kpi co"><small>Consumption</small><b id="es-k-co">0</b><span>assemble floor</span></div>
+                <div class="es-kpi cl"><small>Closing</small><b id="es-k-cl">0</b><span id="es-k-cl-s">O + P − C</span></div>
+                <div class="es-kpi cv"><small>Stock Cover</small><b id="es-k-cv">—</b><span id="es-k-cv-s">at day target</span></div>
+            </div>
             <table class="es-grid">
                 <thead>
                     <tr>
@@ -4901,10 +4978,44 @@ if (shouldRandomizeTheme() && !Number.isInteger(window.__bootThemeIndex)) {
                 <span class="es-legend"><i></i> opening ≠ previous closing</span>
             </div>
             <div class="es-actions">
+                <button type="button" class="es-b es-paste" onclick="esPasteOpen()" title="Paste rows copied from the Excel SFG sheet (or press Ctrl+V outside a cell)">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="vertical-align:-2px;margin-right:5px"><rect x="8" y="3" width="8" height="4" rx="1.5"/><path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 13h6M9 17h4"/></svg>Paste from Excel
+                </button>
                 <button type="button" class="es-b" onclick="esReset()">Reset</button>
                 <button type="button" class="es-b dark" id="es-save" onclick="esSave(false)">Save</button>
                 <button type="button" class="es-b pri" id="es-save-view" onclick="esSave(true)">Save &amp; View Report</button>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ SFG: Paste from Excel ============ -->
+<div class="sp-ov" id="sp-ov" aria-hidden="true">
+    <div class="sp-panel" role="dialog" aria-modal="true">
+        <div class="sp-head">
+            <span class="sp-hico"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="4" rx="1.5"/><path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 13h6M9 17h4"/></svg></span>
+            <div><b>Paste from Excel</b><span>Copy rows from “Armature SFG Report Entry” or “SFG Accessories” — date, sheet and every item are detected automatically</span></div>
+            <button type="button" class="sp-x" onclick="esPasteClose()" title="Close (Esc)">&times;</button>
+        </div>
+        <div class="sp-body">
+            <div class="sp-drop" id="sp-drop"><textarea id="sp-text" spellcheck="false" placeholder="Click here and press Ctrl+V&#10;&#10;Date   Date   Day   Item Name   Opening   Daily Production   Consumption   Closing&#10;2026-11-07      Winding Armature 7 Circle 15mm   12492   900   1000   12392&#10;                Winding Armature 6 Circle 16mm   2750   0   0   2750 …&#10;&#10;Header optional • date can be on the first row of each day only • many days at once"></textarea></div>
+            <div class="sp-bar">
+                <span class="sp-stat" id="sp-stat">Waiting for data…</span>
+                <span style="flex:1"></span>
+                <span class="sp-lbl" title="Used for rows that have no date in the paste">Date if not in paste</span>
+                <input type="date" id="sp-def-date" class="sp-date">
+                <span class="sp-lbl" style="margin-left:6px">Sheet if unknown</span>
+                <div class="es-seg" id="sp-deftype"><button type="button" class="on" data-t="auto">Auto</button><button type="button" data-t="armature">Armature</button><button type="button" data-t="accessories">Accessories</button></div>
+                <span class="sp-lbl">Date order</span>
+                <div class="es-seg" id="sp-dfmt"><button type="button" class="on" data-f="auto">Auto</button><button type="button" data-f="mdy">M/D/Y</button><button type="button" data-f="dmy">D/M/Y</button></div>
+            </div>
+            <div id="sp-prev"></div>
+        </div>
+        <div class="sp-foot">
+            <span class="es-hint" id="sp-hint">Pasted items replace the same items on that date; other items of that day are kept.</span>
+            <span style="flex:1"></span>
+            <button type="button" class="es-b" onclick="esPasteClear()">Clear</button>
+            <button type="button" class="es-b pri" id="sp-save" onclick="esPasteSave()" disabled>Save</button>
         </div>
     </div>
 </div>
@@ -5062,6 +5173,20 @@ if (shouldRandomizeTheme() && !Number.isInteger(window.__bootThemeIndex)) {
         });
         $('es-t-op').textContent = fmt(t.op); $('es-t-pr').textContent = fmt(t.pr);
         $('es-t-co').textContent = fmt(t.co); $('es-t-cl').textContent = fmt(t.cl);
+        // live summary tiles
+        if ($('es-k-op')) {
+            $('es-k-op').textContent = fmt(t.op); $('es-k-pr').textContent = fmt(t.pr);
+            $('es-k-co').textContent = fmt(t.co); $('es-k-cl').textContent = fmt(t.cl);
+            var active = st.rows.filter(function (r) { return num(r.production) > 0; }).length;
+            $('es-k-pr-s').textContent = active ? active + ' of ' + st.rows.length + ' items produced' : 'no production yet';
+            var net = t.pr - t.co;
+            $('es-k-cl-s').textContent = (net >= 0 ? '▲ +' : '▼ ') + fmt(net) + ' vs opening';
+            $('es-k-cl').parentElement.classList.toggle('neg', t.cl < 0);
+            var tg = dayTarget();
+            if (t.cl > 0 && tg > 0) { var dd = t.cl / tg, ww = Math.floor(dd); $('es-k-cv').textContent = ww + 'D ' + Math.round((dd - ww) * 11) + 'H'; }
+            else $('es-k-cv').textContent = '—';
+            $('es-k-cv-s').textContent = 'total • target ' + fmt(tg) + '/day';
+        }
     }
 
     function renderHoliday() {
@@ -5409,6 +5534,226 @@ if (shouldRandomizeTheme() && !Number.isInteger(window.__bootThemeIndex)) {
         }).catch(function (e) { console.warn('Holiday sync unavailable:', e); });
     }
     subscribeHolidays(0);
+
+    // =================================================================
+    // PASTE FROM EXCEL (SFG sheets)
+    //   Armature SFG Report Entry: Date | Date | Day | Item Name | Opening | Daily Production | Consumption | Closing
+    //   SFG Accessories:           Date | Date | Day | Item Name | Opening | Daily Production | Consumption | Closing | Remarks
+    // The date is usually only on the first row of each day → carried down to the rows below.
+    // The sheet (armature / accessories) is detected from the item names.
+    // =================================================================
+    var SP = { groups: [], fmt: 'auto' };
+    var MON3 = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
+    // Dates with no year ("1-Nov" — the SFG Accessories sheet uses d-mmm) take the year of the
+    // dialog's date; if that would land more than ~40 days in the future it is last year's date.
+    function spYear(mo, d) {
+        var base = SP.baseYear || new Date().getFullYear(), k = base + '-' + pad(mo) + '-' + pad(d);
+        var lim = new Date(); lim.setDate(lim.getDate() + 40);
+        if (k > keyOf(lim)) k = (base - 1) + '-' + pad(mo) + '-' + pad(d);
+        return k;
+    }
+    function spDate(raw, dfmt) {
+        var s = String(raw || '').trim(), m;
+        if (!s || /^#/.test(s)) return null;                                    // "#REF!" etc. from the sheet
+        s = s.replace(/^(sun|mon|tue|wed|thu|fri|sat)[a-z]*\.?,?\s+/i, '');     // "Sunday, 1 November 2026"
+        if ((m = s.match(/^(\d{1,2})[-/ .]([A-Za-z]{3,})\.?$/)) && MON3[m[2].slice(0, 3).toLowerCase()] != null) {
+            return { k: spYear(MON3[m[2].slice(0, 3).toLowerCase()] + 1, +m[1]), noYear: true };     // 1-Nov
+        }
+        if ((m = s.match(/^([A-Za-z]{3,})\.?[-/ .]+(\d{1,2})$/)) && MON3[m[1].slice(0, 3).toLowerCase()] != null) {
+            return { k: spYear(MON3[m[1].slice(0, 3).toLowerCase()] + 1, +m[2]), noYear: true };     // Nov 1
+        }
+        if ((m = s.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/))) return { k: m[1] + '-' + pad(+m[2]) + '-' + pad(+m[3]) };
+        if ((m = s.match(/^(\d{1,2})[-/ .]([A-Za-z]{3})[A-Za-z]*[-/ .,]*(\d{2,4})$/)) && MON3[m[2].toLowerCase()] != null) {
+            var y1 = +m[3] < 100 ? 2000 + +m[3] : +m[3]; return { k: y1 + '-' + pad(MON3[m[2].toLowerCase()] + 1) + '-' + pad(+m[1]) };
+        }
+        if ((m = s.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{2,4})$/))) {
+            var a = +m[1], b = +m[2], y = +m[3] < 100 ? 2000 + +m[3] : +m[3], mo, d, amb = false;
+            if (dfmt === 'mdy') { mo = a; d = b; } else if (dfmt === 'dmy') { mo = b; d = a; }
+            else if (a > 12) { d = a; mo = b; } else if (b > 12) { mo = a; d = b; } else { mo = a; d = b; amb = a !== b; }
+            if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+            return { k: y + '-' + pad(mo) + '-' + pad(d), amb: amb };
+        }
+        if (/^\d{5}(\.\d+)?$/.test(s)) { var dt = new Date(Math.round((+s - 25569) * 864e5)); return { k: dt.getUTCFullYear() + '-' + pad(dt.getUTCMonth() + 1) + '-' + pad(dt.getUTCDate()) }; }
+        return null;
+    }
+    function spNum(v) { var s = String(v == null ? '' : v).replace(/[,\s]/g, ''); if (s === '' || s === '-' || s === '–') return 0; var n = parseFloat(s); return isFinite(n) ? n : NaN; }
+    // known items → { type, name }  (exact first, then a loose "contains" match)
+    var SP_ITEMS = [];
+    Object.keys(DEFAULT_ITEMS).forEach(function (t) { DEFAULT_ITEMS[t].forEach(function (n) { SP_ITEMS.push({ type: t, name: n, k: norm(n) }); }); });
+    function spItem(cell) {
+        var k = norm(cell); if (!k || k.length < 4) return null;
+        var hit = SP_ITEMS.filter(function (it) { return it.k === k; })[0];
+        if (hit) return hit;
+        var loose = k.replace(/[^a-z0-9]/g, '');
+        return SP_ITEMS.filter(function (it) { return it.k.replace(/[^a-z0-9]/g, '') === loose; })[0] || null;
+    }
+    function spParse(text, dfmt, defDate, defType) {
+        var lines = String(text || '').replace(/\r/g, '').split('\n').filter(function (l) { return l.replace(/\t/g, '').trim() !== ''; });
+        var cur = null, groups = {}, order = [], amb = false, unknown = [];
+        lines.forEach(function (line, li) {
+            var c = line.split('\t');
+            if (c.length < 3 && /\s{2,}/.test(line)) c = line.trim().split(/\s{2,}/);
+            if (/item\s*name|opening/i.test(line) && !c.some(function (x) { return spItem(x); })) return;   // header row
+            // date: first cell (before the item) that parses as a date
+            var itemIdx = -1, item = null;
+            for (var i = 0; i < c.length; i++) { var it = spItem(c[i]); if (it) { itemIdx = i; item = it; break; } }
+            for (var j = 0; j < (itemIdx < 0 ? c.length : itemIdx); j++) {
+                var d = spDate(c[j], dfmt); if (d) { cur = d.k; if (d.amb) amb = true; break; }
+            }
+            if (!item) {
+                var ti = -1;
+                for (var q = 0; q < c.length; q++) { var cq = String(c[q]).trim(); if (cq && isNaN(spNum(cq)) && !spDate(cq, dfmt)) { ti = q; break; } }
+                if (ti < 0) return;
+                // unknown name: accept it as a custom item only when the user picked the sheet
+                if (defType && defType !== 'auto') { item = { type: defType, name: String(c[ti]).trim() }; itemIdx = ti; }
+                else { unknown.push('row ' + (li + 1) + ': “' + String(c[ti]).trim().slice(0, 40) + '” (pick the sheet to import unknown items)'); return; }
+            }
+            var nums = [], rem = '';
+            for (var n = itemIdx + 1; n < c.length; n++) {
+                var v = String(c[n]).trim();
+                if (nums.length < 4 && (v === '' || !isNaN(spNum(v)))) nums.push(v);
+                else if (v && isNaN(spNum(v))) { rem = v; }
+            }
+            var row = { name: item.name, type: item.type, opening: spNum(nums[0]), production: spNum(nums[1]), consumption: spNum(nums[2]), xlClosing: nums[3] !== undefined && nums[3] !== '' ? spNum(nums[3]) : null, remarks: rem, line: li + 1 };
+            // no date anywhere above this row → use the date chosen in the dialog
+            var day = cur || defDate, noDate = !cur;
+            if (!day) { unknown.push('row ' + (li + 1) + ': no date for “' + item.name + '”'); return; }
+            var gk = item.type + '|' + day;
+            if (!groups[gk]) { groups[gk] = { type: item.type, date: day, rows: [], noDate: noDate }; order.push(gk); }
+            var g = groups[gk], prev = g.rows.filter(function (r) { return r.name === row.name; })[0];
+            if (prev) g.rows.splice(g.rows.indexOf(prev), 1);
+            g.rows.push(row);
+        });
+        var out = order.map(function (k) { return groups[k]; }).sort(function (a, b) { return a.date === b.date ? a.type.localeCompare(b.type) : a.date.localeCompare(b.date); });
+        out.forEach(function (g) {
+            g.warns = [];
+            g.rows.forEach(function (r) {
+                var cl = r.opening + r.production - r.consumption;
+                r.closing = cl;
+                if (r.xlClosing != null && !isNaN(r.xlClosing) && Math.round(r.xlClosing) !== Math.round(cl)) g.warns.push(r.name + ': Excel closing ' + fmt(r.xlClosing) + ' ≠ ' + fmt(cl));
+                if (cl < 0) g.warns.push(r.name + ': closing is negative');
+                if ([r.opening, r.production, r.consumption].some(function (x) { return isNaN(x); })) g.bad = true;
+            });
+            var map = readMap(g.type);
+            g.exists = !!map[g.date];
+            g.holiday = !!readHol()[g.date];
+            // a day where every item has blank/0 production AND consumption = an off day → holiday
+            g.offDay = g.rows.length > 0 && g.rows.every(function (r) { return !r.production && !r.consumption; });
+            if (g.offDay) g.warns = g.warns.filter(function (w) { return !/closing is negative/.test(w); });
+            if (g.date > esToday()) g.warns.push('Date is in the future');
+        });
+        return { groups: out, amb: amb, unknown: unknown };
+    }
+    function spRender() {
+        SP.baseYear = +(($('sp-def-date').value || esToday()).slice(0, 4));
+        var res = spParse($('sp-text').value, SP.fmt, $('sp-def-date').value || esToday(), SP.deftype || 'auto'), gs = res.groups;
+        SP.groups = gs;
+        var ok = gs.filter(function (g) { return !g.bad; });
+        $('sp-drop').classList.toggle('has', gs.length > 0);
+        var st2 = $('sp-stat');
+        if (!gs.length) { st2.className = 'sp-stat' + ($('sp-text').value.trim() ? ' err' : ''); st2.textContent = $('sp-text').value.trim() ? 'No SFG items recognised' + (res.unknown.length ? ' — ' + res.unknown[0] : '') : 'Waiting for data…'; }
+        else {
+            var items = ok.reduce(function (s, g) { return s + g.rows.length; }, 0), days = {};
+            ok.forEach(function (g) { days[g.date] = 1; });
+            st2.className = 'sp-stat ok';
+            st2.textContent = '✓ ' + items + ' item row' + (items === 1 ? '' : 's') + ' • ' + Object.keys(days).length + ' day' + (Object.keys(days).length === 1 ? '' : 's') + ' • ' +
+                Array.from(new Set(ok.map(function (g) { return g.type === 'armature' ? 'Armature' : 'Accessories'; }))).join(' + ') + (res.unknown.length ? ' • ' + res.unknown.length + ' row(s) skipped' : '');
+        }
+        $('sp-hint').textContent = res.amb && SP.fmt === 'auto' ? 'Dates like 11/7/2026 are read month-first (Nov 7) — switch to D/M/Y if wrong.' : 'Pasted items replace the same items on that date; other items of that day are kept.';
+        $('sp-prev').innerHTML = gs.length ? '<div class="sp-cards">' + gs.map(function (g) {
+            var tag = (g.noDate ? '<span class="spc-tag nod" title="No date in the pasted rows — change it with “Date if not in paste”">Date from picker</span>' : '') +
+                (g.offDay ? '<span class="spc-tag hol" title="No production and no consumption on any item">🏖 Holiday — no activity</span>'
+                    : g.holiday ? '<span class="spc-tag hol">Holiday — will be undone</span>' : g.exists ? '<span class="spc-tag rep">Updates saved day</span>' : '<span class="spc-tag new">New day</span>');
+            var rows = g.rows.map(function (r) {
+                return '<tr><td title="' + esc(r.name) + '">' + esc(r.name) + '</td><td>' + fmt(r.opening) + '</td><td class="p">' + fmt(r.production) + '</td><td class="c">' + fmt(r.consumption) + '</td><td class="cl' + (r.closing < 0 ? ' bad' : '') + '">' + fmt(r.closing) + '</td></tr>';
+            }).join('');
+            var msgs = (g.offDay ? '<div class="spc-msg" style="background:#fef3c7">🏖 Production and consumption are blank for every item — this day will be marked as a <b>holiday</b> (no report saved). The next day takes its opening from the last working day.</div>' : '') +
+                g.warns.map(function (w) { return '<div class="spc-msg">⚠ ' + esc(w) + '</div>'; }).join('') + (g.bad ? '<div class="spc-msg bad">✕ A number could not be read — this day will be skipped</div>' : '');
+            return '<div class="spc' + (g.offDay ? ' off' : (g.warns.length || g.bad ? ' warn' : '')) + '"><div class="spc-h"><span class="spc-type' + (g.type === 'accessories' ? ' acc' : '') + '">' + (g.type === 'armature' ? '⚙️ Armature' : '📦 Accessories') + '</span>' +
+                '<span class="spc-date"><b>' + longDate(g.date) + '</b><span>' + g.rows.length + ' item' + (g.rows.length === 1 ? '' : 's') + '</span></span>' + tag + '</div>' +
+                '<table><thead><tr><th>Item</th><th>Opening</th><th>Production</th><th>Consumption</th><th>Closing</th></tr></thead><tbody>' + rows + '</tbody></table>' + msgs + '</div>';
+        }).join('') + '</div>' : '';
+        var n = ok.length, nh = ok.filter(function (g) { return g.offDay; }).length;
+        $('sp-save').disabled = !n;
+        $('sp-save').textContent = n ? 'Save ' + n + ' day' + (n === 1 ? '' : 's') + (nh ? ' (' + nh + ' holiday)' : '') : 'Save';
+    }
+    window.esPasteOpen = function (text) {
+        var ov = $('sp-ov'); ov.classList.add('open'); ov.setAttribute('aria-hidden', 'false');
+        // default date for date-less rows: the Entry Sheet's day if it is open, else the report date / today
+        var dd = $('sp-def-date');
+        if (!dd.value || !dd._touched) {
+            var rp = document.getElementById('statement-date-picker');
+            dd.value = (OV.classList.contains('open') && st.date) ? st.date : (rp && rp.value) || esToday();
+        }
+        if (typeof text === 'string') $('sp-text').value = text;
+        spRender(); setTimeout(function () { $('sp-text').focus(); }, 60);
+    };
+    window.esPasteClose = function () { var ov = $('sp-ov'); ov.classList.remove('open'); ov.setAttribute('aria-hidden', 'true'); };
+    window.esPasteClear = function () { $('sp-text').value = ''; spRender(); $('sp-text').focus(); };
+    window.esPasteSave = function () {
+        var ok = SP.groups.filter(function (g) { return !g.bad; });
+        if (!ok.length) return;
+        var upd = ok.filter(function (g) { return g.exists && !g.offDay; }).length, hol = ok.filter(function (g) { return g.holiday && !g.offDay; });
+        if ((upd || hol.length) && !confirm((upd ? upd + ' day(s) already saved will be updated.\n' : '') + (hol.length ? hol.map(function (g) { return g.date; }).join(', ') + ' marked as holiday — holiday will be removed.\n' : '') + 'Continue?')) return;
+        var hl = readHol();
+        ok.forEach(function (g) {
+            var map = readMap(g.type), ex = map[g.date];
+            if (g.offDay) {
+                // off day → holiday; drop any (empty) report this sheet had for the date
+                hl[g.date] = { at: Date.now(), by: 'paste' };
+                cloudSet(HOL_PATH + '/' + g.date, hl[g.date]);
+                if (ex) { delete map[g.date]; localStorage.setItem(KEYS[g.type], JSON.stringify(map)); cloudWrite(g.type, g.date, null); }
+                return;
+            }
+            // keep items of that day that were not in the paste; replace the pasted ones; default order
+            var byName = {};
+            (ex ? ex.data : []).forEach(function (r) { byName[norm(r.name)] = r; });
+            g.rows.forEach(function (r) {
+                var o = { name: r.name, opening: r.opening, production: r.production, consumption: r.consumption };
+                if (r.remarks) o.remarks = r.remarks;
+                byName[norm(r.name)] = o;
+            });
+            var ordered = DEFAULT_ITEMS[g.type].map(function (n) { return byName[norm(n)]; }).filter(Boolean);
+            Object.keys(byName).forEach(function (k) { if (!DEFAULT_ITEMS[g.type].some(function (n) { return norm(n) === k; })) ordered.push(byName[k]); });
+            var rep = makeReport(g.type, g.date, ordered);
+            map[g.date] = rep;
+            localStorage.setItem(KEYS[g.type], JSON.stringify(map));
+            cloudWrite(g.type, g.date, rep);
+            if (hl[g.date]) { delete hl[g.date]; cloudSet(HOL_PATH + '/' + g.date, null); }
+        });
+        writeHol(hl);
+        var last = ok[ok.length - 1];
+        if (window.showToast) window.showToast('✓ ' + ok.length + ' day' + (ok.length === 1 ? '' : 's') + ' saved from Excel');
+        $('sp-text').value = ''; $('sp-def-date')._touched = false; spRender(); window.esPasteClose();
+        st.type = last.type; st.date = last.date; st.dirty = false;
+        buildRows(); render();
+        if (typeof refreshModuleViews === 'function') refreshModuleViews();
+        // opened from "Import Data" (Entry Sheet closed) → show the saved report like the old import did
+        var lastWork = ok.filter(function (g) { return !g.offDay; }).pop();
+        if (lastWork && !OV.classList.contains('open') && typeof window.loadToGenerator === 'function') {
+            try { window.loadToGenerator(lastWork.type, lastWork.date); } catch (e) { console.warn(e); }
+        }
+    };
+    (function wirePaste() {
+        var t; $('sp-text').addEventListener('input', function () { clearTimeout(t); t = setTimeout(spRender, 120); });
+        $('sp-def-date').addEventListener('change', function () { this._touched = true; spRender(); });
+        $('sp-deftype').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; SP.deftype = b.dataset.t; this.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); }); spRender(); });
+        $('sp-dfmt').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; SP.fmt = b.dataset.f; this.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); }); spRender(); });
+        $('sp-ov').addEventListener('mousedown', function (e) { if (e.target === this) window.esPasteClose(); });
+        document.addEventListener('keydown', function (e) {
+            if (!$('sp-ov').classList.contains('open')) return;
+            if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); window.esPasteClose(); }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); window.esPasteSave(); }
+        }, true);
+        // Ctrl+V on the Entry Sheet outside a cell, with several tab-separated lines → open the dialog
+        document.addEventListener('paste', function (e) {
+            if (!OV.classList.contains('open') || $('sp-ov').classList.contains('open')) return;
+            var tg = e.target; if (tg && tg.closest && tg.closest('input, textarea, [contenteditable="true"]')) return;
+            var text = (e.clipboardData || window.clipboardData).getData('text');
+            if (!text || text.indexOf('\t') < 0) return;
+            e.preventDefault(); window.esPasteOpen(text);
+        });
+    })();
 
     window.esSave = function (view) {
         if (st.holiday) { alert(shortDate(st.date) + ' is marked as a holiday. Undo the holiday to enter data.'); return; }
