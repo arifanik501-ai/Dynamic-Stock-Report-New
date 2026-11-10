@@ -8,6 +8,10 @@
 <link rel="icon" href="icon-192x192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://whatsapp-c10ef-default-rtdb.firebaseio.com">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/12.12.0/firebase-database.js">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Manrope:wght@600;700;800&display=swap">
 <style>
 /* =====================================================================
@@ -603,13 +607,7 @@ select.rj-native { position: absolute !important; opacity: 0 !important; pointer
             </a>
         </nav>
     </div>
-    <div class="sb-foot">
-        <div class="sb-card">
-            <b>Defect Module</b>
-            <span>16 defect categories • per model</span>
-            <div class="sb-sync off" id="sb-sync"><i></i><span>Connecting…</span></div>
-        </div>
-    </div>
+
 </aside>
 
 <!-- ================= TOP BAR ================= -->
@@ -645,7 +643,7 @@ select.rj-native { position: absolute !important; opacity: 0 !important; pointer
                     <b>Last 14 Days Trend</b>
                     <div class="chart-legend-pills">
                         <span class="pill-leg rate"><i class="dot"></i> Defect Rate</span>
-                        <span class="pill-leg dis"><i class="dot"></i> Disassembled</span>
+                        <span class="pill-leg dis"><i class="dot"></i> Rejection</span>
                         <span class="pill-leg prod"><i class="bar"></i> Production</span>
                     </div>
                 </div>
@@ -673,7 +671,7 @@ select.rj-native { position: absolute !important; opacity: 0 !important; pointer
             <div class="card-h mt"><b>Defects</b><span class="hint">Tab / Enter to move • leave blank for 0</span></div>
             <div class="def-grid" id="def-grid"></div>
             <div class="f-row mt">
-                <div class="fld"><label>Disassembled Fan</label><input type="number" min="0" inputmode="numeric" id="f-dis" class="big" placeholder="0"></div>
+                <div class="fld"><label>Rejection Fan</label><input type="number" min="0" inputmode="numeric" id="f-dis" class="big" placeholder="0"></div>
                 <div class="fld" style="grid-column: span 2"><label>Remarks</label><input type="text" id="f-rem" placeholder="Optional note"></div>
             </div>
             <div class="form-act">
@@ -710,10 +708,10 @@ select.rj-native { position: absolute !important; opacity: 0 !important; pointer
                 <div class="sum-box">
                     <div class="sum red"><small>Total Defect</small><b class="num" id="s-def">0</b></div>
                     <div class="sum red"><small>Defect Rate</small><b class="num" id="s-rate">0.00%</b></div>
-                    <div class="sum"><small>Disassembled</small><b class="num" id="s-dis">0</b></div>
+                    <div class="sum"><small>Rejection</small><b class="num" id="s-dis">0</b></div>
                     <div class="sum green"><small>Recovery</small><b class="num" id="s-rec">0.00%</b></div>
                 </div>
-                <p class="hint" style="margin:10px 0 0">Recovery = (Total Defect − Disassembled) ÷ Total Defect, same as the Excel dashboard.</p>
+                <p class="hint" style="margin:10px 0 0">Recovery = (Total Defect − Rejection) ÷ Total Defect, same as the Excel dashboard.</p>
             </div>
             <div class="card mt">
                 <div class="card-h"><b>Entries on this date</b><span id="f-day-count"></span></div>
@@ -747,7 +745,7 @@ select.rj-native { position: absolute !important; opacity: 0 !important; pointer
     <div class="grid g-kpi" id="m-kpis"></div>
     <div class="grid g-2 mt">
         <div class="card"><div class="card-h"><b class="ttl"><span class="ttag def">Defect</span>Defect Pareto — by category</b><span id="m-pareto-sub"></span></div><div class="chart-box lg"><canvas id="c-m-pareto"></canvas></div></div>
-        <div class="card"><div class="card-h"><b class="ttl"><span class="ttag def">Defect</span><span class="ttag dis">Disassembled</span>Category table</b><span id="m-tbl-sub"></span></div><div class="tbl-wrap" style="max-height:320px"><table class="tb" id="m-table"></table></div></div>
+        <div class="card"><div class="card-h"><b class="ttl"><span class="ttag def">Defect</span><span class="ttag dis">Rejection</span>Category table</b><span id="m-tbl-sub"></span></div><div class="tbl-wrap" style="max-height:320px"><table class="tb" id="m-table"></table></div></div>
     </div>
     <div class="grid g-2e mt">
         <div class="card"><div class="card-h"><b>Daily Trend</b><span class="chart-avg-badge" id="m-trend-avg">Month Avg: --%</span></div><div class="chart-box"><canvas id="c-m-daily"></canvas></div></div>
@@ -765,7 +763,7 @@ select.rj-native { position: absolute !important; opacity: 0 !important; pointer
     </div>
     <div class="grid g-kpi six" id="y-kpis"></div>
     <div class="grid g-2 mt">
-        <div class="card"><div class="card-h"><b>Monthly performance</b><span>production • defect • disassembled • rate</span></div><div class="chart-box lg"><canvas id="c-y-month"></canvas></div></div>
+        <div class="card"><div class="card-h"><b>Monthly performance</b><span>production • defect • rejection • rate</span></div><div class="chart-box lg"><canvas id="c-y-month"></canvas></div></div>
         <div class="card donut3d-card"><div class="card-h"><b class="ttl"><span class="ttag def">Defect</span>Top defects YTD</b><span id="y-top-sub"></span></div>
             <div class="chart-box lg d3-wrap"><div id="y-donut3d" class="d3-host"></div><div class="d3-center" id="y-d3-center"></div><canvas id="c-y-donut"></canvas></div></div>
     </div>
@@ -796,7 +794,7 @@ select.rj-native { position: absolute !important; opacity: 0 !important; pointer
         </div>
         <div class="px-body">
             <div class="px-drop" id="px-drop">
-                <textarea id="px-text" spellcheck="false" placeholder="Click here and press Ctrl+V&#10;&#10;Date   Model   Production Quantity   Humming Noise   …   Disassembled Fan   Remarks&#10;11/7/2026   2401   423   2   3   5 …&#10;&#10;Header row is optional • one or many models • many days at once"></textarea>
+                <textarea id="px-text" spellcheck="false" placeholder="Click here and press Ctrl+V&#10;&#10;Date   Model   Production Quantity   Humming Noise   …   Rejection Fan   Remarks&#10;11/7/2026   2401   423   2   3   5 …&#10;&#10;Header row is optional • one or many models • many days at once"></textarea>
             </div>
             <div class="px-bar" id="px-bar">
                 <span class="px-stat" id="px-stat">Waiting for data…</span>
@@ -833,7 +831,7 @@ function goPortal(e) {
     return false;
 }
 </script>
-<script type="module" src="rejection.js?v=20261109p"></script>
+<script type="module" src="rejection.js?v=20261110r"></script>
 
 </body>
 </html>

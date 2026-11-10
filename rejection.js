@@ -304,7 +304,7 @@ function rateTrend(id, keys, aggs, avgRate, avgLabel, highlight) {
                 },
                 {
                     type: 'line',
-                    label: 'Disassembled %',
+                    label: 'Rejection %',
                     data: dis,
                     borderColor: '#f59e0b',
                     borderWidth: 1.8,
@@ -357,7 +357,7 @@ function rateTrend(id, keys, aggs, avgRate, avgLabel, highlight) {
                             const v = aggs[c.dataIndex];
                             if (c.dataset.label === 'Production') return ` Production: ${fmt(v.prod)} fans`;
                             if (c.dataset.label === 'Defect %') return ` Defect Rate: ${c.raw}% (${fmt(v.def)} pcs)`;
-                            return ` Disassembled: ${c.raw}% (${fmt(v.dis)} pcs)`;
+                            return ` Rejection: ${c.raw}% (${fmt(v.dis)} pcs)`;
                         }
                     }
                 },
@@ -436,7 +436,7 @@ function renderDaily() {
     $('d-kpis').innerHTML = [
         kpi({ lbl: 'Total Production', val: fmt(a.prod), ico: 'box', cls: 'k-blue', sub: `${Object.keys(a.models).length} model${Object.keys(a.models).length === 1 ? '' : 's'} • 100% manufactured` }),
         kpi({ lbl: 'Total Defect', val: fmt(a.def), ico: 'alert', sub: `Rate <b class="num">${pct(a.def, a.prod)}</b> ${p ? delta(rate, pnum(p.def, p.prod)) : ''}` }),
-        kpi({ lbl: 'Disassembled', val: fmt(a.dis), ico: 'tool', cls: 'k-amber', sub: `<b class="num">${pct(a.dis, a.prod)}</b> of production ${p ? delta(disR, pnum(p.dis, p.prod)) : ''}` }),
+        kpi({ lbl: 'Rejection', val: fmt(a.dis), ico: 'tool', cls: 'k-amber', sub: `<b class="num">${pct(a.dis, a.prod)}</b> of production ${p ? delta(disR, pnum(p.dis, p.prod)) : ''}` }),
         kpi({ lbl: 'Recovery', val: a.def ? a.rec.toFixed(2) + '%' : '—', ring: a.def ? a.rec : 0, cls: 'k-green', sub: `${fmt(Math.max(0, a.def - a.dis))} defects recovered` }),
         kpi({ lbl: 'Top Defect', val: a.top ? esc(DLABEL[a.top[0]]) : '—', ico: 'target', cls: 'k-violet', sub: a.top ? `<b class="num">${fmt(a.top[1])}</b> pcs • ${pct(a.top[1], a.def, 1)} of defects` : 'nothing logged' })
     ].join('');
@@ -444,7 +444,7 @@ function renderDaily() {
     $('d-bd-sub').textContent = a.n ? '% = of production' : '';
     $('d-bars').innerHTML = a.n ? bars(a, a.prod) : '<div class="empty">No entry for this date. Use <b>Entry</b> to add it.</div>';
     const ms = Object.entries(a.models).sort((x, y) => y[1].prod - x[1].prod);
-    $('d-models').innerHTML = `<thead><tr><th class="l">Model</th><th>Prod</th><th>Defect</th><th>Rate</th><th>Disasm.</th></tr></thead><tbody>${ms.map(([m, v]) =>
+    $('d-models').innerHTML = `<thead><tr><th class="l">Model</th><th>Prod</th><th>Defect</th><th>Rate</th><th>Reject</th></tr></thead><tbody>${ms.map(([m, v]) =>
         `<tr><td class="l"><b>${esc(m)}</b></td><td>${fmt(v.prod)}</td><td class="hot">${fmt(v.def)}</td><td>${pct(v.def, v.prod)}</td><td>${fmt(v.dis)}</td></tr>`).join('') || '<tr><td class="l" colspan="5" style="text-align:center;color:#94a3b8">—</td></tr>'}</tbody>`;
     // last 14 data days
     const end = S.dates.filter(x => x <= k).slice(-14);
@@ -458,7 +458,7 @@ function renderDaily() {
     if (a.n) {
         parts.push(`Defect rate <b>${pct(a.def, a.prod)}</b> vs month average <b>${mRate.toFixed(2)}%</b> — ${rate > mRate ? 'worse than' : 'better than'} the month so far.`);
         if (a.top) parts.push(`<b>${DLABEL[a.top[0]]}</b> is the biggest cause today (${pct(a.top[1], a.def, 1)} of defects).`);
-        if (a.def) parts.push(`Recovery <b>${a.rec.toFixed(1)}%</b>: ${fmt(a.def - a.dis)} of ${fmt(a.def)} defective fans were fixed without disassembly.`);
+        if (a.def) parts.push(`Recovery <b>${a.rec.toFixed(1)}%</b>: ${fmt(a.def - a.dis)} of ${fmt(a.def)} defective fans were fixed without rejection.`);
     } else parts.push('No production logged for this date.');
     $('d-insight').innerHTML = `<span class="ic">${ICON.bulb}</span><p>${parts.join(' ')}</p>`;
     // month to date (1st of the month → selected day)
@@ -469,7 +469,7 @@ function renderDaily() {
         ['Production', fmt(mtd.prod)],
         ['Working days', mtd.days.size + ' • avg ' + fmt(Math.round(mtd.prod / (mtd.days.size || 1)))],
         ['Defect', fmt(mtd.def) + ' • ' + pct(mtd.def, mtd.prod)],
-        ['Disassembled', fmt(mtd.dis) + ' • ' + pct(mtd.dis, mtd.prod)],
+        ['Rejection', fmt(mtd.dis) + ' • ' + pct(mtd.dis, mtd.prod)],
         ['Recovery', mtd.def ? mtd.rec.toFixed(1) + '%' : '—'],
         ['Top defect', mtd.top ? DLABEL[mtd.top[0]] : '—']
     ].map(([l, v]) => `<div><small>${l}</small><b>${esc(v)}</b></div>`).join('');
@@ -542,7 +542,7 @@ function renderEntry() {
     const k = $('f-date').value || todayKey();
     const list = S.byDate.get(k) || [];
     $('f-day-count').textContent = list.length ? list.length + ' row' + (list.length > 1 ? 's' : '') : 'none yet';
-    $('f-day').innerHTML = `<thead><tr><th class="l">Model</th><th>Prod</th><th>Defect</th><th>Rate</th><th>Disasm.</th><th></th></tr></thead><tbody>${list.map(e => {
+    $('f-day').innerHTML = `<thead><tr><th class="l">Model</th><th>Prod</th><th>Defect</th><th>Rate</th><th>Reject</th><th></th></tr></thead><tbody>${list.map(e => {
         const t = defTotal(e);
         return `<tr><td class="l"><b>${esc(e.model)}</b>${e.src === 'cloud' ? '' : ' <span class="hint">excel</span>'}</td><td>${fmt(e.prod)}</td><td class="hot">${fmt(t)}</td><td>${pct(t, e.prod)}</td><td>${fmt(e.dis || 0)}</td><td><span class="act"><button type="button" data-act="edit" data-id="${esc(e.id)}" title="Edit">${ICON.edit}</button><button type="button" data-act="del" data-id="${esc(e.id)}" title="Delete">${ICON.del}</button></span></td></tr>`;
     }).join('') || '<tr><td class="l" colspan="6" style="text-align:center;color:#94a3b8;padding:18px">No entries on this date</td></tr>'}</tbody>`;
@@ -624,7 +624,7 @@ async function saveEntry() {
     if (!f.prod) { $('f-prod').focus(); return toast('Enter the production quantity'); }
     const t = defTotal(f);
     if (t > f.prod && !confirm(`Total defect (${t}) is more than production (${f.prod}). Save anyway?`)) return;
-    if (f.dis > t && !confirm(`Disassembled (${f.dis}) is more than total defect (${t}). Save anyway?`)) return;
+    if (f.dis > t && !confirm(`Rejection (${f.dis}) is more than total defect (${t}). Save anyway?`)) return;
     let id = S.editingId;
     if (!id) {
         const clash = (S.byDate.get(f.date) || []).find(e => String(e.model) === f.model);
@@ -678,7 +678,7 @@ function renderMonthly() {
     $('m-kpis').innerHTML = [
         kpi({ lbl: 'Production', val: fmt(a.prod), ico: 'box', cls: 'k-blue', sub: `${a.days.size} working day${a.days.size === 1 ? '' : 's'} • avg <b class="num">${fmt(Math.round(a.prod / (a.days.size || 1)))}</b>/day` }),
         kpi({ lbl: 'Total Defect', val: fmt(a.def), ico: 'alert', sub: `Rate <b class="num">${rate.toFixed(2)}%</b> ${delta(rate, pRate)} vs ${MONTHS[pm[1]].slice(0, 3)}` }),
-        kpi({ lbl: 'Disassembled', val: fmt(a.dis), ico: 'tool', cls: 'k-amber', sub: `<b class="num">${pct(a.dis, a.prod)}</b> of production` }),
+        kpi({ lbl: 'Rejection', val: fmt(a.dis), ico: 'tool', cls: 'k-amber', sub: `<b class="num">${pct(a.dis, a.prod)}</b> of production` }),
         kpi({ lbl: 'Recovery', val: a.def ? a.rec.toFixed(2) + '%' : '—', ring: a.def ? a.rec : 0, cls: 'k-green kpi-green', sub: `${fmt(Math.max(0, a.def - a.dis))} fixed in line` }),
         kpi({ lbl: 'Top Defect', val: a.top ? esc(DLABEL[a.top[0]]) : '—', ico: 'target', cls: 'k-violet', sub: a.top ? `<b class="num">${fmt(a.top[1])}</b> • ${pct(a.top[1], a.prod)} of prod` : '—' })
     ].join('');
@@ -738,7 +738,7 @@ function renderMonthly() {
     $('m-table').innerHTML = `<thead><tr><th class="l">Defect Category</th><th>Qty</th><th>Rejection %</th></tr></thead><tbody>${a.sorted.map(([k, q]) =>
         `<tr><td class="l">${DLABEL[k]}</td><td class="${q ? 'hot' : 'z'}">${fmt(q)}</td><td class="${q ? '' : 'z'}">${pct(q, a.prod)}</td></tr>`).join('')}</tbody>
         <tfoot><tr class="ft-def"><td class="l">TOTAL DEFECT</td><td>${fmt(a.def)}</td><td>${pct(a.def, a.prod)}</td></tr>
-        <tr class="ft-dis"><td class="l">DISASSEMBLED FAN <span class="prod-pill" title="Total production this month — the base for every %">Total Production <b>${fmt(a.prod)}</b></span></td><td>${fmt(a.dis)}</td><td>${pct(a.dis, a.prod)}</td></tr></tfoot>`;
+        <tr class="ft-dis"><td class="l">REJECTION FAN <span class="prod-pill" title="Total production this month — the base for every %">Total Production <b>${fmt(a.prod)}</b></span></td><td>${fmt(a.dis)}</td><td>${pct(a.dis, a.prod)}</td></tr></tfoot>`;
     // daily trend
     const pre = M.y + '-' + pad(M.m + 1);
     const days = S.dates.filter(x => x.startsWith(pre));
@@ -746,7 +746,7 @@ function renderMonthly() {
     rateTrend('c-m-daily', days, dayAgg, rate, 'Month avg');
     // by model
     const ms = Object.entries(a.models).sort((x, y) => y[1].prod - x[1].prod);
-    $('m-models').innerHTML = `<thead><tr><th class="l">Model</th><th>Rows</th><th>Production</th><th>Defect</th><th>Rate</th><th>Disasm.</th><th>Recovery</th></tr></thead><tbody>${ms.map(([m, v]) =>
+    $('m-models').innerHTML = `<thead><tr><th class="l">Model</th><th>Rows</th><th>Production</th><th>Defect</th><th>Rate</th><th>Reject</th><th>Recovery</th></tr></thead><tbody>${ms.map(([m, v]) =>
         `<tr><td class="l"><b>${esc(m)}</b></td><td>${v.n}</td><td>${fmt(v.prod)}</td><td class="hot">${fmt(v.def)}</td><td>${pct(v.def, v.prod)}</td><td>${fmt(v.dis)}</td><td>${v.def ? ((v.def - v.dis) / v.def * 100).toFixed(1) + '%' : '—'}</td></tr>`).join('') || '<tr><td class="l" colspan="7" style="text-align:center;color:#94a3b8;padding:18px">No data</td></tr>'}</tbody>`;
     // insight (Pareto 80/20)
     let c = 0, n80 = 0; for (const r of rows) { c += r[1]; n80++; if (c / (a.def || 1) >= .8) break; }
@@ -770,9 +770,9 @@ function renderYearly() {
     $('y-kpis').innerHTML = [
         kpi({ lbl: 'Total Production (YTD)', val: fmt(ytd.prod), ico: 'box', cls: 'k-blue', sub: 'Manufactured assemblies' }),
         kpi({ lbl: 'Total Defect (YTD)', val: fmt(ytd.def), ico: 'alert', sub: 'Defective units identified' }),
-        kpi({ lbl: 'YTD Rejection Rate', val: pct(ytd.def, ytd.prod), ico: 'shield', cls: 'k-violet', sub: 'Annual quality loss rate' }),
-        kpi({ lbl: 'Disassembled for Rework', val: fmt(ytd.dis), ico: 'tool', cls: 'k-amber', sub: 'Recoverable fan units' }),
-        kpi({ lbl: 'Disassembled %', val: pct(ytd.dis, ytd.prod), ring: pnum(ytd.dis, ytd.prod) * 5, cls: 'k-amber', sub: '% of total production' }),
+        kpi({ lbl: 'YTD Defect Rate', val: pct(ytd.def, ytd.prod), ico: 'shield', cls: 'k-violet', sub: 'Annual quality loss rate' }),
+        kpi({ lbl: 'Rejection', val: fmt(ytd.dis), ico: 'tool', cls: 'k-amber', sub: 'Rejected fan units' }),
+        kpi({ lbl: 'Rejection %', val: pct(ytd.dis, ytd.prod), ring: pnum(ytd.dis, ytd.prod) * 5, cls: 'k-amber', sub: '% of total production' }),
         // Recovery = defective fans fixed in line without disassembly
         kpi({ lbl: 'Recovery (YTD)', val: ytd.def ? ytd.rec.toFixed(2) + '%' : '—', ring: ytd.def ? ytd.rec : 0, cls: 'k-green kpi-green', sub: `${fmt(Math.max(0, ytd.def - ytd.dis))} of ${fmt(ytd.def)} fixed in line` })
     ].join('');
@@ -783,7 +783,7 @@ function renderYearly() {
         data: { labels: MONTHS.map(m => m.slice(0, 3)), datasets: [
             { type: 'line', label: 'Rejection %', data: ms.map(a => a.prod ? +pnum(a.def, a.prod).toFixed(2) : null), borderColor: '#0f172a', borderWidth: 2.2, cubicInterpolationMode: 'monotone', pointRadius: 4, pointBackgroundColor: '#fff', pointBorderColor: '#0f172a', pointBorderWidth: 2, spanGaps: true, yAxisID: 'y1' },
             { type: 'bar', label: 'Total defect', data: ms.map(a => a.def), backgroundColor: 'rgba(225,29,72,.8)', borderRadius: 6, yAxisID: 'y' },
-            { type: 'bar', label: 'Disassembled', data: ms.map(a => a.dis), backgroundColor: 'rgba(245,158,11,.65)', borderRadius: 6, yAxisID: 'y' }
+            { type: 'bar', label: 'Rejection', data: ms.map(a => a.dis), backgroundColor: 'rgba(245,158,11,.65)', borderRadius: 6, yAxisID: 'y' }
         ] },
         options: { interaction: { mode: 'index', intersect: false }, layout: { padding: { top: 26 } },
             plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { footer: items => 'Production: ' + fmt(ms[items[0].dataIndex].prod) } },
@@ -910,7 +910,7 @@ function renderYearlyMatrix(ms, ytd, Y) {
         }).join('');
         return `<tr><td class="l"><b>${MONTHS[i]}</b></td><td class="${has ? '' : 'z'}">${fmt(a.prod)}</td>${cells}<td class="hot">${fmt(a.def)}</td><td>${has ? pct(a.def, a.prod) : '–'}</td><td>${fmt(a.dis)}</td><td>${has ? pct(a.dis, a.prod) : '–'}</td><td>${mom == null ? '–' : (mom > 0 ? '+' : '') + fmt(mom)}</td><td>${momPct == null ? '–' : (momPct > 0 ? '+' : '') + momPct.toFixed(1) + '%'}</td><td class="l">${trend}</td><td class="l">${a.top ? DLABEL[a.top[0]] + ' <span class="hint">' + fmt(a.top[1]) + '</span>' : '<span class="hint">None</span>'}</td></tr>`;
     }).join('');
-    $('y-matrix').innerHTML = `<thead><tr><th class="l">Month</th><th>Production</th>${DEFECTS.map(d => `<th>${d[1]}</th>`).join('')}<th>Total Rej.</th><th>Rej. %</th><th>Disasm.</th><th>Disasm. %</th><th>MoM Qty</th><th>MoM %</th><th class="l">Trend</th><th class="l">Top Defect</th></tr></thead><tbody>${body}</tbody>
+    $('y-matrix').innerHTML = `<thead><tr><th class="l">Month</th><th>Production</th>${DEFECTS.map(d => `<th>${d[1]}</th>`).join('')}<th>Total Defect</th><th>Defect %</th><th>Reject</th><th>Reject %</th><th>MoM Qty</th><th>MoM %</th><th class="l">Trend</th><th class="l">Top Defect</th></tr></thead><tbody>${body}</tbody>
         <tfoot><tr><td class="l">YTD TOTAL</td><td>${fmt(ytd.prod)}</td>${DKEYS.map(k => `<td>${pctView ? pct(ytd.d[k], ytd.prod) : fmt(ytd.d[k])}</td>`).join('')}<td>${fmt(ytd.def)}</td><td>${pct(ytd.def, ytd.prod)}</td><td>${fmt(ytd.dis)}</td><td>${pct(ytd.dis, ytd.prod)}</td><td></td><td></td><td></td><td class="l">${ytd.top ? DLABEL[ytd.top[0]] : ''}</td></tr></tfoot>`;
 }
 
@@ -931,12 +931,12 @@ function renderRecords() {
         const t = defTotal(e);
         return `<tr><td class="l">${e.date}</td><td class="l"><b>${esc(e.model)}</b></td><td>${fmt(e.prod)}</td>${DKEYS.map(k => { const v = +e.d?.[k] || 0; return v ? `<td>${v}</td>` : '<td class="z">–</td>'; }).join('')}<td class="hot">${fmt(t)}</td><td>${pct(t, e.prod)}</td><td>${fmt(e.dis || 0)}</td><td class="l" style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${esc(e.rem || '')}</td><td><span class="act"><button type="button" data-act="edit" data-id="${esc(e.id)}" title="Edit">${ICON.edit}</button><button type="button" data-act="del" data-id="${esc(e.id)}" title="Delete">${ICON.del}</button></span></td></tr>`;
     }).join('');
-    $('r-table').innerHTML = `<thead><tr><th class="l">Date</th><th class="l">Model</th><th>Prod</th>${DEFECTS.map(d => `<th>${d[1]}</th>`).join('')}<th>Total</th><th>Rej. %</th><th>Disasm.</th><th class="l">Remarks</th><th></th></tr></thead><tbody>${rows || `<tr><td class="l" colspan="${DKEYS.length + 9}" style="text-align:center;color:#94a3b8;padding:24px">No records</td></tr>`}</tbody>
+    $('r-table').innerHTML = `<thead><tr><th class="l">Date</th><th class="l">Model</th><th>Prod</th>${DEFECTS.map(d => `<th>${d[1]}</th>`).join('')}<th>Total</th><th>Defect %</th><th>Reject</th><th class="l">Remarks</th><th></th></tr></thead><tbody>${rows || `<tr><td class="l" colspan="${DKEYS.length + 9}" style="text-align:center;color:#94a3b8;padding:24px">No records</td></tr>`}</tbody>
         <tfoot><tr><td class="l" colspan="2">TOTAL${list.length > LIMIT ? ' (first ' + LIMIT + ' shown)' : ''}</td><td>${fmt(a.prod)}</td>${DKEYS.map(k => `<td>${fmt(a.d[k])}</td>`).join('')}<td>${fmt(a.def)}</td><td>${pct(a.def, a.prod)}</td><td>${fmt(a.dis)}</td><td></td><td></td></tr></tfoot>`;
 }
 function exportCsv() {
     const list = filteredRecords().slice().reverse();
-    const head = ['Date', 'Model', 'Production Quantity', ...DEFECTS.map(d => d[1]), 'Total Rejection', 'Rejection %', 'Disassembled Fan', 'Remarks'];
+    const head = ['Date', 'Model', 'Production Quantity', ...DEFECTS.map(d => d[1]), 'Total Defect', 'Defect %', 'Rejection Fan', 'Remarks'];
     const q = v => { const s = String(v == null ? '' : v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
     const lines = [head.map(q).join(',')].concat(list.map(e => { const t = defTotal(e); return [e.date, e.model, e.prod, ...DKEYS.map(k => +e.d?.[k] || 0), t, e.prod ? (t / e.prod * 100).toFixed(2) + '%' : '0%', e.dis || 0, e.rem || ''].map(q).join(','); }));
     const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
@@ -952,10 +952,14 @@ function setCloud(state, label) {
     S.cloud = state;
     const chip = $('cloud-chip'), sb = $('sb-sync');
     const text = label || { live: 'Firebase live', offline: 'Offline • local', error: 'Sync error', connecting: 'Connecting…' }[state];
-    chip.className = 'chip' + (state === 'live' ? '' : state === 'error' ? ' err' : ' off');
-    chip.lastElementChild.textContent = text;
-    sb.className = 'sb-sync' + (state === 'live' ? '' : state === 'error' ? ' err' : ' off');
-    sb.lastElementChild.textContent = text;
+    if (chip) {
+        chip.className = 'chip' + (state === 'live' ? '' : state === 'error' ? ' err' : ' off');
+        chip.lastElementChild.textContent = text;
+    }
+    if (sb) {
+        sb.className = 'sb-sync' + (state === 'live' ? '' : state === 'error' ? ' err' : ' off');
+        sb.lastElementChild.textContent = text;
+    }
 }
 function readPending() { try { return JSON.parse(localStorage.getItem(PENDING_KEY) || '{}') || {}; } catch (e) { return {}; } }
 function writePending(p) { try { localStorage.setItem(PENDING_KEY, JSON.stringify(p)); } catch (e) {} }
@@ -1036,7 +1040,7 @@ const PX_HEAD = {
     date: /^date$/, model: /^model/, prod: /^prod/,
     humming: /humm/, bearing: /bearing/, taptal: /tap/, fitting: /fitting/, rotor: /rotor/, jam: /^jam/, xlcrack: /xl/,
     wireleak: /wire/, lockwatt: /lock/, painting: /paint/, border: /border/, highwatt: /high/, shaft: /shaft/, notrunning: /not\s*run/,
-    crack: /crack\s*body|body/, conveyor: /con?m?veyor|comveyor|scratch/, total: /^total/, rate: /%|rejection\s*%/, dis: /disas/, rem: /remark/
+    crack: /crack\s*body|body/, conveyor: /con?m?veyor|comveyor|scratch/, total: /^total/, rate: /%|rejection\s*%|defect\s*%/, dis: /disas|reject\s*fan|^reject$/, rem: /remark/
 };
 const PX_ORDER = ['date', 'model', 'prod', ...DKEYS, 'total', 'rate', 'dis', 'rem'];
 const MON3 = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
@@ -1106,7 +1110,7 @@ function pxParse(text, dfmt) {
             if (Math.round(tot) !== r.def && Math.round(tot) !== noConv) r.warns.push(`Excel total ${fmt(tot)} ≠ sum of defects ${fmt(r.def)} — check the row`);
         }
         if (r.def > r.prod && r.prod > 0) r.warns.push('Total defect is more than production');
-        if (r.dis > r.def) r.warns.push('Disassembled is more than total defect');
+        if (r.dis > r.def) r.warns.push('Rejection is more than total defect');
         if (r.date && r.date > todayKey()) r.warns.push('Date is in the future');
         rows.push(r);
     }
@@ -1136,7 +1140,7 @@ function pxRender() {
         const msgs = r.errs.map(e => `<div class="pxc-msg bad">✕ ${esc(e)}</div>`).join('') + r.warns.map(w => `<div class="pxc-msg warn">⚠ ${esc(w)}</div>`).join('');
         return `<div class="pxc${r.errs.length ? ' bad' : r.warns.length ? ' warn' : ''}">
             <div class="pxc-h"><span class="pxc-model">${esc(r.model || '?')}</span><span class="pxc-date"><b>${r.date ? longDate(r.date) : '—'}</b><span>row ${r.line}${r.rem ? ' • ' + esc(r.rem) : ''}</span></span>${tag}</div>
-            <div class="pxc-kpi"><div><small>Production</small><b>${fmt(r.prod || 0)}</b></div><div><small>Defect</small><b style="color:#be123c">${fmt(r.def)}</b></div><div><small>Rate</small><b>${pct(r.def, r.prod)}</b></div><div><small>Disasm.</small><b>${fmt(r.dis)}</b></div></div>
+            <div class="pxc-kpi"><div><small>Production</small><b>${fmt(r.prod || 0)}</b></div><div><small>Defect</small><b style="color:#be123c">${fmt(r.def)}</b></div><div><small>Rate</small><b>${pct(r.def, r.prod)}</b></div><div><small>Reject</small><b>${fmt(r.dis)}</b></div></div>
             <div class="pxc-def">${defs}</div>${msgs}</div>`;
     }).join('') + '</div>' : '';
     const n = good.length;
@@ -1376,8 +1380,8 @@ async function exportDailyReport() {
     const rate = pnum(a.def, a.prod), pRate = p ? pnum(p.def, p.prod) : null;
     y += rpKpis(x, y, [
         { label: 'Production', value: fmt(a.prod), sub: `${Object.keys(a.models).length} model${Object.keys(a.models).length > 1 ? 's' : ''}: ${Object.keys(a.models).join(', ')}`, accent: RP.blue, delta: [p ? a.prod - p.prod : null, '', 'neutral'] },
-        { label: 'Total Rejection', value: fmt(a.def), vc: RP.redD, sub: `Rate ${rate.toFixed(2)}% of production`, accent: RP.red, delta: [pRate == null ? null : rate - pRate, ' pts', 'bad-up'] },
-        { label: 'Disassembled', value: fmt(a.dis), sub: `${pnum(a.dis, a.prod).toFixed(2)}% of production`, accent: RP.amber, delta: [p ? pnum(a.dis, a.prod) - pnum(p.dis, p.prod) : null, ' pts', 'bad-up'] },
+        { label: 'Total Defect', value: fmt(a.def), vc: RP.redD, sub: `Rate ${rate.toFixed(2)}% of production`, accent: RP.red, delta: [pRate == null ? null : rate - pRate, ' pts', 'bad-up'] },
+        { label: 'Reject', value: fmt(a.dis), sub: `${pnum(a.dis, a.prod).toFixed(2)}% of production`, accent: RP.amber, delta: [p ? pnum(a.dis, a.prod) - pnum(p.dis, p.prod) : null, ' pts', 'bad-up'] },
         { label: 'Recovery', value: a.def ? a.rec.toFixed(1) + '%' : '—', vc: RP.green, sub: `${fmt(Math.max(0, a.def - a.dis))} of ${fmt(a.def)} fixed in line`, accent: RP.green, delta: [p && p.def && a.def ? a.rec - p.rec : null, ' pts', 'good-up'] }
     ]);
     y += 22;
@@ -1402,7 +1406,7 @@ async function exportDailyReport() {
     const ch = Math.max(70 + ms.length * 40 + (p ? 130 : 0), 66 + ins.length * 52) + 20;
     rpCard(x, RP.PAD, y, half, ch);
     rpT(x, 'Model-wise', RP.PAD + 20, y + 32, { s: 15, w: 800 });
-    ['MODEL', 'PROD', 'REJ.', 'RATE', 'DISASM.'].forEach((h, i) => rpT(x, h, RP.PAD + (i ? 150 + i * 100 : 20), y + 60, { s: 10.5, w: 800, c: RP.mute, ls: '1.4px', a: i ? 'right' : 'left' }));
+    ['MODEL', 'PROD', 'DEFECT', 'RATE', 'REJECT'].forEach((h, i) => rpT(x, h, RP.PAD + (i ? 150 + i * 100 : 20), y + 60, { s: 10.5, w: 800, c: RP.mute, ls: '1.4px', a: i ? 'right' : 'left' }));
     ms.forEach(([m, v], i) => {
         const yy = y + 90 + i * 40;
         rpT(x, m, RP.PAD + 20, yy, { s: 15, w: 800, num: true });
@@ -1413,7 +1417,7 @@ async function exportDailyReport() {
         const by = y + ch - 118, bw = half - 40;
         rpRR(x, RP.PAD + 20, by, bw, 98, 14); x.fillStyle = '#f8fafc'; x.fill(); x.strokeStyle = '#e2e8f0'; x.stroke();
         rpT(x, 'PREVIOUS DAY  •  ' + longDate(prev).toUpperCase(), RP.PAD + 36, by + 26, { s: 10.5, w: 800, c: RP.mute, ls: '1.4px' });
-        [['Production', fmt(p.prod)], ['Rejection', fmt(p.def)], ['Rate', pct(p.def, p.prod)], ['Disassembled', fmt(p.dis)]].forEach((kv, i) => {
+        [['Production', fmt(p.prod)], ['Defect', fmt(p.def)], ['Rate', pct(p.def, p.prod)], ['Reject', fmt(p.dis)]].forEach((kv, i) => {
             const X = RP.PAD + 36 + i * (bw - 32) / 4;
             rpT(x, kv[0], X, by + 52, { s: 11.5, w: 700, c: RP.mute });
             rpT(x, kv[1], X, by + 78, { s: 19, w: 800, num: true, c: i === 1 || i === 2 ? RP.redD : RP.ink });
@@ -1444,8 +1448,8 @@ async function exportMonthlyReport() {
         // compare average per working day — a running month's total vs a full month would mislead
         { label: 'Production', value: fmt(a.prod), sub: `${a.days.size} working days • avg ${fmt(Math.round(a.prod / (a.days.size || 1)))}/day`, accent: RP.blue,
           delta: [p.prod && a.days.size ? a.prod / a.days.size - p.prod / (p.days.size || 1) : null, '/day', 'neutral'] },
-        { label: 'Total Rejection', value: fmt(a.def), vc: RP.redD, sub: `Rate ${rate.toFixed(2)}% of production`, accent: RP.red, delta: [pRate == null ? null : rate - pRate, ' pts', 'bad-up'] },
-        { label: 'Disassembled', value: fmt(a.dis), sub: `${pnum(a.dis, a.prod).toFixed(2)}% of production`, accent: RP.amber, delta: [p.prod ? pnum(a.dis, a.prod) - pnum(p.dis, p.prod) : null, ' pts', 'bad-up'] },
+        { label: 'Total Defect', value: fmt(a.def), vc: RP.redD, sub: `Rate ${rate.toFixed(2)}% of production`, accent: RP.red, delta: [pRate == null ? null : rate - pRate, ' pts', 'bad-up'] },
+        { label: 'Reject', value: fmt(a.dis), sub: `${pnum(a.dis, a.prod).toFixed(2)}% of production`, accent: RP.amber, delta: [p.prod ? pnum(a.dis, a.prod) - pnum(p.dis, p.prod) : null, ' pts', 'bad-up'] },
         { label: 'Recovery', value: a.def ? a.rec.toFixed(1) + '%' : '—', vc: RP.green, sub: `${fmt(Math.max(0, a.def - a.dis))} fixed in line`, accent: RP.green, delta: [p.def && a.def ? a.rec - p.rec : null, ' pts', 'good-up'] }
     ]);
     y += 22;
